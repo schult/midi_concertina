@@ -7756,6 +7756,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C80670"
+			(at 77.47 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "5b6cdc96-858e-4229-bb76-deb46220e7f9")
 		)
@@ -9048,7 +9057,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_SMD:Panasonic_EVQPUL_EVQPUC"
 			(at 273.05 146.05 0)
 			(effects
 				(font
@@ -9068,6 +9077,15 @@
 		)
 		(property "Description" "Push button switch, generic, two pins"
 			(at 267.97 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C79175"
+			(at 267.97 146.05 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10465,6 +10483,15 @@
 			)
 		)
 		(property "Description" "USB 2.0-only 16P Type-C Receptacle connector"
+			(at 59.69 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C3020560"
 			(at 59.69 85.09 0)
 			(effects
 				(font
