@@ -2,7 +2,7 @@
 	(version 20241209)
 	(generator "kicad_symbol_editor")
 	(generator_version "9.0")
-	(symbol "ABPMRRV001PD2A3"
+	(symbol "ABPMRRV060MG2A3"
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -15,7 +15,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "ABPMRRV001PD2A3"
+		(property "Value" "ABPMRRV060MG2A3"
 			(at 2.54 10.16 0)
 			(effects
 				(font
@@ -24,7 +24,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Sensor_Pressure:CFSensor_XGZP6899x"
+		(property "Footprint" "midi_concertina:Honeywell_ABPMRRx"
 			(at 0 0 0)
 			(effects
 				(font
@@ -33,7 +33,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://cfsensor.com/wp-content/uploads/2022/11/XGZP6899D-Pressure-Sensor-V2.8.pdf"
+		(property "Datasheet" "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/siot/en-us/products/sensors/pressure-sensors/board-mount-pressure-sensors/basic-abp-series/documents/sps-siot-basic-board-mount-pressure-abp-series-datasheet-32305128-ciid-155789.pdf"
 			(at 0 0 0)
 			(effects
 				(font
@@ -42,7 +42,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "i2c differential digital, 2.5Vdc-5.5Vdc"
+		(property "Description" "i2c differential digital"
 			(at 0 0 0)
 			(effects
 				(font
@@ -69,7 +69,7 @@
 				(hide yes)
 			)
 		)
-		(symbol "ABPMRRV001PD2A3_0_1"
+		(symbol "ABPMRRV060MG2A3_0_1"
 			(rectangle
 				(start -5.08 7.62)
 				(end 5.08 -7.62)
@@ -82,7 +82,7 @@
 				)
 			)
 		)
-		(symbol "ABPMRRV001PD2A3_1_0"
+		(symbol "ABPMRRV060MG2A3_1_0"
 			(pin no_connect line
 				(at -5.08 2.54 0)
 				(length 2.54)
@@ -103,7 +103,7 @@
 				)
 			)
 		)
-		(symbol "ABPMRRV001PD2A3_1_1"
+		(symbol "ABPMRRV060MG2A3_1_1"
 			(pin power_in line
 				(at 0 10.16 270)
 				(length 2.54)
