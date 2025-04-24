@@ -10213,7 +10213,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "W25Q16JVSSIQ"
+		(property "Value" "W25Q16JVSNIQ"
 			(at 158.75 143.51 0)
 			(effects
 				(font
@@ -10222,7 +10222,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm"
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
 			(at 156.21 156.21 0)
 			(effects
 				(font
@@ -10249,7 +10249,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C131025"
+		(property "LCSC" "C115407"
 			(at 156.21 156.21 0)
 			(effects
 				(font
