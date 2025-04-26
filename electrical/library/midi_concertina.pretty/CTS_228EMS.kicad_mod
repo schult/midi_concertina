@@ -1,0 +1,229 @@
+(footprint "CTS_228EMS"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Side push button with LED (https://www.ctscorp.com/Files/DataSheets/Switches/Tactile-Switches/CTS-Switches-Tactile-228E-Series-Datasheet.pdf)")
+	(tags "push horizontal SPST 1P1T LED")
+	(property "Reference" "REF**"
+		(at 0 -2.7 180)
+		(layer "F.SilkS")
+		(uuid "38f14fee-1155-4648-9500-4f7d951a8d15")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "CTS_228EMS"
+		(at 0 7 0)
+		(layer "F.Fab")
+		(uuid "0daaf160-9b21-454a-a12a-20b3eb1a294d")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "4e738b75-aab6-486d-b00b-68430536f354")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "9918cb02-9b53-4c71-87a0-77a6371cc8d9")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -3.6 3.31)
+		(end -2.6 3.31)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "9644dc6f-ebbd-4e5f-8f02-82f674687074")
+	)
+	(fp_line
+		(start 3.6 -1.61)
+		(end -3.6 -1.61)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "4f10d850-b079-46af-a670-9e077203c58b")
+	)
+	(fp_line
+		(start 3.6 3.31)
+		(end 2.6 3.31)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "6720d87f-7e11-440c-b8c3-2c08ef310622")
+	)
+	(fp_rect
+		(start -4.6 -1.8)
+		(end 4.6 6)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "f141296c-3e84-403f-aa71-a0bdc361f68f")
+	)
+	(fp_line
+		(start -3.6 -1.5)
+		(end -3.6 3.2)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "7a3d6ec9-437e-47b4-8a42-09b0577a4526")
+	)
+	(fp_line
+		(start -3.6 -1.5)
+		(end 3.6 -1.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "dd728782-a6c7-47bb-a0aa-f3ef0444b65c")
+	)
+	(fp_line
+		(start -3.6 3.2)
+		(end 3.6 3.2)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "3b91d516-eb70-446d-9801-75dfea75fced")
+	)
+	(fp_line
+		(start -1.9 5.05)
+		(end -1.9 3.2)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "9eb565ad-c266-46c1-97b3-6f1e3c4ae9e7")
+	)
+	(fp_line
+		(start -1.9 5.05)
+		(end 1.9 5.05)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "ee0df563-6156-4675-a088-3fceec3a267c")
+	)
+	(fp_line
+		(start 1.9 5.05)
+		(end 1.9 3.2)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "9fc86f99-d870-40b2-af37-45e16cd9c2c7")
+	)
+	(fp_line
+		(start 3.6 -1.5)
+		(end 3.6 3.2)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "fd963505-1627-4b7a-9589-74003368f01b")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "aca163fd-64c5-4fef-8e92-c0361fa1eae3")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "A" smd roundrect
+		(at 0.9 0)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "93f3cf3b-fdd0-4001-9f38-3e6d72c16d6d")
+	)
+	(pad "B" smd roundrect
+		(at 2.5 0)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "7449b8d7-4431-45b1-b78e-257f08f59535")
+	)
+	(pad "L1" smd roundrect
+		(at -2.5 0)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "b3b71669-7ab3-4fe5-b8db-cbd4723b4083")
+	)
+	(pad "L2" smd roundrect
+		(at -0.9 0)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "a243040f-7fbd-4024-9c87-150d736ac5d6")
+	)
+	(pad "SH" smd roundrect
+		(at -3.875 0.85)
+		(size 1.05 4)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "8aecfa59-40ad-4e00-9978-d0c760112fa8")
+	)
+	(pad "SH" smd roundrect
+		(at 0 4.35)
+		(size 4.5 3)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.08333333333)
+		(uuid "3ab96465-9742-41d6-ada7-d54063a1a506")
+	)
+	(pad "SH" smd roundrect
+		(at 3.875 0.85)
+		(size 1.05 4)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "aba40f9e-7c5e-40b0-bcda-4c918d55bdbb")
+	)
+	(embedded_fonts no)
+)
