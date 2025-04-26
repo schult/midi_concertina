@@ -37,9 +37,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.2,
-          "height": 0.5,
-          "width": 0.5
+          "drill": 0.0,
+          "height": 1.135,
+          "width": 0.6
         },
         "silk_line_width": 0.153,
         "silk_text_italic": false,
@@ -58,7 +58,12 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "lib_footprint_mismatch|153000000|72000000|a9914486-051c-4fc3-b577-6a2e3128be90|00000000-0000-0000-0000-000000000000",
+          "GND pads resized to allow minimum clearance to holes for locating pegs"
+        ]
+      ],
       "meta": {
         "version": 2
       },
