@@ -60,8 +60,8 @@
       ],
       "drc_exclusions": [
         [
-          "lib_footprint_mismatch|153000000|72000000|a9914486-051c-4fc3-b577-6a2e3128be90|00000000-0000-0000-0000-000000000000",
-          "GND pads resized to allow minimum clearance to holes for locating pegs"
+          "lib_footprint_mismatch|152200000|72000000|a9914486-051c-4fc3-b577-6a2e3128be90|00000000-0000-0000-0000-000000000000",
+          "GND pads reduced for clearance with locating holes"
         ]
       ],
       "meta": {
@@ -493,13 +493,12 @@
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2,
+        "track_width": 0.15,
         "via_diameter": 0.45,
         "via_drill": 0.3,
         "wire_width": 6
       },
       {
-        "clearance": 0.15,
         "name": "POWER",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 0,
@@ -507,18 +506,12 @@
         "track_width": 0.3
       },
       {
-        "clearance": 0.15,
         "diff_pair_gap": 0.15,
         "diff_pair_width": 0.77,
-        "microvia_diameter": 0.3,
-        "microvia_drill": 0.15,
         "name": "USB_DIFF_90",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 1,
-        "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2,
-        "via_diameter": 0.45,
-        "via_drill": 0.3
+        "schematic_color": "rgba(0, 0, 0, 0.000)"
       }
     ],
     "meta": {
