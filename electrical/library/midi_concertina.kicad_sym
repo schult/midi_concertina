@@ -6,7 +6,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "U2"
+		(property "Reference" "U"
 			(at 2.54 12.7 0)
 			(effects
 				(font
@@ -197,49 +197,27 @@
 		)
 		(embedded_fonts no)
 	)
-	(symbol "CTS_228E"
-		(pin_names
-			(offset 1.016)
-			(hide yes)
-		)
+	(symbol "LightPipe"
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(property "Reference" "SW"
-			(at 0 13.97 0)
+		(property "Reference" "LP"
+			(at 0 3.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "CTS_228E"
-			(at 0 11.43 0)
+		(property "Value" ""
+			(at 0 0 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "midi_concertina:CTS_228EMS"
-			(at 0 10.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.ctscorp.com/Files/DataSheets/Switches/Tactile-Switches/CTS-Switches-Tactile-228E-Series-Datasheet.pdf"
-			(at 1.27 -11.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "CTS 228E single pole normally-open illuminated tactile switch with one or two LEDs"
+		(property "Footprint" ""
 			(at 0 0 0)
 			(effects
 				(font
@@ -248,7 +226,7 @@
 				(hide yes)
 			)
 		)
-		(property "ki_keywords" "switch normally-open pushbutton push-button LED"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(effects
 				(font
@@ -257,7 +235,7 @@
 				(hide yes)
 			)
 		)
-		(property "ki_fp_filters" "SW*MEC*5G*"
+		(property "Description" ""
 			(at 0 0 0)
 			(effects
 				(font
@@ -266,395 +244,25 @@
 				(hide yes)
 			)
 		)
-		(symbol "CTS_228E_0_0"
-			(polyline
-				(pts
-					(xy -5.08 5.08) (xy -2.54 5.08)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -5.08 -2.54) (xy -2.54 -2.54)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -3.81 -6.35) (xy -3.81 -6.985) (xy -3.175 -6.985)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -3.81 -6.985) (xy -2.54 -5.715)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -2.54 0) (xy -2.54 -5.08)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -2.54 -5.08) (xy 2.54 -5.08)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -2.54 -6.35) (xy -2.54 -6.985) (xy -1.905 -6.985)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -2.54 -6.985) (xy -1.27 -5.715)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -0.635 -3.81) (xy -0.635 -6.35)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy -0.635 -5.08) (xy 1.27 -3.81) (xy 1.27 -6.35) (xy -0.635 -5.08)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type outline)
-				)
-			)
-			(polyline
-				(pts
-					(xy 0.635 1.27) (xy 0.635 -1.27)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 0.635 0) (xy -1.27 1.27) (xy -1.27 -1.27) (xy 0.635 0)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type outline)
-				)
-			)
-			(polyline
-				(pts
-					(xy 2.54 5.08) (xy 5.08 5.08)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 2.54 1.905) (xy 1.27 0.635)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 2.54 1.27) (xy 2.54 1.905) (xy 1.905 1.905)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 2.54 0) (xy -2.54 0)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 2.54 0) (xy 2.54 -5.08)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 3.81 1.905) (xy 2.54 0.635)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 3.81 1.27) (xy 3.81 1.905) (xy 3.175 1.905)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 5.08 -2.54) (xy 2.54 -2.54)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-		)
-		(symbol "CTS_228E_0_1"
-			(circle
-				(center -2.032 5.08)
-				(radius 0.508)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 0 6.35) (xy 0 8.128)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(circle
-				(center 2.032 5.08)
-				(radius 0.508)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(polyline
-				(pts
-					(xy 2.54 6.35) (xy -2.54 6.35)
-				)
-				(stroke
-					(width 0)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-		)
-		(symbol "CTS_228E_1_1"
+		(symbol "LightPipe_0_1"
 			(rectangle
-				(start -5.08 8.89)
-				(end 5.08 -7.62)
+				(start -6.35 2.54)
+				(end 6.35 -2.54)
 				(stroke
 					(width 0)
 					(type default)
 				)
 				(fill
-					(type background)
+					(type none)
 				)
 			)
-			(pin passive line
-				(at -7.62 5.08 0)
-				(length 2.54)
-				(name "A"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "A"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin passive line
-				(at -7.62 -2.54 0)
-				(length 2.54)
-				(name "L1"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "L1"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin passive line
-				(at 0 -10.16 90)
-				(length 2.54)
-				(name "Shield"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "SH"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin passive line
-				(at 7.62 5.08 180)
-				(length 2.54)
-				(name "B"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "B"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin passive line
-				(at 7.62 -2.54 180)
-				(length 2.54)
-				(name "L2"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "L2"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
+		)
+		(symbol "LightPipe_1_1"
+			(text "Light Pipe"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
 					)
 				)
 			)

@@ -1,0 +1,195 @@
+(footprint "SLP3-150-150-F"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Light Pipe (https://www.bivar.com/parts_content/Datasheets/SLP3-150-XXX-X.pdf)")
+	(tags "light pipe")
+	(property "Reference" "REF**"
+		(at 0 -6 0)
+		(layer "F.SilkS")
+		(uuid "6b2f9f3e-9c04-460e-ab7e-be9d66dfc170")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SLP3-150-150-F"
+		(at 0 8 0)
+		(layer "F.Fab")
+		(uuid "9edf2490-9469-44a1-85c3-18e287f74a6f")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a9bb0280-fec8-4834-8be7-82c2ac7ed76a")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "fc9eb531-53bc-4288-bcde-264ceea0a963")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr exclude_from_pos_files exclude_from_bom)
+	(fp_rect
+		(start -2.4 -4)
+		(end 2.4 -1.6)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "2d9e5c4a-b233-455c-8950-e489ac5ba5cb")
+	)
+	(fp_rect
+		(start -2.4 1.6)
+		(end 2.4 6.6)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "612bfecd-424d-445e-83fc-76ea530186ae")
+	)
+	(fp_line
+		(start -2.2606 -3.8354)
+		(end 2.2606 -3.8354)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "e2f8fa21-4005-4a94-9f91-b86ede38933b")
+	)
+	(fp_line
+		(start -2.2606 -1.778)
+		(end 2.2606 -1.778)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "02684fc4-0279-4e8f-97d7-6b0b311928be")
+	)
+	(fp_line
+		(start -2.2606 1.778)
+		(end 2.2606 1.778)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "d994e454-e58f-46b6-bc80-b161906d255d")
+	)
+	(fp_line
+		(start -2.2606 2.5146)
+		(end -2.2606 -3.8354)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "98498846-2f17-45e0-a5c8-b577bf618c91")
+	)
+	(fp_line
+		(start -2.2606 2.5146)
+		(end 2.2606 2.5146)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "d4cadc3c-7575-4ab3-8e60-dac1c614a14f")
+	)
+	(fp_line
+		(start -1.4986 6.3246)
+		(end -1.4986 2.5146)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "c9249db4-3e29-4690-92e4-afea2c1775f3")
+	)
+	(fp_line
+		(start -1.4986 6.3246)
+		(end 1.4986 6.3246)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "9fe7768b-a9f8-4c20-bba1-b742606ad43a")
+	)
+	(fp_line
+		(start 1.4986 6.3246)
+		(end 1.4986 2.5146)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "82af7a7f-29ac-4fb8-90ec-6a0b9a623c04")
+	)
+	(fp_line
+		(start 2.2606 -3.8354)
+		(end 2.2606 2.5146)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "8f58cb83-a821-4b49-8865-7b6329012ed4")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "8c11b0c0-6371-43ee-838a-2f470c65b79b")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "" np_thru_hole circle
+		(at -1.27 -2.6924)
+		(size 1.27 1.27)
+		(drill 1.27)
+		(layers "F&B.Cu" "*.Mask")
+		(uuid "29294245-1118-4960-96b4-eeea301fef62")
+	)
+	(pad "" np_thru_hole circle
+		(at 1.27 -2.6924)
+		(size 1.27 1.27)
+		(drill 1.27)
+		(layers "F&B.Cu" "*.Mask")
+		(uuid "fa055336-61f5-479c-bf43-b9204a2cfbf2")
+	)
+	(embedded_fonts no)
+)
