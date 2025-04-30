@@ -4506,7 +4506,7 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U2"
+			(property "Reference" "U"
 				(at 2.54 12.7 0)
 				(effects
 					(font
@@ -10283,7 +10283,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C528974"
+		(property "LCSC" "C52923"
 			(at 58.42 153.67 0)
 			(effects
 				(font
@@ -10720,7 +10720,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www3.panasonic.biz/ac/cdn/e/control/switch/light-touch/catalog/sw_lt_eng_smalls_side.pdf"
 			(at 298.45 199.39 0)
 			(effects
 				(font
@@ -10864,7 +10864,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/6536/ABM8_Datasheet.pdf"
 			(at 162.56 186.69 0)
 			(effects
 				(font
@@ -11317,7 +11317,7 @@
 				(justify left)
 			)
 		)
-		(property "LCSC" "C528974"
+		(property "LCSC" "C52923"
 			(at 353.06 76.2 0)
 			(effects
 				(font
@@ -11510,7 +11510,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.jst-mfg.com/product/pdf/eng/eSH.pdf"
 			(at 54.61 195.58 0)
 			(effects
 				(font
@@ -11659,7 +11659,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
+		(property "Datasheet" "https://www.digikey.com/en/products/detail/gct/USB4105-GF-A/11198441"
 			(at 63.5 85.09 0)
 			(effects
 				(font
@@ -11677,7 +11677,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C3020560"
+		(property "LCSC" "C2988369"
 			(at 59.69 85.09 0)
 			(effects
 				(font
@@ -12603,7 +12603,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.jst-mfg.com/product/pdf/eng/eSH.pdf"
 			(at 353.06 161.29 0)
 			(effects
 				(font
@@ -13080,7 +13080,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.jst-mfg.com/product/pdf/eng/eSH.pdf"
 			(at 54.61 210.82 0)
 			(effects
 				(font
@@ -13478,7 +13478,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C528974"
+		(property "LCSC" "C52923"
 			(at 99.06 153.67 0)
 			(effects
 				(font
@@ -13565,7 +13565,7 @@
 				(justify left)
 			)
 		)
-		(property "LCSC" "C528974"
+		(property "LCSC" "C52923"
 			(at 304.8 76.2 0)
 			(effects
 				(font
@@ -15200,7 +15200,7 @@
 		(at 367.03 198.12 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -15214,7 +15214,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "~"
+		(property "Value" "SLP-150-150-F"
 			(at 374.65 199.39 0)
 			(effects
 				(font

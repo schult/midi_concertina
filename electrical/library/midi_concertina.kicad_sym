@@ -199,7 +199,7 @@
 	)
 	(symbol "LightPipe"
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "LP"
 			(at 0 3.81 0)
