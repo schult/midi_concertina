@@ -1,4 +1,4 @@
 (sym_lib_table
   (version 7)
-  (lib (name "midi_concertina")(type "KiCad")(uri "${KIPRJMOD}/../library/midi_concertina.kicad_sym")(options "")(descr ""))
+  (lib (name "MidiConcertina")(type "KiCad")(uri "${KIPRJMOD}/../library/MidiConcertina.kicad_sym")(options "")(descr ""))
 )
