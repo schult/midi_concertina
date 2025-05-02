@@ -3095,7 +3095,7 @@
 			(net 58 "unconnected-(J5-MountPin-PadMP)_1")
 			(pinfunction "MountPin")
 			(pintype "passive+no_connect")
-			(uuid "3aa219a3-edb3-4643-a25a-69b75378e4d7")
+			(uuid "244e700d-3ba9-4777-8d53-c81438c3ed0b")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_Molex.3dshapes/Molex_PicoBlade_53261-0471_1x04-1MP_P1.25mm_Horizontal.wrl"
