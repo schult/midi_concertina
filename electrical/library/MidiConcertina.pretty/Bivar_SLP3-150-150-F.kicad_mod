@@ -1,4 +1,4 @@
-(footprint "SLP3-150-150-F"
+(footprint "Bivar_SLP3-150-150-F"
 	(version 20241229)
 	(generator "pcbnew")
 	(generator_version "9.0")
@@ -16,7 +16,7 @@
 			)
 		)
 	)
-	(property "Value" "SLP3-150-150-F"
+	(property "Value" "Bivar_SLP3-150-150-F"
 		(at 0 8 0)
 		(layer "F.Fab")
 		(uuid "9edf2490-9469-44a1-85c3-18e287f74a6f")

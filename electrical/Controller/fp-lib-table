@@ -1,4 +1,4 @@
 (fp_lib_table
   (version 7)
-  (lib (name "midi_concertina")(type "KiCad")(uri "${KIPRJMOD}/../library/midi_concertina.pretty")(options "")(descr ""))
+  (lib (name "MidiConcertina")(type "KiCad")(uri "${KIPRJMOD}/../library/MidiConcertina.pretty")(options "")(descr ""))
 )

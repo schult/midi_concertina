@@ -15581,7 +15581,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "midi_concertina:Honeywell_ABPMRRx"
+		(property "Footprint" "MidiConcertina:Honeywell_ABPMRRx"
 			(at 356.87 130.81 0)
 			(effects
 				(font
@@ -15748,7 +15748,7 @@
 				)
 			)
 		)
-		(property "Footprint" "midi_concertina:SLP3-150-150-F"
+		(property "Footprint" "MidiConcertina:Bivar_SLP3-150-150-F"
 			(at 374.65 212.09 0)
 			(effects
 				(font
