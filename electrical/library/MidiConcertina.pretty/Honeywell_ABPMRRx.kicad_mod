@@ -428,15 +428,4 @@
 		(uuid "bf8dd5dd-8ade-4511-a4db-f070052c7a27")
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/../library/midi_concertina.3dshapes/Honeywell_ABPMRRx.stp"
-		(offset
-			(xyz 28 -33 4.175)
-		)
-		(scale
-			(xyz 1 1 1)
-		)
-		(rotate
-			(xyz -0 -0 180)
-		)
-	)
 )

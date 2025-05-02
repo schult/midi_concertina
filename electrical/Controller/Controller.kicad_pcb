@@ -11079,7 +11079,7 @@
 		(at 151 110.4 -90)
 		(tags "sop sensor pressure")
 		(property "Reference" "U5"
-			(at -5 5.8 180)
+			(at -5 5.8 0)
 			(layer "F.SilkS")
 			(uuid "d2b518fb-d636-487c-b588-0912a93cfba5")
 			(effects
@@ -11087,7 +11087,7 @@
 					(size 0.8 0.8)
 					(thickness 0.15)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(property "Value" "ABPMRRV060MG2A3"
@@ -11539,17 +11539,6 @@
 			(uuid "7902349b-97bf-49fd-8822-a2f25f2c088d")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/../library/midi_concertina.3dshapes/Honeywell_ABPMRRx.stp"
-			(offset
-				(xyz 28 -33 4.175)
-			)
-			(scale
-				(xyz 1 1 1)
-			)
-			(rotate
-				(xyz -0 -0 180)
-			)
-		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
