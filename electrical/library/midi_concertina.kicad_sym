@@ -201,16 +201,16 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "LP"
-			(at 0 3.81 0)
+		(property "Reference" "H"
+			(at 0 7.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" ""
-			(at 0 0 0)
+		(property "Value" "LightPipe"
+			(at 0 5.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -244,20 +244,18 @@
 				(hide yes)
 			)
 		)
-		(symbol "LightPipe_0_1"
+		(symbol "LightPipe_1_1"
 			(rectangle
 				(start -6.35 2.54)
 				(end 6.35 -2.54)
 				(stroke
-					(width 0)
-					(type default)
+					(width 0.254)
+					(type solid)
 				)
 				(fill
 					(type none)
 				)
 			)
-		)
-		(symbol "LightPipe_1_1"
 			(text "Light Pipe"
 				(at 0 0 0)
 				(effects
