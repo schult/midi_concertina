@@ -55,22 +55,22 @@
 	)
 	(attr exclude_from_pos_files exclude_from_bom)
 	(fp_rect
-		(start -2.4 -4)
-		(end 2.4 -1.6)
+		(start -2.52 -4.09)
+		(end 2.52 -1.53)
 		(stroke
 			(width 0.05)
-			(type default)
+			(type solid)
 		)
 		(fill no)
 		(layer "F.CrtYd")
 		(uuid "2d9e5c4a-b233-455c-8950-e489ac5ba5cb")
 	)
 	(fp_rect
-		(start -2.4 1.6)
-		(end 2.4 6.6)
+		(start -2.52 1.53)
+		(end 2.52 6.58)
 		(stroke
 			(width 0.05)
-			(type default)
+			(type solid)
 		)
 		(fill no)
 		(layer "F.CrtYd")
