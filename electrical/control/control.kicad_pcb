@@ -480,7 +480,7 @@
 			(uuid "8e6bb949-ebd7-4462-a39f-a9638c305d84")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/../library/midi_concertina.3dshapes/JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal.wrl"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -5628,7 +5628,7 @@
 		(property "Reference" "Y1"
 			(at 0 2.4 90)
 			(layer "F.SilkS")
-			(uuid "6be0f3bc-9cc4-4c8d-82e5-5dd1f0af1731")
+			(uuid "a7c7e45c-30b9-4286-877e-2c2c0cca5f84")
 			(effects
 				(font
 					(size 0.8 0.8)
@@ -5640,7 +5640,7 @@
 			(at 0 2.45 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "77d64d8b-1e70-4dbd-abed-2b2e9d16ac28")
+			(uuid "ee8ba008-a6cc-419f-925b-fb639a02fb54")
 			(effects
 				(font
 					(size 1 1)
@@ -5653,7 +5653,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "4f87ba0e-2656-4e52-841f-969bdcc5f72d")
+			(uuid "2f44555b-e823-47fd-b1c0-23deebaff141")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5666,7 +5666,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "77a9ecc1-243e-4818-a154-8ed948af6d3d")
+			(uuid "17027fe0-8014-48ef-9291-38ef1afb0001")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6582,7 +6582,7 @@
 			(uuid "58acb673-dd05-4a85-b04b-e6ee718e7ed4")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/../library/midi_concertina.3dshapes/JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal.wrl"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -10420,7 +10420,7 @@
 			(uuid "5d13f02f-3840-475c-a2e0-1d827a167248")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/../library/midi_concertina.3dshapes/Panasonic_EVQPUL_EVQPUC.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Button_Switch_SMD.3dshapes/Panasonic_EVQPUL_EVQPUC.wrl"
 			(offset
 				(xyz 0 0 0)
 			)
