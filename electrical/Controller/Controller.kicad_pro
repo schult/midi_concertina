@@ -199,7 +199,8 @@
         0.0,
         0.15,
         0.2,
-        0.3
+        0.3,
+        0.5
       ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
@@ -512,7 +513,7 @@
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 0,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.3
+        "track_width": 0.5
       },
       {
         "diff_pair_gap": 0.15,

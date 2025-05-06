@@ -3696,7 +3696,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "MidiConcertina:ABPMRRV060MG2A3"
+		(symbol "MidiConcertina:Honeywell_ABPx2x"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -3709,7 +3709,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "ABPMRRV060MG2A3"
+			(property "Value" "Honeywell_ABPx2x"
 				(at 2.54 10.16 0)
 				(effects
 					(font
@@ -3718,7 +3718,7 @@
 					(justify left)
 				)
 			)
-			(property "Footprint" "midi_concertina:Honeywell_ABPMRRx"
+			(property "Footprint" "MidiConcertina:Honeywell_ABPMRRx"
 				(at 0 0 0)
 				(effects
 					(font
@@ -3763,7 +3763,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "ABPMRRV060MG2A3_0_1"
+			(symbol "Honeywell_ABPx2x_0_1"
 				(rectangle
 					(start -5.08 7.62)
 					(end 5.08 -7.62)
@@ -3776,7 +3776,7 @@
 					)
 				)
 			)
-			(symbol "ABPMRRV060MG2A3_1_0"
+			(symbol "Honeywell_ABPx2x_1_0"
 				(pin no_connect line
 					(at -5.08 2.54 0)
 					(length 2.54)
@@ -3797,7 +3797,7 @@
 					)
 				)
 			)
-			(symbol "ABPMRRV060MG2A3_1_1"
+			(symbol "Honeywell_ABPx2x_1_1"
 				(pin power_in line
 					(at 0 10.16 270)
 					(length 2.54)
@@ -5930,7 +5930,7 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 153.67) (xy 133.35 152.4)
+			(xy 138.43 153.67) (xy 138.43 152.4)
 		)
 		(stroke
 			(width 0)
@@ -6340,7 +6340,7 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 142.24) (xy 156.21 142.24)
+			(xy 138.43 142.24) (xy 156.21 142.24)
 		)
 		(stroke
 			(width 0)
@@ -6350,7 +6350,7 @@
 	)
 	(wire
 		(pts
-			(xy 339.09 119.38) (xy 356.87 119.38)
+			(xy 345.44 119.38) (xy 356.87 119.38)
 		)
 		(stroke
 			(width 0)
@@ -6457,6 +6457,16 @@
 			(type default)
 		)
 		(uuid "495613d9-c1ab-40a1-84a3-52ddcbe7dfda")
+	)
+	(wire
+		(pts
+			(xy 345.44 130.81) (xy 345.44 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4a533fdf-7376-4865-b390-1aa065867b84")
 	)
 	(wire
 		(pts
@@ -7050,7 +7060,7 @@
 	)
 	(wire
 		(pts
-			(xy 339.09 121.92) (xy 339.09 119.38)
+			(xy 345.44 121.92) (xy 345.44 119.38)
 		)
 		(stroke
 			(width 0)
@@ -7470,7 +7480,7 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 144.78) (xy 133.35 142.24)
+			(xy 138.43 144.78) (xy 138.43 142.24)
 		)
 		(stroke
 			(width 0)
@@ -7507,6 +7517,16 @@
 			(type default)
 		)
 		(uuid "c843f965-1c0a-4125-99e0-591067a73aa9")
+	)
+	(wire
+		(pts
+			(xy 342.9 215.9) (xy 342.9 214.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c8793866-5844-4653-b36e-7a8e4aa3d459")
 	)
 	(wire
 		(pts
@@ -11716,7 +11736,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 339.09 129.54 0)
+		(at 345.44 130.81 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11725,7 +11745,7 @@
 		(fields_autoplaced yes)
 		(uuid "69129e48-d134-4470-b16b-edef0c8bd26c")
 		(property "Reference" "#PWR0111"
-			(at 339.09 135.89 0)
+			(at 345.44 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11734,7 +11754,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 339.09 134.62 0)
+			(at 345.44 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11743,7 +11763,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 339.09 129.54 0)
+			(at 345.44 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11752,7 +11772,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 339.09 129.54 0)
+			(at 345.44 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11761,7 +11781,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 339.09 129.54 0)
+			(at 345.44 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12289,7 +12309,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 133.35 153.67 0)
+		(at 138.43 153.67 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12298,7 +12318,7 @@
 		(fields_autoplaced yes)
 		(uuid "82df4950-9f55-43aa-afd5-0f7ea5cd158c")
 		(property "Reference" "#PWR0120"
-			(at 133.35 160.02 0)
+			(at 138.43 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12307,7 +12327,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 133.35 158.75 0)
+			(at 138.43 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12316,7 +12336,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 133.35 153.67 0)
+			(at 138.43 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12325,7 +12345,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 133.35 153.67 0)
+			(at 138.43 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12334,7 +12354,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 133.35 153.67 0)
+			(at 138.43 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12502,7 +12522,8 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 133.35 148.59 0)
+		(at 138.43 148.59 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12510,7 +12531,7 @@
 		(dnp no)
 		(uuid "841a8a31-ef41-4cd1-9fd7-12dbffef8124")
 		(property "Reference" "C15"
-			(at 137.16 147.3199 0)
+			(at 134.62 147.3199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12519,7 +12540,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 137.16 149.8599 0)
+			(at 134.62 149.8599 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12528,7 +12549,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 134.3152 152.4 0)
+			(at 137.4648 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12537,7 +12558,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 133.35 148.59 0)
+			(at 138.43 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12546,7 +12567,7 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
-			(at 133.35 148.59 0)
+			(at 138.43 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12555,7 +12576,7 @@
 			)
 		)
 		(property "LCSC" "C1525"
-			(at 133.35 148.59 0)
+			(at 138.43 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12791,16 +12812,16 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 339.09 125.73 0)
+		(at 345.44 125.73 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "90ad701c-2917-4d16-a8c8-fbc94c6a5519")
 		(property "Reference" "C18"
-			(at 342.9 124.4599 0)
+			(at 341.63 124.4599 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12809,7 +12830,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 342.9 126.9999 0)
+			(at 341.63 126.9999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12818,7 +12839,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 340.0552 129.54 0)
+			(at 344.4748 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12827,7 +12848,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 339.09 125.73 0)
+			(at 345.44 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12836,7 +12857,7 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
-			(at 339.09 125.73 0)
+			(at 345.44 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12845,7 +12866,7 @@
 			)
 		)
 		(property "LCSC" "C1525"
-			(at 339.09 125.73 0)
+			(at 345.44 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14890,7 +14911,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 342.9 214.63 0)
+		(at 342.9 215.9 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -14899,7 +14920,7 @@
 		(fields_autoplaced yes)
 		(uuid "dffc428d-1bb7-43ec-8dd8-9e14e9343feb")
 		(property "Reference" "#PWR0140"
-			(at 342.9 220.98 0)
+			(at 342.9 222.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14908,7 +14929,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 342.9 219.71 0)
+			(at 342.9 220.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14917,7 +14938,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 342.9 214.63 0)
+			(at 342.9 215.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14926,7 +14947,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 342.9 214.63 0)
+			(at 342.9 215.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14935,7 +14956,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 342.9 214.63 0)
+			(at 342.9 215.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15555,7 +15576,7 @@
 		)
 	)
 	(symbol
-		(lib_id "MidiConcertina:ABPMRRV060MG2A3")
+		(lib_id "MidiConcertina:Honeywell_ABPx2x")
 		(at 356.87 130.81 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -15572,7 +15593,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "ABPMRRV060MG2A3"
+		(property "Value" "ABPMRRV001PD2A3"
 			(at 359.41 120.65 0)
 			(effects
 				(font
@@ -15608,7 +15629,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C22270183"
+		(property "LCSC" ""
 			(at 356.87 130.81 0)
 			(effects
 				(font
