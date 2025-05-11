@@ -415,34 +415,6 @@
 		(layer "F.Fab")
 		(uuid "a8056ed4-c52a-48f2-bab6-05f45b82bb67")
 	)
-	(fp_text user "Port 1"
-		(at 8.75 0.95 0)
-		(unlocked yes)
-		(layer "Cmts.User")
-		(uuid "6fe20111-dcd8-40f1-9973-23f1fe476ade")
-		(effects
-			(font
-				(size 0.7 0.7)
-				(thickness 0.12)
-				(bold yes)
-			)
-			(justify right)
-		)
-	)
-	(fp_text user "Port 2"
-		(at 8.75 -0.95 0)
-		(unlocked yes)
-		(layer "Cmts.User")
-		(uuid "cf9d4cdd-2d19-49e7-913f-b796f5a25a45")
-		(effects
-			(font
-				(size 0.7 0.7)
-				(thickness 0.12)
-				(bold yes)
-			)
-			(justify right)
-		)
-	)
 	(fp_text user "${REFERENCE}"
 		(at 0 0 180)
 		(layer "F.Fab")
