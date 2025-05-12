@@ -681,7 +681,7 @@
           "group_by": false,
           "label": "Part",
           "name": "Part",
-          "show": false
+          "show": true
         }
       ],
       "filter_string": "",

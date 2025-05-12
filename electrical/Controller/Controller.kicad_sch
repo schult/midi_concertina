@@ -5687,6 +5687,12 @@
 		(uuid "60337b23-c17b-4049-a9bf-36157f2cc15c")
 	)
 	(junction
+		(at 360.68 168.91)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "64c5483e-8278-4aaa-859a-237258fc18b1")
+	)
+	(junction
 		(at 278.13 158.75)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5745,12 +5751,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "aef512f4-4186-4833-8af8-b9557b25fbaf")
-	)
-	(junction
-		(at 360.68 163.83)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "af4eecaf-0d3b-429e-95c7-81ceae091d5e")
 	)
 	(junction
 		(at 264.16 82.55)
@@ -6364,7 +6364,7 @@
 	)
 	(wire
 		(pts
-			(xy 350.52 168.91) (xy 365.76 168.91)
+			(xy 350.52 163.83) (xy 365.76 163.83)
 		)
 		(stroke
 			(width 0)
@@ -6844,7 +6844,7 @@
 	)
 	(wire
 		(pts
-			(xy 360.68 171.45) (xy 360.68 163.83)
+			(xy 360.68 171.45) (xy 360.68 168.91)
 		)
 		(stroke
 			(width 0)
@@ -7294,7 +7294,7 @@
 	)
 	(wire
 		(pts
-			(xy 360.68 163.83) (xy 360.68 156.21)
+			(xy 360.68 156.21) (xy 360.68 168.91)
 		)
 		(stroke
 			(width 0)
@@ -7314,7 +7314,7 @@
 	)
 	(wire
 		(pts
-			(xy 350.52 163.83) (xy 360.68 163.83)
+			(xy 350.52 168.91) (xy 360.68 168.91)
 		)
 		(stroke
 			(width 0)
@@ -8436,7 +8436,7 @@
 	)
 	(global_label "I2C_SCL"
 		(shape bidirectional)
-		(at 365.76 168.91 0)
+		(at 365.76 163.83 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -8446,7 +8446,7 @@
 		)
 		(uuid "682605d1-3c83-4e79-90c7-961d73497456")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 377.416 168.91 0)
+			(at 377.416 163.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9721,7 +9721,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 268.986 147.574 90)
 			(effects
 				(font
@@ -9730,7 +9730,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0402WGF2201TCE_C25879.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0603WAF2201T5E_C4190.pdf"
 			(at 267.97 147.32 0)
 			(effects
 				(font
@@ -9739,7 +9739,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "62.5mW 50V ±1% 2.2kΩ Resistor, ROHS"
+		(property "Description" "100mW 75V ±1% 2.2kΩ Resistor, ROHS"
 			(at 267.97 147.32 0)
 			(effects
 				(font
@@ -9748,7 +9748,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25879"
+		(property "LCSC" "C4190"
 			(at 267.97 147.32 0)
 			(effects
 				(font
@@ -9757,7 +9757,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part" "UNI-ROYAL 0402WGF2201TCE"
+		(property "Part" "UNI-ROYAL 0603WAF2201T5E"
 			(at 267.97 147.32 0)
 			(effects
 				(font
@@ -13068,7 +13068,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 279.146 147.574 90)
 			(effects
 				(font
@@ -13077,7 +13077,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0402WGF2201TCE_C25879.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0603WAF2201T5E_C4190.pdf"
 			(at 278.13 147.32 0)
 			(effects
 				(font
@@ -13086,7 +13086,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "62.5mW 50V ±1% 2.2kΩ Resistor, ROHS"
+		(property "Description" "100mW 75V ±1% 2.2kΩ Resistor, ROHS"
 			(at 278.13 147.32 0)
 			(effects
 				(font
@@ -13095,7 +13095,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C25879"
+		(property "LCSC" "C4190"
 			(at 278.13 147.32 0)
 			(effects
 				(font
@@ -13104,7 +13104,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part" "UNI-ROYAL 0402WGF2201TCE"
+		(property "Part" "UNI-ROYAL 0603WAF2201T5E"
 			(at 278.13 147.32 0)
 			(effects
 				(font
