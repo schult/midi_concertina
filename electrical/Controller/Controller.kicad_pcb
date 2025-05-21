@@ -744,6 +744,127 @@
 			)
 		)
 	)
+	(footprint "MountingHole:MountingHole_3.2mm_M3_Pad"
+		(layer "F.Cu")
+		(uuid "0bcff81a-e730-40fb-b11c-c2ace40afa88")
+		(at 152 83)
+		(descr "Mounting Hole 3.2mm, M3")
+		(tags "mounting hole 3.2mm m3")
+		(property "Reference" "H1"
+			(at 0 -4.2 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "35302ecb-3b27-48ae-b50a-38101a50e4a8")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 0 4.2 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9199f7ff-d03e-4497-9d7b-7c20e364a09a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a402d25d-0a35-4623-9a7e-c27b85f4ff60")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "eb686b82-e5f0-4b5d-8388-0c63af151720")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Part" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "17e52498-703e-462f-a68b-aef4e2df18cc")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property ki_fp_filters "MountingHole*Pad*")
+		(path "/c74b242e-0d51-4937-9685-5d33b301ba94")
+		(sheetname "/")
+		(sheetfile "Controller.kicad_sch")
+		(zone_connect 2)
+		(attr exclude_from_pos_files exclude_from_bom)
+		(fp_circle
+			(center 0 0)
+			(end 3.2 0)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(fill no)
+			(layer "Cmts.User")
+			(uuid "60c026b0-89a1-45a7-8d8b-9c11362ccdb4")
+		)
+		(fp_circle
+			(center 0 0)
+			(end 3.45 0)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.CrtYd")
+			(uuid "db953e8c-d20d-480b-99ee-9927dab2359b")
+		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(uuid "67e6a1ba-002e-4074-bd06-ca546ad3bdea")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(pad "1" thru_hole circle
+			(at 0 0)
+			(size 6.4 6.4)
+			(drill 3.2)
+			(layers "*.Cu" "*.Mask")
+			(remove_unused_layers no)
+			(net 2 "GND")
+			(pinfunction "1")
+			(pintype "input")
+			(uuid "e4cbed2f-70ee-4ffe-b5cf-5c1a17ffbb4e")
+		)
+		(embedded_fonts no)
+	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "F.Cu")
 		(uuid "0ec9efad-b483-4ee5-b11a-16e3923a34dc")
@@ -751,7 +872,7 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R12"
-			(at 3.4 -0.3 90)
+			(at 3.8 -0.3 90)
 			(layer "F.SilkS")
 			(uuid "dd286e39-932b-4c53-a460-01a695249833")
 			(effects
@@ -2351,7 +2472,7 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R13"
-			(at 3.4 -0.4 90)
+			(at 3.8 -0.4 90)
 			(layer "F.SilkS")
 			(uuid "bae23530-15ea-4572-9939-9b771568563f")
 			(effects
@@ -3058,7 +3179,7 @@
 			(net 57 "unconnected-(J5-MountPin-PadMP)")
 			(pinfunction "MountPin")
 			(pintype "passive+no_connect")
-			(uuid "3aa219a3-edb3-4643-a25a-69b75378e4d7")
+			(uuid "1ab8a70c-6b2d-4222-8542-68e8f64f5e95")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_Molex.3dshapes/Molex_PicoBlade_53261-0671_1x06-1MP_P1.25mm_Horizontal.wrl"
@@ -8569,7 +8690,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "fa896ea7-5a40-4c80-a9a4-03d2281f5779")
 		)
 		(pad "57" thru_hole circle
 			(at -1.3 1.3)
@@ -8581,7 +8702,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "d82b1397-5522-44be-b7cd-22d9dbe0c88d")
 		)
 		(pad "57" thru_hole circle
 			(at 0 -1.3)
@@ -8593,7 +8714,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "776a8424-b435-41e4-8403-9a8c2e0640f4")
 		)
 		(pad "57" thru_hole circle
 			(at 0 0)
@@ -8605,7 +8726,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "cfe72fc3-a1e4-4c24-98f7-b81512828d4d")
 		)
 		(pad "57" smd rect
 			(at 0 0)
@@ -8616,7 +8737,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "4a928c99-7461-46b1-8e07-dc721186f58c")
 		)
 		(pad "57" thru_hole circle
 			(at 0 1.3)
@@ -8628,7 +8749,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "b3a44da7-f5c7-46db-88b2-84a1765b88e4")
 		)
 		(pad "57" thru_hole circle
 			(at 1.3 -1.3)
@@ -8640,7 +8761,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "3bd68ffc-8e8a-4a41-b01f-4f1dd67e71fa")
 		)
 		(pad "57" thru_hole circle
 			(at 1.3 0)
@@ -8652,7 +8773,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "9a649c51-9f77-48e1-a1d3-6bb831445fdd")
 		)
 		(pad "57" thru_hole circle
 			(at 1.3 1.3)
@@ -8664,7 +8785,7 @@
 			(pinfunction "GND")
 			(pintype "power_in")
 			(zone_connect 2)
-			(uuid "81e1e80b-54e1-4440-bc0f-5f0738bb3477")
+			(uuid "b09ac15d-1928-4618-934f-54a3c2bfb384")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Package_DFN_QFN.3dshapes/QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm.wrl"
@@ -10006,7 +10127,7 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C11"
-			(at 3.4 -0.2 90)
+			(at 3.8 -0.2 90)
 			(layer "F.SilkS")
 			(uuid "578a4dd9-d7a1-47ae-bb21-28c3622ad3c3")
 			(effects
@@ -10233,7 +10354,7 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C6"
-			(at 3.4 -0.1 90)
+			(at 3.8 -0.1 90)
 			(layer "F.SilkS")
 			(uuid "21d8ff02-300e-43c6-bbd6-2dadea98ead7")
 			(effects
@@ -10452,127 +10573,6 @@
 				(xyz 0 0 0)
 			)
 		)
-	)
-	(footprint "MountingHole:MountingHole_3.2mm_M3_Pad"
-		(layer "F.Cu")
-		(uuid "d2f4bcd3-8e6a-4150-9def-4c8d9a4ddd17")
-		(at 152 83)
-		(descr "Mounting Hole 3.2mm, M3")
-		(tags "mounting hole 3.2mm m3")
-		(property "Reference" "H1"
-			(at 0 -4.2 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "96eeded5-7ae7-4f26-88ef-5cfc1939079b")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Value" "MountingHole"
-			(at 0 4.2 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "fb22d8bf-7c33-4685-8d68-d33befd8e2d7")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 0 0 0)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "c9ef4c00-0ec1-495f-8b8e-639a188ec5cd")
-			(effects
-				(font
-					(size 1.27 1.27)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Description" "Mounting Hole with connection"
-			(at 0 0 0)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "e0d0f5fb-0071-4334-8bc8-ca78e67eeb88")
-			(effects
-				(font
-					(size 1.27 1.27)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Part" ""
-			(at 0 0 0)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "0b994f9d-ffa5-472f-944e-dd7e42ef4aae")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property ki_fp_filters "MountingHole*Pad*")
-		(path "/c74b242e-0d51-4937-9685-5d33b301ba94")
-		(sheetname "/")
-		(sheetfile "Controller.kicad_sch")
-		(attr exclude_from_pos_files exclude_from_bom)
-		(fp_circle
-			(center 0 0)
-			(end 3.2 0)
-			(stroke
-				(width 0.15)
-				(type solid)
-			)
-			(fill no)
-			(layer "Cmts.User")
-			(uuid "068f133a-7a79-4b6c-b1ef-e17bdc5fe426")
-		)
-		(fp_circle
-			(center 0 0)
-			(end 3.45 0)
-			(stroke
-				(width 0.05)
-				(type solid)
-			)
-			(fill no)
-			(layer "F.CrtYd")
-			(uuid "949f2a95-12a8-4d12-a3c6-89fcfd792a53")
-		)
-		(fp_text user "${REFERENCE}"
-			(at 0 0 0)
-			(layer "F.Fab")
-			(uuid "ca37f1a7-dc8f-4204-abce-40824b79d961")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(pad "1" thru_hole circle
-			(at 0 0)
-			(size 6.4 6.4)
-			(drill 3.2)
-			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
-			(net 2 "GND")
-			(pinfunction "1")
-			(pintype "input")
-			(zone_connect 2)
-			(uuid "7b3b9a02-3026-4f01-8abf-71c0e5f7ceb5")
-		)
-		(embedded_fonts no)
 	)
 	(footprint "Button_Switch_SMD:Panasonic_EVQPUL_EVQPUC"
 		(layer "F.Cu")
@@ -13235,7 +13235,7 @@
 		(layer "User.4")
 		(uuid "2ab11f53-26e2-4ed7-acc4-392ecb575eeb")
 		(pts
-			(xy 152 84) (xy 160 70)
+			(xy 152 83) (xy 160 70)
 		)
 		(height -22)
 		(orientation 0)
@@ -13257,7 +13257,7 @@
 			(keep_text_aligned yes)
 		)
 		(gr_text "8"
-			(at 156 60.85 0)
+			(at 156 59.85 0)
 			(layer "User.4")
 			(uuid "2ab11f53-26e2-4ed7-acc4-392ecb575eeb")
 			(effects
@@ -14029,6 +14029,14 @@
 		(uuid "80aef318-6979-495c-9050-68345ae3b741")
 	)
 	(segment
+		(start 140.8 101.08)
+		(end 140.8 101.8)
+		(width 0.5)
+		(layer "F.Cu")
+		(net 2)
+		(uuid "930f881c-cccf-418a-b58e-68b36ea09736")
+	)
+	(segment
 		(start 155.67 103.235)
 		(end 155.67 104)
 		(width 0.5)
@@ -14139,14 +14147,6 @@
 		(layer "F.Cu")
 		(net 2)
 		(uuid "c016f904-475e-4929-970e-e54a77b137df")
-	)
-	(segment
-		(start 139.8 101.08)
-		(end 140.8 101.08)
-		(width 0.5)
-		(layer "F.Cu")
-		(net 2)
-		(uuid "c1455b62-b209-41a4-81eb-262d8c663824")
 	)
 	(segment
 		(start 138.625 107.8)
@@ -14443,6 +14443,14 @@
 		(layers "F.Cu" "B.Cu")
 		(net 2)
 		(uuid "daf93ee6-53a8-4f11-9d56-3cdc7aad4f9a")
+	)
+	(via
+		(at 140.8 101.8)
+		(size 0.45)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(net 2)
+		(uuid "dbad2f93-a88a-418c-9bf7-89e389c5a17f")
 	)
 	(via
 		(at 139.2 86.8)
