@@ -3101,12 +3101,6 @@
 		(uuid "19554e69-cd2c-4683-9ead-df69124cb5d7")
 	)
 	(junction
-		(at 118.11 82.55)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "1a3dd897-6db8-4a6d-b461-4eda2d976355")
-	)
-	(junction
 		(at 80.01 92.71)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3161,7 +3155,7 @@
 		(uuid "3b143949-2077-4dd0-8941-cf585f7e433b")
 	)
 	(junction
-		(at 67.31 72.39)
+		(at 82.55 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "48618c7f-15e4-4dff-9fcf-c256e8ed4c63")
@@ -3251,12 +3245,6 @@
 		(uuid "77d655ea-0276-46f6-9a6e-caf135ffd599")
 	)
 	(junction
-		(at 82.55 59.69)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7b8552ba-cd5d-44c4-bae2-5b5009f98d4a")
-	)
-	(junction
 		(at 104.14 196.85)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3275,7 +3263,7 @@
 		(uuid "8a8d0eb6-1b70-49e0-92d7-bd3e2d7379d6")
 	)
 	(junction
-		(at 67.31 59.69)
+		(at 82.55 59.69)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8d69aae0-e8a0-492a-a892-7e82bbed80bb")
@@ -3305,7 +3293,7 @@
 		(uuid "936446a6-d490-4048-b3c7-a32e29735ed8")
 	)
 	(junction
-		(at 36.83 72.39)
+		(at 52.07 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "94750f25-8ea6-4818-9ec5-b5a09aa4a8fc")
@@ -3317,7 +3305,7 @@
 		(uuid "94de8fce-0d2e-454e-b0ab-c26d2f875545")
 	)
 	(junction
-		(at 52.07 59.69)
+		(at 67.31 59.69)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "984dea21-0baa-4f8d-845d-ab9b8eadea09")
@@ -3333,12 +3321,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a56322d5-3775-4987-a47a-4408795b7f35")
-	)
-	(junction
-		(at 97.79 59.69)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "adf7da03-ba3b-461c-a68b-1339a9a01d7a")
 	)
 	(junction
 		(at 342.9 24.13)
@@ -3365,7 +3347,7 @@
 		(uuid "c457e6b4-8a0c-4f22-a825-4d5cd228dafc")
 	)
 	(junction
-		(at 52.07 72.39)
+		(at 67.31 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c4fc84fe-8831-47bd-9129-565708ac117f")
@@ -3401,16 +3383,16 @@
 		(uuid "e618c721-09da-4268-8a44-88c3b360b963")
 	)
 	(junction
-		(at 82.55 72.39)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "e6a41c5d-0e42-41d6-9ef5-75ee412a8b39")
-	)
-	(junction
 		(at 113.03 59.69)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ec292820-880c-4dae-97f5-5588091c85b6")
+	)
+	(junction
+		(at 97.79 59.69)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f29e9fb8-a253-4030-911e-666e7da3e779")
 	)
 	(no_connect
 		(at 135.89 130.81)
@@ -3626,6 +3608,16 @@
 	)
 	(wire
 		(pts
+			(xy 191.77 102.87) (xy 135.89 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "16203874-0179-4667-b356-d4d72db8f67b")
+	)
+	(wire
+		(pts
 			(xy 74.93 92.71) (xy 80.01 92.71)
 		)
 		(stroke
@@ -3633,6 +3625,16 @@
 			(type default)
 		)
 		(uuid "16cbafe1-5ccc-4ee4-87f3-8913b412d3a2")
+	)
+	(wire
+		(pts
+			(xy 199.39 100.33) (xy 191.77 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "178ad524-4dd7-4720-bad3-0a9c9481cc93")
 	)
 	(wire
 		(pts
@@ -3686,16 +3688,6 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 85.09) (xy 123.19 82.55)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1bf9d0e6-7062-4b7d-891f-bdfef8613071")
-	)
-	(wire
-		(pts
 			(xy 353.06 78.74) (xy 355.6 78.74)
 		)
 		(stroke
@@ -3736,17 +3728,7 @@
 	)
 	(wire
 		(pts
-			(xy 189.23 100.33) (xy 135.89 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "20d30c32-acf7-43ff-a285-f30133136864")
-	)
-	(wire
-		(pts
-			(xy 36.83 59.69) (xy 52.07 59.69)
+			(xy 52.07 59.69) (xy 67.31 59.69)
 		)
 		(stroke
 			(width 0)
@@ -3846,16 +3828,6 @@
 	)
 	(wire
 		(pts
-			(xy 191.77 100.33) (xy 191.77 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2890dd8b-c44c-4938-9947-4333c531130c")
-	)
-	(wire
-		(pts
 			(xy 212.09 128.27) (xy 212.09 129.54)
 		)
 		(stroke
@@ -3863,16 +3835,6 @@
 			(type default)
 		)
 		(uuid "289ffb30-b3ce-40c1-9583-5cb2154e5d78")
-	)
-	(wire
-		(pts
-			(xy 189.23 97.79) (xy 189.23 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2a1a57b4-f69a-4875-ad9a-26ac686e57b4")
 	)
 	(wire
 		(pts
@@ -3926,7 +3888,7 @@
 	)
 	(wire
 		(pts
-			(xy 82.55 59.69) (xy 82.55 62.23)
+			(xy 97.79 59.69) (xy 97.79 62.23)
 		)
 		(stroke
 			(width 0)
@@ -4156,7 +4118,7 @@
 	)
 	(wire
 		(pts
-			(xy 186.69 87.63) (xy 199.39 87.63)
+			(xy 184.15 87.63) (xy 199.39 87.63)
 		)
 		(stroke
 			(width 0)
@@ -4216,7 +4178,7 @@
 	)
 	(wire
 		(pts
-			(xy 52.07 59.69) (xy 67.31 59.69)
+			(xy 67.31 59.69) (xy 82.55 59.69)
 		)
 		(stroke
 			(width 0)
@@ -4226,7 +4188,17 @@
 	)
 	(wire
 		(pts
-			(xy 67.31 59.69) (xy 67.31 62.23)
+			(xy 135.89 100.33) (xy 189.23 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4bff6f87-6898-498d-8551-2adeba5aab13")
+	)
+	(wire
+		(pts
+			(xy 82.55 59.69) (xy 82.55 62.23)
 		)
 		(stroke
 			(width 0)
@@ -4386,7 +4358,7 @@
 	)
 	(wire
 		(pts
-			(xy 67.31 69.85) (xy 67.31 72.39)
+			(xy 82.55 69.85) (xy 82.55 72.39)
 		)
 		(stroke
 			(width 0)
@@ -4456,7 +4428,7 @@
 	)
 	(wire
 		(pts
-			(xy 36.83 59.69) (xy 36.83 62.23)
+			(xy 52.07 59.69) (xy 52.07 62.23)
 		)
 		(stroke
 			(width 0)
@@ -4496,17 +4468,7 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 82.55) (xy 118.11 82.55)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "63f74115-1fe7-4d7d-aac9-9b4275ccba5d")
-	)
-	(wire
-		(pts
-			(xy 52.07 59.69) (xy 52.07 62.23)
+			(xy 67.31 59.69) (xy 67.31 62.23)
 		)
 		(stroke
 			(width 0)
@@ -4566,7 +4528,7 @@
 	)
 	(wire
 		(pts
-			(xy 186.69 97.79) (xy 135.89 97.79)
+			(xy 184.15 97.79) (xy 135.89 97.79)
 		)
 		(stroke
 			(width 0)
@@ -4666,23 +4628,13 @@
 	)
 	(wire
 		(pts
-			(xy 36.83 74.93) (xy 36.83 72.39)
+			(xy 52.07 74.93) (xy 52.07 72.39)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "726430ab-10ef-414e-99f5-da2bd1f22c71")
-	)
-	(wire
-		(pts
-			(xy 199.39 100.33) (xy 191.77 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "72ead5f2-5339-467e-a3f5-b19ca2de8651")
 	)
 	(wire
 		(pts
@@ -4796,7 +4748,7 @@
 	)
 	(wire
 		(pts
-			(xy 186.69 87.63) (xy 186.69 97.79)
+			(xy 184.15 87.63) (xy 184.15 97.79)
 		)
 		(stroke
 			(width 0)
@@ -4946,6 +4898,26 @@
 	)
 	(wire
 		(pts
+			(xy 189.23 97.79) (xy 189.23 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "829200ed-e5a8-41f2-ab3d-cc7bb0d8d2b4")
+	)
+	(wire
+		(pts
+			(xy 191.77 100.33) (xy 191.77 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8344f4eb-f5c9-4d17-98a1-071c07abe95a")
+	)
+	(wire
+		(pts
 			(xy 120.65 167.64) (xy 118.11 167.64)
 		)
 		(stroke
@@ -4993,16 +4965,6 @@
 			(type default)
 		)
 		(uuid "86cc4122-144a-428e-90c2-fc423b1ffed8")
-	)
-	(wire
-		(pts
-			(xy 97.79 59.69) (xy 97.79 62.23)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "894c9fbb-318b-4167-86c8-ea83d65936c7")
 	)
 	(wire
 		(pts
@@ -5556,16 +5518,6 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 69.85) (xy 97.79 72.39)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b108948e-e4bd-47fa-811a-074d53d4f991")
-	)
-	(wire
-		(pts
 			(xy 101.6 189.23) (xy 114.3 189.23)
 		)
 		(stroke
@@ -5623,16 +5575,6 @@
 			(type default)
 		)
 		(uuid "b549d45c-30bf-447c-bece-0dc903363391")
-	)
-	(wire
-		(pts
-			(xy 82.55 59.69) (xy 97.79 59.69)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b581a482-a226-4771-a04c-1123671cc57d")
 	)
 	(wire
 		(pts
@@ -5716,7 +5658,7 @@
 	)
 	(wire
 		(pts
-			(xy 82.55 69.85) (xy 82.55 72.39)
+			(xy 97.79 69.85) (xy 97.79 72.39)
 		)
 		(stroke
 			(width 0)
@@ -5776,23 +5718,13 @@
 	)
 	(wire
 		(pts
-			(xy 52.07 72.39) (xy 67.31 72.39)
+			(xy 67.31 72.39) (xy 82.55 72.39)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "ca4050b6-20f4-4e4e-ad50-4b53a5e45bde")
-	)
-	(wire
-		(pts
-			(xy 191.77 102.87) (xy 135.89 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ca56a1d0-0e12-472a-b3f0-1b7440028897")
 	)
 	(wire
 		(pts
@@ -5866,6 +5798,16 @@
 	)
 	(wire
 		(pts
+			(xy 123.19 64.77) (xy 128.27 64.77)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d00a27b5-6332-4f1a-bd70-5cfa9e0b28f6")
+	)
+	(wire
+		(pts
 			(xy 146.05 69.85) (xy 146.05 72.39)
 		)
 		(stroke
@@ -5906,7 +5848,7 @@
 	)
 	(wire
 		(pts
-			(xy 52.07 69.85) (xy 52.07 72.39)
+			(xy 67.31 69.85) (xy 67.31 72.39)
 		)
 		(stroke
 			(width 0)
@@ -6016,7 +5958,7 @@
 	)
 	(wire
 		(pts
-			(xy 36.83 69.85) (xy 36.83 72.39)
+			(xy 52.07 69.85) (xy 52.07 72.39)
 		)
 		(stroke
 			(width 0)
@@ -6053,6 +5995,16 @@
 			(type default)
 		)
 		(uuid "e2ad4c32-db10-4d60-a514-2d2247f88e02")
+	)
+	(wire
+		(pts
+			(xy 128.27 64.77) (xy 128.27 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e2cfbae0-6ec9-4f57-b245-2527b2cd517f")
 	)
 	(wire
 		(pts
@@ -6113,16 +6065,6 @@
 			(type default)
 		)
 		(uuid "e7514a27-dd6c-438a-ae1e-b7c5f8b7f4ac")
-	)
-	(wire
-		(pts
-			(xy 82.55 72.39) (xy 97.79 72.39)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e76374a4-ad80-4c23-8707-3250b2b3d2c7")
 	)
 	(wire
 		(pts
@@ -6206,7 +6148,7 @@
 	)
 	(wire
 		(pts
-			(xy 67.31 59.69) (xy 82.55 59.69)
+			(xy 82.55 59.69) (xy 97.79 59.69)
 		)
 		(stroke
 			(width 0)
@@ -6326,7 +6268,17 @@
 	)
 	(wire
 		(pts
-			(xy 67.31 72.39) (xy 82.55 72.39)
+			(xy 123.19 64.77) (xy 123.19 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f6644c49-915b-4b65-845d-ada09f8e2008")
+	)
+	(wire
+		(pts
+			(xy 82.55 72.39) (xy 97.79 72.39)
 		)
 		(stroke
 			(width 0)
@@ -6406,7 +6358,7 @@
 	)
 	(wire
 		(pts
-			(xy 36.83 72.39) (xy 52.07 72.39)
+			(xy 52.07 72.39) (xy 67.31 72.39)
 		)
 		(stroke
 			(width 0)
@@ -8177,7 +8129,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 82.55 66.04 0)
+		(at 97.79 66.04 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8186,7 +8138,7 @@
 		(fields_autoplaced yes)
 		(uuid "07453533-69c6-40e5-8d1e-9c779b146e84")
 		(property "Reference" "C5"
-			(at 86.36 64.7699 0)
+			(at 101.6 64.7699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8195,7 +8147,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 86.36 67.3099 0)
+			(at 101.6 67.3099 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8204,7 +8156,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 83.5152 69.85 0)
+			(at 98.7552 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8213,7 +8165,7 @@
 			)
 		)
 		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/609/CL05B104KO5NNNC.pdf"
-			(at 82.55 66.04 0)
+			(at 97.79 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8222,7 +8174,7 @@
 			)
 		)
 		(property "Description" "16V 100nF X7R ±10% Multilayer Ceramic Capacitor, ROHS"
-			(at 82.55 66.04 0)
+			(at 97.79 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8231,7 +8183,7 @@
 			)
 		)
 		(property "LCSC" "C1525"
-			(at 82.55 66.04 0)
+			(at 97.79 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8240,7 +8192,7 @@
 			)
 		)
 		(property "Part" "Samsung CL05B104KO5NNNC"
-			(at 82.55 66.04 0)
+			(at 97.79 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9942,7 +9894,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 67.31 66.04 0)
+		(at 82.55 66.04 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9951,7 +9903,7 @@
 		(fields_autoplaced yes)
 		(uuid "3f54df6f-a189-4529-a3e8-c9d1ee081204")
 		(property "Reference" "C7"
-			(at 71.12 64.7699 0)
+			(at 86.36 64.7699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9960,7 +9912,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 71.12 67.3099 0)
+			(at 86.36 67.3099 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9969,7 +9921,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 68.2752 69.85 0)
+			(at 83.5152 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9978,7 +9930,7 @@
 			)
 		)
 		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/609/CL05B104KO5NNNC.pdf"
-			(at 67.31 66.04 0)
+			(at 82.55 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9987,7 +9939,7 @@
 			)
 		)
 		(property "Description" "16V 100nF X7R ±10% Multilayer Ceramic Capacitor, ROHS"
-			(at 67.31 66.04 0)
+			(at 82.55 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9996,7 +9948,7 @@
 			)
 		)
 		(property "LCSC" "C1525"
-			(at 67.31 66.04 0)
+			(at 82.55 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10005,7 +9957,7 @@
 			)
 		)
 		(property "Part" "Samsung CL05B104KO5NNNC"
-			(at 67.31 66.04 0)
+			(at 82.55 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11428,94 +11380,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:C")
-		(at 97.79 66.04 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "83aaf0d3-480c-4720-b33a-67cb456c4348")
-		(property "Reference" "C6"
-			(at 101.6 64.7699 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 101.6 67.3099 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 98.7552 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/609/CL05B104KO5NNNC.pdf"
-			(at 97.79 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "16V 100nF X7R ±10% Multilayer Ceramic Capacitor, ROHS"
-			(at 97.79 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C1525"
-			(at 97.79 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part" "Samsung CL05B104KO5NNNC"
-			(at 97.79 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b812f419-55f0-49be-a45f-b492b46d565e")
-		)
-		(pin "2"
-			(uuid "009a0e33-4a85-4fa7-8020-012d66038ea2")
-		)
-		(instances
-			(project "control"
-				(path "/da26d94e-7a50-4b99-9678-5aaaf6987a15"
-					(reference "C6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "MidiConcertina:TI_DRV5053xDBZ")
 		(at 392.43 204.47 0)
 		(unit 1)
@@ -12590,7 +12454,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 52.07 66.04 0)
+		(at 67.31 66.04 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12599,7 +12463,7 @@
 		(fields_autoplaced yes)
 		(uuid "a82d01c9-34c3-4c24-946d-8eaf7beed652")
 		(property "Reference" "C4"
-			(at 55.88 64.7699 0)
+			(at 71.12 64.7699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12608,7 +12472,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 55.88 67.3099 0)
+			(at 71.12 67.3099 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12617,7 +12481,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 53.0352 69.85 0)
+			(at 68.2752 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12626,7 +12490,7 @@
 			)
 		)
 		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/609/CL05B104KO5NNNC.pdf"
-			(at 52.07 66.04 0)
+			(at 67.31 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12635,7 +12499,7 @@
 			)
 		)
 		(property "Description" "16V 100nF X7R ±10% Multilayer Ceramic Capacitor, ROHS"
-			(at 52.07 66.04 0)
+			(at 67.31 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12644,7 +12508,7 @@
 			)
 		)
 		(property "LCSC" "C1525"
-			(at 52.07 66.04 0)
+			(at 67.31 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12653,7 +12517,7 @@
 			)
 		)
 		(property "Part" "Samsung CL05B104KO5NNNC"
-			(at 52.07 66.04 0)
+			(at 67.31 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13931,6 +13795,73 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 128.27 67.31 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d3148c0b-8fad-4cb6-a40e-c458a8e0b807")
+		(property "Reference" "#PWR0125"
+			(at 128.27 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 128.27 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 128.27 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 128.27 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 128.27 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8f837e9f-59d8-433f-8061-0d8f0184b353")
+		)
+		(instances
+			(project "AngloRightHand"
+				(path "/da26d94e-7a50-4b99-9678-5aaaf6987a15"
+					(reference "#PWR0125")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:PWR_FLAG")
 		(at 101.6 191.77 90)
 		(unit 1)
@@ -15033,7 +14964,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 36.83 74.93 0)
+		(at 52.07 74.93 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15042,7 +14973,7 @@
 		(fields_autoplaced yes)
 		(uuid "ee627c89-8fe0-4603-adbe-9825c91eeb93")
 		(property "Reference" "#PWR0119"
-			(at 36.83 81.28 0)
+			(at 52.07 81.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15051,7 +14982,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 36.83 80.01 0)
+			(at 52.07 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15060,7 +14991,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 36.83 74.93 0)
+			(at 52.07 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15069,7 +15000,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 36.83 74.93 0)
+			(at 52.07 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15078,7 +15009,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 36.83 74.93 0)
+			(at 52.07 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15236,7 +15167,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 36.83 66.04 0)
+		(at 52.07 66.04 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15245,7 +15176,7 @@
 		(fields_autoplaced yes)
 		(uuid "f93b5dee-4785-4099-8be9-7fb2a4ad31ee")
 		(property "Reference" "C15"
-			(at 40.64 64.7699 0)
+			(at 55.88 64.7699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15254,7 +15185,7 @@
 			)
 		)
 		(property "Value" "10uF"
-			(at 40.64 67.3099 0)
+			(at 55.88 67.3099 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15263,7 +15194,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 37.7952 69.85 0)
+			(at 53.0352 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15272,7 +15203,7 @@
 			)
 		)
 		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/658/CL10A106MA8NRNC_Spec.pdf"
-			(at 36.83 66.04 0)
+			(at 52.07 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15281,7 +15212,7 @@
 			)
 		)
 		(property "Description" "25V 10uF X5R ±20% Multilayer Ceramic Capacitor, ROHS"
-			(at 36.83 66.04 0)
+			(at 52.07 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15290,7 +15221,7 @@
 			)
 		)
 		(property "LCSC" "C96446"
-			(at 36.83 66.04 0)
+			(at 52.07 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15299,7 +15230,7 @@
 			)
 		)
 		(property "Part" "Samsung CL10A106MA8NRNC"
-			(at 36.83 66.04 0)
+			(at 52.07 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
