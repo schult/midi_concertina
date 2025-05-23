@@ -13385,7 +13385,7 @@
 		(layer "Edge.Cuts")
 		(uuid "c103e2dc-9f02-4dff-b7cb-caf871d4a32d")
 	)
-	(gr_text "BBMI MIDI Anglo Right Hand - Rev 1"
+	(gr_text "MIDI Anglo Right Hand - Rev 1"
 		(at 40.5 104.5 0)
 		(layer "F.SilkS")
 		(uuid "88e265b4-388e-4724-bf36-434e51063549")

@@ -13205,7 +13205,7 @@
 			(justify bottom)
 		)
 	)
-	(gr_text "BBMI MIDI Concertina Controller - Rev 1"
+	(gr_text "MIDI Concertina Controller - Rev 1"
 		(at 130.6 92.5 90)
 		(layer "F.SilkS")
 		(uuid "88e265b4-388e-4724-bf36-434e51063549")
