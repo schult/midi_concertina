@@ -159,31 +159,31 @@
 	(net 40 "BUTTON_2a")
 	(net 41 "BUTTON_10")
 	(net 42 "BUTTON_4")
-	(net 43 "Net-(U1-BOOT0)")
-	(net 44 "Net-(U1-PB4)")
-	(net 45 "unconnected-(U1-PC14-Pad3)")
-	(net 46 "unconnected-(U1-PB6-Pad42)")
-	(net 47 "unconnected-(U1-PB5-Pad41)")
-	(net 48 "Net-(U1-PA2)")
-	(net 49 "Net-(U1-PA4)")
-	(net 50 "Net-(U1-PA3)")
-	(net 51 "unconnected-(U1-PC15-Pad4)")
-	(net 52 "Net-(U1-PA0)")
-	(net 53 "unconnected-(U1-PH0-Pad5)")
-	(net 54 "unconnected-(U1-PC13-Pad2)")
-	(net 55 "unconnected-(U1-PB7-Pad43)")
-	(net 56 "unconnected-(U1-PA11-Pad32)")
-	(net 57 "unconnected-(U1-PH1-Pad6)")
-	(net 58 "unconnected-(U1-PA15-Pad38)")
-	(net 59 "unconnected-(U1-PA12-Pad33)")
-	(net 60 "Net-(U1-PA1)")
+	(net 43 "Net-(U16-BOOT0)")
+	(net 44 "Net-(U16-PB4)")
+	(net 45 "unconnected-(U16-PC14-Pad3)")
+	(net 46 "unconnected-(U16-PB6-Pad42)")
+	(net 47 "unconnected-(U16-PB5-Pad41)")
+	(net 48 "Net-(U16-PA2)")
+	(net 49 "Net-(U16-PA4)")
+	(net 50 "Net-(U16-PA3)")
+	(net 51 "unconnected-(U16-PC15-Pad4)")
+	(net 52 "Net-(U16-PA0)")
+	(net 53 "unconnected-(U16-PH0-Pad5)")
+	(net 54 "unconnected-(U16-PC13-Pad2)")
+	(net 55 "unconnected-(U16-PB7-Pad43)")
+	(net 56 "unconnected-(U16-PA11-Pad32)")
+	(net 57 "unconnected-(U16-PH1-Pad6)")
+	(net 58 "unconnected-(U16-PA15-Pad38)")
+	(net 59 "unconnected-(U16-PA12-Pad33)")
+	(net 60 "Net-(U16-PA1)")
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
 		(uuid "05db649c-e973-4aec-962f-64d7acac2ce1")
 		(at 85.52 135.5)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C19"
+		(property "Reference" "C13"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "41f2c863-2eff-4bf4-b7d8-f8c67af4428a")
@@ -410,8 +410,8 @@
 		(at 91.121321 157.717514 -135)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C2"
-			(at 0 -1.249999 45)
+		(property "Reference" "C17"
+			(at 0.462311 -1.351398 45)
 			(layer "F.SilkS")
 			(uuid "f0df7bbb-eabb-409f-9351-f6b2c61570f0")
 			(effects
@@ -636,7 +636,7 @@
 		(at 79.52 122.5)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C18"
+		(property "Reference" "C8"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "7567777f-14d6-459c-b1f2-05c4a663c77c")
@@ -863,7 +863,7 @@
 		(at 112 121.501356 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U16"
+		(property "Reference" "U10"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "a6b72c5b-1bd2-46cc-980e-36fe111defcf")
@@ -1488,7 +1488,7 @@
 		(at 94.833631 155.419417 -135)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C6"
+		(property "Reference" "C21"
 			(at -1 -0.25 45)
 			(layer "F.SilkS")
 			(uuid "63830499-d3ac-4b77-8e93-b4fb3ff89642")
@@ -1715,7 +1715,7 @@
 		(at 47.52 127.044622)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C12"
+		(property "Reference" "C6"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "78eaffbe-abda-438d-9e94-364d25f77637")
@@ -1943,7 +1943,7 @@
 		(at 118.5 147 90)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C7"
+		(property "Reference" "C22"
 			(at 1 0 90)
 			(layer "F.SilkS")
 			(uuid "4241243a-a3d3-48fa-aad8-d8ba9266669f")
@@ -2170,7 +2170,7 @@
 		(at 113 151)
 		(descr "24-Lead Plastic Shrink Small Outline (SS)-5.30 mm Body [SSOP] (see Microchip Packaging Specification 00000049BS.pdf)")
 		(tags "SSOP 0.65")
-		(property "Reference" "U2"
+		(property "Reference" "U17"
 			(at 0 -5.25 0)
 			(layer "F.SilkS")
 			(uuid "275c21b8-d47c-4cdf-85d7-cfc2caeb51b3")
@@ -2427,7 +2427,7 @@
 			(at -3.6 -3.575)
 			(size 1.75 0.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
-			(net 48 "Net-(U1-PA2)")
+			(net 48 "Net-(U16-PA2)")
 			(pinfunction "COM")
 			(pintype "passive")
 			(uuid "be20f97a-f290-45ae-900b-fdf671c87e35")
@@ -2508,7 +2508,7 @@
 			(at -3.6 2.275)
 			(size 1.75 0.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
-			(net 50 "Net-(U1-PA3)")
+			(net 50 "Net-(U16-PA3)")
 			(pinfunction "S0")
 			(pintype "input")
 			(uuid "1642c1e1-5890-4012-91a4-aae14617b673")
@@ -2517,7 +2517,7 @@
 			(at -3.6 2.925)
 			(size 1.75 0.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
-			(net 49 "Net-(U1-PA4)")
+			(net 49 "Net-(U16-PA4)")
 			(pinfunction "S1")
 			(pintype "input")
 			(uuid "ea351ecc-846d-419f-b067-360749ca2095")
@@ -2535,7 +2535,7 @@
 			(at 3.6 3.575)
 			(size 1.75 0.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
-			(net 52 "Net-(U1-PA0)")
+			(net 52 "Net-(U16-PA0)")
 			(pinfunction "S3")
 			(pintype "input")
 			(uuid "fdfe96b1-36f9-48e6-ba36-e46551e14b17")
@@ -2544,7 +2544,7 @@
 			(at 3.6 2.925)
 			(size 1.75 0.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
-			(net 60 "Net-(U1-PA1)")
+			(net 60 "Net-(U16-PA1)")
 			(pinfunction "S2")
 			(pintype "input")
 			(uuid "7fcaaf47-f779-442f-b825-71138d1f0452")
@@ -2658,7 +2658,7 @@
 		(at 95.52 122.5)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C21"
+		(property "Reference" "C9"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "8e13fd8e-a06c-406a-add5-92c66505f761")
@@ -3387,7 +3387,7 @@
 		(at 66.5 155.75)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C9"
+		(property "Reference" "C24"
 			(at 1 0 0)
 			(layer "F.SilkS")
 			(uuid "ecf40a75-e517-4d89-918f-fe275cf8490a")
@@ -3614,7 +3614,7 @@
 		(at 74 107 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U9"
+		(property "Reference" "U3"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "a0e26a06-b766-411f-95cb-32dd89aa71eb")
@@ -4368,7 +4368,7 @@
 		(at 117.52 137.001356)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C25"
+		(property "Reference" "C15"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "3eea2b50-2211-4793-b6b2-bfdf0c736c57")
@@ -4716,7 +4716,7 @@
 		(at 51.75 155.75)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C10"
+		(property "Reference" "C25"
 			(at 1 0 0)
 			(layer "F.SilkS")
 			(uuid "865a24ea-6573-4c81-bfbb-f6945ef30072")
@@ -4943,7 +4943,7 @@
 		(at 111.52 124.001356)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C24"
+		(property "Reference" "C10"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "8dfae199-b958-4074-8730-f1847899776d")
@@ -5170,7 +5170,7 @@
 		(at 96 120 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U13"
+		(property "Reference" "U9"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "cbaca3bc-f22c-4a7d-98c1-cb9b9dba0a19")
@@ -5616,7 +5616,7 @@
 			(size 0.54 0.64)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 43 "Net-(U1-BOOT0)")
+			(net 43 "Net-(U16-BOOT0)")
 			(pintype "passive")
 			(uuid "fb54e93a-0a13-49b1-bf32-978c0e701177")
 		)
@@ -5900,7 +5900,7 @@
 		(at 41.52 114.044622)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C11"
+		(property "Reference" "C1"
 			(at 0.98 0 0)
 			(layer "F.SilkS")
 			(uuid "e1ba1c8f-9b92-47f4-99c5-ecfe98f7dd71")
@@ -6127,7 +6127,7 @@
 		(at 73.52 109.5)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C17"
+		(property "Reference" "C3"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "0dfa82e5-3b83-497f-a0fa-33f7171ef0ed")
@@ -6557,7 +6557,7 @@
 			(size 0.54 0.64)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 44 "Net-(U1-PB4)")
+			(net 44 "Net-(U16-PB4)")
 			(pintype "passive")
 			(uuid "424be93e-01da-4cb3-8209-4567adba1a8d")
 		)
@@ -6580,7 +6580,7 @@
 		(at 54 137.544622 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U5"
+		(property "Reference" "U11"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "94018d56-bed8-4993-8e00-7a56fc280b54")
@@ -6832,7 +6832,7 @@
 		(at 118 134.501356 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U17"
+		(property "Reference" "U15"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "51771ece-d5eb-4479-9eed-38a9961bcf8d")
@@ -7084,8 +7084,8 @@
 		(at 93.228499 156.289158 -45)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C8"
-			(at -0.012485 1.017768 135)
+		(property "Reference" "C23"
+			(at -0.012485 1.088478 135)
 			(layer "F.SilkS")
 			(uuid "c6c94018-421b-4424-a81c-5d3f012d20f2")
 			(effects
@@ -7310,7 +7310,7 @@
 		(at 69.52 137)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C16"
+		(property "Reference" "C12"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "2a287b2f-9166-4998-88d2-b1c64a0695fa")
@@ -7537,7 +7537,7 @@
 		(at 89.75 145 45)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C3"
+		(property "Reference" "C18"
 			(at 0.03033 -1.03033 45)
 			(layer "F.SilkS")
 			(uuid "f62877b2-1c99-42c5-9bf4-186c94735777")
@@ -7763,7 +7763,7 @@
 		(at 80 120 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U10"
+		(property "Reference" "U8"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "e6b6dc07-c3de-4af1-83ad-4f4db9c0b2ca")
@@ -8015,7 +8015,7 @@
 		(at 105.52 111.001356)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C23"
+		(property "Reference" "C5"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "07a38dcf-c1a3-40da-9e59-c65e3df8bf80")
@@ -8242,7 +8242,7 @@
 		(at 89 151 135)
 		(descr "LQFP, 48 Pin (https://www.analog.com/media/en/technical-documentation/data-sheets/ltc2358-16.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "LQFP QFP")
-		(property "Reference" "U1"
+		(property "Reference" "U16"
 			(at -3 -4.5 135)
 			(layer "F.SilkS")
 			(uuid "23d712a4-5c31-4d67-bc8e-1f711914d523")
@@ -8729,7 +8729,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 54 "unconnected-(U1-PC13-Pad2)")
+			(net 54 "unconnected-(U16-PC13-Pad2)")
 			(pinfunction "PC13")
 			(pintype "bidirectional+no_connect")
 			(uuid "a5b8c643-e28e-417a-9f8c-3e596b569042")
@@ -8739,7 +8739,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 45 "unconnected-(U1-PC14-Pad3)")
+			(net 45 "unconnected-(U16-PC14-Pad3)")
 			(pinfunction "PC14")
 			(pintype "bidirectional+no_connect")
 			(uuid "34876865-eb4a-44ab-8708-b34a0f34c2b6")
@@ -8749,7 +8749,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 51 "unconnected-(U1-PC15-Pad4)")
+			(net 51 "unconnected-(U16-PC15-Pad4)")
 			(pinfunction "PC15")
 			(pintype "bidirectional+no_connect")
 			(uuid "9db256e6-ead6-408a-aa56-94ac8e2a67df")
@@ -8759,7 +8759,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 53 "unconnected-(U1-PH0-Pad5)")
+			(net 53 "unconnected-(U16-PH0-Pad5)")
 			(pinfunction "PH0")
 			(pintype "bidirectional+no_connect")
 			(uuid "a5794553-a3cc-4def-a2df-c310580c6ddd")
@@ -8769,7 +8769,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 57 "unconnected-(U1-PH1-Pad6)")
+			(net 57 "unconnected-(U16-PH1-Pad6)")
 			(pinfunction "PH1")
 			(pintype "bidirectional+no_connect")
 			(uuid "c28d6b2c-7a11-4cd8-b096-a9e2add97971")
@@ -8809,7 +8809,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 52 "Net-(U1-PA0)")
+			(net 52 "Net-(U16-PA0)")
 			(pinfunction "PA0")
 			(pintype "bidirectional")
 			(uuid "a353d8fa-f8fe-44e3-b6eb-063f7f236934")
@@ -8819,7 +8819,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 60 "Net-(U1-PA1)")
+			(net 60 "Net-(U16-PA1)")
 			(pinfunction "PA1")
 			(pintype "bidirectional")
 			(uuid "f80534ea-b5d9-4519-86d6-a6100733e4fa")
@@ -8829,7 +8829,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 48 "Net-(U1-PA2)")
+			(net 48 "Net-(U16-PA2)")
 			(pinfunction "PA2")
 			(pintype "bidirectional")
 			(uuid "6b4373ac-47e3-4d44-8e84-7ef6f465799d")
@@ -8839,7 +8839,7 @@
 			(size 0.3 1.475)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 50 "Net-(U1-PA3)")
+			(net 50 "Net-(U16-PA3)")
 			(pinfunction "PA3")
 			(pintype "bidirectional")
 			(uuid "806382ec-3361-466c-a0d1-441412d50a4b")
@@ -8849,7 +8849,7 @@
 			(size 0.3 1.475)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 49 "Net-(U1-PA4)")
+			(net 49 "Net-(U16-PA4)")
 			(pinfunction "PA4")
 			(pintype "bidirectional")
 			(uuid "7535e61c-f2d7-4919-ae87-3c451ce9f5a2")
@@ -9029,7 +9029,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 56 "unconnected-(U1-PA11-Pad32)")
+			(net 56 "unconnected-(U16-PA11-Pad32)")
 			(pinfunction "PA11")
 			(pintype "bidirectional+no_connect")
 			(uuid "b1fa9de8-be94-4a34-a6de-8f49335f58a5")
@@ -9039,7 +9039,7 @@
 			(size 1.475 0.3)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 59 "unconnected-(U1-PA12-Pad33)")
+			(net 59 "unconnected-(U16-PA12-Pad33)")
 			(pinfunction "PA12")
 			(pintype "bidirectional+no_connect")
 			(uuid "f564ee45-ab12-4ecb-afa9-6a5ab9f26f4a")
@@ -9089,7 +9089,7 @@
 			(size 0.3 1.475)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 58 "unconnected-(U1-PA15-Pad38)")
+			(net 58 "unconnected-(U16-PA15-Pad38)")
 			(pinfunction "PA15")
 			(pintype "bidirectional+no_connect")
 			(uuid "e377880b-7cac-4afd-b7ea-67f96bc6b130")
@@ -9109,7 +9109,7 @@
 			(size 0.3 1.475)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 44 "Net-(U1-PB4)")
+			(net 44 "Net-(U16-PB4)")
 			(pinfunction "PB4")
 			(pintype "bidirectional")
 			(uuid "639e68fa-dc68-48e2-9438-240b1061208f")
@@ -9119,7 +9119,7 @@
 			(size 0.3 1.475)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 47 "unconnected-(U1-PB5-Pad41)")
+			(net 47 "unconnected-(U16-PB5-Pad41)")
 			(pinfunction "PB5")
 			(pintype "bidirectional+no_connect")
 			(uuid "619d6528-4282-46f9-ad46-ebd37ec22a1f")
@@ -9129,7 +9129,7 @@
 			(size 0.3 1.475)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 46 "unconnected-(U1-PB6-Pad42)")
+			(net 46 "unconnected-(U16-PB6-Pad42)")
 			(pinfunction "PB6")
 			(pintype "bidirectional+no_connect")
 			(uuid "52083c6b-ab31-4dd6-9cee-ba19eff1374f")
@@ -9139,7 +9139,7 @@
 			(size 0.3 1.475)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 55 "unconnected-(U1-PB7-Pad43)")
+			(net 55 "unconnected-(U16-PB7-Pad43)")
 			(pinfunction "PB7")
 			(pintype "bidirectional+no_connect")
 			(uuid "af185bf3-e785-4be8-969d-6eb7df97bd1e")
@@ -9149,7 +9149,7 @@
 			(size 0.3 1.475)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
-			(net 43 "Net-(U1-BOOT0)")
+			(net 43 "Net-(U16-BOOT0)")
 			(pinfunction "BOOT0")
 			(pintype "input")
 			(uuid "6fe34e44-7b8d-4674-b5dd-d937995fb403")
@@ -9213,7 +9213,7 @@
 		(at 101.52 135.5)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C22"
+		(property "Reference" "C14"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "1dc24129-2a22-4c8d-ac0c-4af602c48a90")
@@ -9440,7 +9440,7 @@
 		(at 48 124.544622 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U4"
+		(property "Reference" "U6"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "c70f56bc-62c4-4d3e-b27e-3fa7ea120405")
@@ -9692,7 +9692,7 @@
 		(at 94.126525 154.71231 -135)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C5"
+		(property "Reference" "C20"
 			(at -1 0 45)
 			(layer "F.SilkS")
 			(uuid "043e13fd-8637-4b27-bacf-6512117894e6")
@@ -9919,7 +9919,7 @@
 		(at 86.772614 157.257895 135)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C4"
+		(property "Reference" "C19"
 			(at -1 0 135)
 			(layer "F.SilkS")
 			(uuid "b8e3fe2b-c310-4c0a-8094-bef42ee569e6")
@@ -10146,7 +10146,7 @@
 		(at 70 134.501356 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U8"
+		(property "Reference" "U12"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "2c1948c2-5b7c-4c85-8157-72a22373a626")
@@ -10398,7 +10398,7 @@
 		(at 90 107 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U12"
+		(property "Reference" "U4"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "eb84d002-bfdd-476c-9e47-3ccca92e716a")
@@ -10650,7 +10650,7 @@
 		(at 89.52 109.5)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C20"
+		(property "Reference" "C4"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "98e52cae-249e-4211-b4ab-dd4b5bd2a329")
@@ -10877,7 +10877,7 @@
 		(at 53.52 140.044622)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C13"
+		(property "Reference" "C11"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "b4b957ac-1047-48ab-96ca-885fefe72a00")
@@ -11104,7 +11104,7 @@
 		(at 86.171573 158.778174 135)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C1"
+		(property "Reference" "C16"
 			(at -1.5 0 135)
 			(layer "F.SilkS")
 			(uuid "a1a220c9-e382-4ebc-b9e9-afa85de631da")
@@ -11331,7 +11331,7 @@
 		(at 106 108.501356 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U15"
+		(property "Reference" "U5"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "40ab996a-ab94-4587-a09f-afe8cdece24a")
@@ -11583,7 +11583,7 @@
 		(at 57.52 111.001356)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C14"
+		(property "Reference" "C2"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "337cb669-c30a-4a4c-96f0-f6254f4fbd29")
@@ -11810,7 +11810,7 @@
 		(at 86 133 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U11"
+		(property "Reference" "U13"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "72daa1c9-72a8-4352-b2de-e5bc295e26a8")
@@ -12062,7 +12062,7 @@
 		(at 63.52 124)
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
-		(property "Reference" "C15"
+		(property "Reference" "C7"
 			(at -1 0 0)
 			(layer "F.SilkS")
 			(uuid "53a83d7a-fddf-457e-87aa-fe1b566f35d6")
@@ -12289,7 +12289,7 @@
 		(at 42 111.544622 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U3"
+		(property "Reference" "U1"
 			(at 0 1.75 180)
 			(layer "F.SilkS")
 			(uuid "49b1168b-27e7-4a45-ad27-e3488353f81c")
@@ -12541,7 +12541,7 @@
 		(at 58 108.501356 90)
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
-		(property "Reference" "U6"
+		(property "Reference" "U2"
 			(at 0 -1.75 180)
 			(layer "F.SilkS")
 			(uuid "88e294a1-c106-43df-9aa5-6580c055f538")
