@@ -60,19 +60,15 @@
       ],
       "drc_exclusions": [
         [
-          "lib_footprint_mismatch|138000000|74000000|a9914486-051c-4fc3-b577-6a2e3128be90|00000000-0000-0000-0000-000000000000",
+          "lib_footprint_mismatch|134500000|72250000|d5449a2f-375b-463a-b3cd-8d56c7656f55|00000000-0000-0000-0000-000000000000",
           ""
         ],
         [
-          "lib_footprint_mismatch|139600000|94200000|a4acb245-a49f-479b-a7d1-4807d8b26e9b|00000000-0000-0000-0000-000000000000",
+          "lib_footprint_mismatch|152000000|74000000|a9914486-051c-4fc3-b577-6a2e3128be90|00000000-0000-0000-0000-000000000000",
           ""
         ],
         [
-          "lib_footprint_mismatch|142812500|80937500|a2ca5285-2978-4e40-9fcc-7e3f1a53c9b4|00000000-0000-0000-0000-000000000000",
-          ""
-        ],
-        [
-          "lib_footprint_mismatch|155000000|72350000|d5449a2f-375b-463a-b3cd-8d56c7656f55|00000000-0000-0000-0000-000000000000",
+          "lib_footprint_mismatch|156812500|80937500|a2ca5285-2978-4e40-9fcc-7e3f1a53c9b4|00000000-0000-0000-0000-000000000000",
           ""
         ]
       ],
@@ -265,6 +261,14 @@
   },
   "erc": {
     "erc_exclusions": [
+      [
+        "pin_to_pin|1219200|622300|bdc3b539-132e-4b0b-8be9-20a3d0d73e7d|7b9b448f-7070-4a36-8317-f8e2c97a83c7|/da26d94e-7a50-4b99-9678-5aaaf6987a15|/da26d94e-7a50-4b99-9678-5aaaf6987a15|/da26d94e-7a50-4b99-9678-5aaaf6987a15",
+        ""
+      ],
+      [
+        "pin_to_pin|1346200|1968500|8b358f34-aeeb-4ecb-850a-92eaa69cd261|014bf3f7-eb0f-4b71-9e34-da73e0ef2763|/da26d94e-7a50-4b99-9678-5aaaf6987a15|/da26d94e-7a50-4b99-9678-5aaaf6987a15|/da26d94e-7a50-4b99-9678-5aaaf6987a15",
+        ""
+      ],
       [
         "pin_to_pin|889000|1524000|bdc3b539-132e-4b0b-8be9-20a3d0d73e7d|7b9b448f-7070-4a36-8317-f8e2c97a83c7|/da26d94e-7a50-4b99-9678-5aaaf6987a15|/da26d94e-7a50-4b99-9678-5aaaf6987a15|/da26d94e-7a50-4b99-9678-5aaaf6987a15",
         ""
@@ -473,14 +477,14 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "same_local_global_label": "warning",
       "similar_label_and_power": "warning",
       "similar_labels": "warning",
       "similar_power": "warning",
       "simulation_model_issue": "ignore",
-      "single_global_label": "ignore",
+      "single_global_label": "warning",
       "unannotated": "error",
       "unconnected_wire_endpoint": "warning",
       "unit_value_mismatch": "error",
@@ -539,10 +543,6 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "USB_DIFF_90",
-        "pattern": "USB_D*"
-      },
-      {
         "netclass": "POWER",
         "pattern": "VBUS"
       },
@@ -553,6 +553,10 @@
       {
         "netclass": "POWER",
         "pattern": "GND"
+      },
+      {
+        "netclass": "USB_DIFF_90",
+        "pattern": "/USB_D*"
       }
     ]
   },
