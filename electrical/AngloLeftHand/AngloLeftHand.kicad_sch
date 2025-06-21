@@ -6,7 +6,9 @@
 	(paper "USLedger")
 	(title_block
 		(title "MIDI Concertina Controller")
-		(company "Bushel Basket Musical Instruments")
+		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
+		(comment 2 "Licensed under CERN-OHL-S v2 or any later version")
+		(comment 3 "Copyright 2025 Steven Schulteis")
 	)
 	(lib_symbols
 		(symbol "74xx:CD74HC4067SM"

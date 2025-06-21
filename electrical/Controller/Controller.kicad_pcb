@@ -7,6 +7,12 @@
 		(legacy_teardrops no)
 	)
 	(paper "USLetter")
+	(title_block
+		(title "MIDI Concertina Controller")
+		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
+		(comment 2 "Licensed under CERN-OHL-S v2 or any later version")
+		(comment 3 "Copyright 2025 Steven Schulteis")
+	)
 	(layers
 		(0 "F.Cu" signal)
 		(2 "B.Cu" signal)
