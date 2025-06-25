@@ -7728,6 +7728,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 154.94 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 154.94 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "44a014e8-723c-499d-85c3-79977c6c81ca")
 		)
@@ -7831,7 +7847,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "11517f3c-77f6-4a30-b403-b7659cf086f4")
-		(property "Reference" "H3"
+		(property "Reference" "H2"
 			(at 322.58 81.28 0)
 			(effects
 				(font
@@ -7883,10 +7899,26 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 322.58 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 322.58 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(instances
 			(project "Controller"
 				(path "/da26d94e-7a50-4b99-9678-5aaaf6987a15"
-					(reference "H3")
+					(reference "H2")
 					(unit 1)
 				)
 			)
@@ -8188,7 +8220,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 282.956 162.814 90)
 			(effects
 				(font
@@ -8197,7 +8229,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0603WAF2201T5E_C4190.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0402WGF2201TCE_C25879.pdf"
 			(at 281.94 162.56 0)
 			(effects
 				(font
@@ -8206,7 +8238,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100mW 75V ±1% 2.2kΩ Resistor, ROHS"
+		(property "Description" "62.5mW 50V ±1% 2.2kΩ Resistor, ROHS"
 			(at 281.94 162.56 0)
 			(effects
 				(font
@@ -8215,7 +8247,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C4190"
+		(property "LCSC" "C25879"
 			(at 281.94 162.56 0)
 			(effects
 				(font
@@ -8224,13 +8256,29 @@
 				(hide yes)
 			)
 		)
-		(property "Part" "UNI-ROYAL 0603WAF2201T5E"
+		(property "Part" "UNI-ROYAL 0402WGF2201TCE"
 			(at 281.94 162.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 281.94 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 281.94 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -8388,6 +8436,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 147.32 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 147.32 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "468ddc0f-7bcc-4e15-8ef9-a4f37b00fea4")
 		)
@@ -8475,6 +8539,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 281.94 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 281.94 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -8632,6 +8712,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 215.9 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 215.9 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "3"
@@ -8861,6 +8957,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 195.58 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 195.58 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "f9e85e76-8eb1-451e-a22c-b35964ef9df0")
 		)
@@ -8948,6 +9060,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 195.58 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 195.58 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -9170,6 +9298,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 111.76 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 111.76 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "a3803a0a-23ba-4802-aec4-e209f396a5d6")
 		)
@@ -9271,6 +9415,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 91.44 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 91.44 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "2"
@@ -9494,6 +9654,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 256.54 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 256.54 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "a49ae3c0-7300-43d9-994a-897ee7b2056a")
 		)
@@ -9581,6 +9757,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 246.38 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 246.38 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -10004,6 +10196,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 312.42 213.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 312.42 213.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "d6a120e5-32a4-4ba1-a795-4a35dc63fbda")
 		)
@@ -10088,6 +10296,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 99.06 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 99.06 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "A12"
@@ -10422,6 +10646,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 121.92 199.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 121.92 199.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "7"
 			(uuid "4ee49980-daec-420f-afe3-e34a4e336662")
 		)
@@ -10489,7 +10729,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 293.116 162.814 90)
 			(effects
 				(font
@@ -10498,7 +10738,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0603WAF2201T5E_C4190.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0402WGF2201TCE_C25879.pdf"
 			(at 292.1 162.56 0)
 			(effects
 				(font
@@ -10507,7 +10747,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100mW 75V ±1% 2.2kΩ Resistor, ROHS"
+		(property "Description" "62.5mW 50V ±1% 2.2kΩ Resistor, ROHS"
 			(at 292.1 162.56 0)
 			(effects
 				(font
@@ -10516,7 +10756,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C4190"
+		(property "LCSC" "C25879"
 			(at 292.1 162.56 0)
 			(effects
 				(font
@@ -10525,13 +10765,29 @@
 				(hide yes)
 			)
 		)
-		(property "Part" "UNI-ROYAL 0603WAF2201T5E"
+		(property "Part" "UNI-ROYAL 0402WGF2201TCE"
 			(at 292.1 162.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 292.1 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 292.1 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -10689,6 +10945,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 336.55 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 336.55 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "2879bc62-6998-4efa-8ed2-c025c7b4d917")
 		)
@@ -10778,6 +11050,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 180.34 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 180.34 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "f9afad67-9a41-4d6c-a808-d6631f23afbb")
 		)
@@ -10863,6 +11151,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 132.08 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 132.08 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -10960,6 +11264,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 325.12 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 325.12 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "2"
@@ -11191,6 +11511,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 160.02 196.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 160.02 196.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "3deb07bb-6bf0-4d8a-ad45-d425a113f2a4")
 		)
@@ -11292,6 +11628,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 236.22 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 236.22 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "ccd595a5-3714-48fe-9d6f-bd8a3d64cedb")
 		)
@@ -11378,6 +11730,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 132.08 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 132.08 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "2"
@@ -11467,6 +11835,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 180.34 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 180.34 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "2"
@@ -11825,6 +12209,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 266.7 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 266.7 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "1795fdc8-619a-464e-b4b0-227e84635637")
 		)
@@ -11849,7 +12249,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c74b242e-0d51-4937-9685-5d33b301ba94")
-		(property "Reference" "H2"
+		(property "Reference" "H1"
 			(at 322.58 66.04 0)
 			(effects
 				(font
@@ -11901,10 +12301,26 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 322.58 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 322.58 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(instances
 			(project "control"
 				(path "/da26d94e-7a50-4b99-9678-5aaaf6987a15"
-					(reference "H2")
+					(reference "H1")
 					(unit 1)
 				)
 			)
@@ -11982,6 +12398,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 251.46 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 251.46 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -12273,6 +12705,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 246.38 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 246.38 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -12638,6 +13086,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 266.7 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 266.7 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "f661746e-a91a-45b9-84f6-25695a7492fa")
 		)
@@ -12723,6 +13187,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 251.46 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 251.46 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "2"
@@ -12813,6 +13293,22 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 325.12 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 325.12 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "5"
 			(uuid "2079970a-3b7e-47b1-b938-f1feb22a675d")
 		)
@@ -12842,15 +13338,15 @@
 	)
 	(symbol
 		(lib_id "MidiConcertina:LightPipe")
-		(at 322.58 57.15 0)
+		(at 322.58 104.14 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "fac0d5e1-279a-4cdd-b606-ae52f400c0d6")
-		(property "Reference" "H1"
-			(at 322.58 49.53 0)
+		(property "Reference" "H3"
+			(at 322.58 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12858,7 +13354,7 @@
 			)
 		)
 		(property "Value" "SLP3-150-150-F"
-			(at 322.58 52.07 0)
+			(at 322.58 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12866,7 +13362,7 @@
 			)
 		)
 		(property "Footprint" "MidiConcertina:Bivar_SLP3-150-150-F"
-			(at 322.58 57.15 0)
+			(at 322.58 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12875,7 +13371,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.bivar.com/parts_content/Datasheets/SLP3-150-XXX-X.pdf"
-			(at 322.58 57.15 0)
+			(at 322.58 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12884,7 +13380,7 @@
 			)
 		)
 		(property "Description" "Right angle press-fit light pipe"
-			(at 322.58 57.15 0)
+			(at 322.58 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12893,7 +13389,7 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 322.58 57.15 0)
+			(at 322.58 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12902,7 +13398,7 @@
 			)
 		)
 		(property "Part" ""
-			(at 322.58 57.15 0)
+			(at 322.58 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12910,10 +13406,26 @@
 				(hide yes)
 			)
 		)
+		(property "Note" ""
+			(at 322.58 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 322.58 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(instances
 			(project ""
 				(path "/da26d94e-7a50-4b99-9678-5aaaf6987a15"
-					(reference "H1")
+					(reference "H3")
 					(unit 1)
 				)
 			)
@@ -12990,6 +13502,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 266.7 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 266.7 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -13077,6 +13605,22 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Note" ""
+			(at 121.92 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 121.92 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
