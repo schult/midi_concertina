@@ -250,20 +250,6 @@
 			)
 		)
 	)
-	(pad "" np_thru_hole circle
-		(at -1.905 4.445)
-		(size 1.016 1.016)
-		(drill 1.016)
-		(layers "F&B.Cu" "*.Mask")
-		(uuid "31b71a44-6376-4bef-868e-8d1673584255")
-	)
-	(pad "" np_thru_hole circle
-		(at 1.905 4.445)
-		(size 1.016 1.016)
-		(drill 1.016)
-		(layers "F&B.Cu" "*.Mask")
-		(uuid "c91d479a-a019-4470-b75d-51f083e4f9f3")
-	)
 	(pad "1" smd roundrect
 		(at -2.54 1.524)
 		(size 0.762 2.032)
