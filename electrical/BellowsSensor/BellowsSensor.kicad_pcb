@@ -413,7 +413,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C99277"
+		(property "LCSC" "C17393620"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1941,7 +1941,7 @@
 		(uuid "e1af28ce-0e2b-4e7f-881d-4adc5c42c330")
 	)
 	(gr_text "MIDI Concertina\nBellows Sensor - Rev 1"
-		(at 154 100 0)
+		(at 156 96 0)
 		(layer "B.SilkS")
 		(uuid "d1309236-4a74-4bc4-8d44-f9a8090289ec")
 		(effects
@@ -1950,7 +1950,7 @@
 				(thickness 0.15)
 				(bold yes)
 			)
-			(justify left bottom mirror)
+			(justify left top mirror)
 		)
 	)
 	(segment
