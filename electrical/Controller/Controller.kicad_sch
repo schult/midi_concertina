@@ -7392,7 +7392,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100n"
+		(property "Value" "100nF"
 			(at 143.51 146.0499 0)
 			(effects
 				(font
@@ -8884,7 +8884,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100n"
+		(property "Value" "100nF"
 			(at 303.53 173.9899 0)
 			(effects
 				(font
@@ -9683,7 +9683,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C99277"
+		(property "LCSC" "C17393620"
 			(at 320.04 161.29 0)
 			(effects
 				(font
@@ -11588,7 +11588,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_0402_1005Metric"
+		(property "Footprint" "Package_SON:Texas_DPY0002A_0.6x1mm_P0.65mm"
 			(at 251.46 170.18 0)
 			(effects
 				(font
