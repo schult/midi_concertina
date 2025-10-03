@@ -530,7 +530,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "MidiConcertina:Honeywell_HSCx2x"
+		(symbol "MidiConcertina:Amphenol_ELVH-x"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -543,7 +543,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "Honeywell_HSCx2x"
+			(property "Value" "Amphenol_ELVH-x"
 				(at 2.54 10.16 0)
 				(effects
 					(font
@@ -552,7 +552,7 @@
 					(justify left)
 				)
 			)
-			(property "Footprint" "MidiConcertina:Honeywell_HSCMRRx"
+			(property "Footprint" "MidiConcertina:Amphenol_ELVH-x-xJ-x-x"
 				(at 0 0 0)
 				(effects
 					(font
@@ -561,7 +561,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/siot/en-us/products/sensors/pressure-sensors/board-mount-pressure-sensors/trustability-hsc-series/documents/sps-siot-trustability-hsc-series-high-accuracy-board-mount-pressure-sensors-50099148-a-en-ciid-151133.pdf"
+			(property "Datasheet" "https://428059.fs1.hubspotusercontent-na1.net/hubfs/428059/Product-Data-Sheets/DS-0376.pdf"
 				(at 0 0 0)
 				(effects
 					(font
@@ -570,7 +570,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "i2c differential digital"
+			(property "Description" "Pressure Sensor ±1PSI (±6.89kPa) Differential Male - 0.06\" (1.6mm) Tube, Dual Ports, Same Side, ROHS"
 				(at 0 0 0)
 				(effects
 					(font
@@ -579,7 +579,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "differential i2c"
+			(property "ki_keywords" "differential i2c pressure sensor"
 				(at 0 0 0)
 				(effects
 					(font
@@ -588,7 +588,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "*Honeywell*HSC*"
+			(property "ki_fp_filters" "*Amphenol*ELV*"
 				(at 0 0 0)
 				(effects
 					(font
@@ -597,7 +597,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "Honeywell_HSCx2x_0_1"
+			(symbol "Amphenol_ELVH-x_0_1"
 				(rectangle
 					(start -5.08 7.62)
 					(end 5.08 -5.08)
@@ -610,7 +610,7 @@
 					)
 				)
 			)
-			(symbol "Honeywell_HSCx2x_1_1"
+			(symbol "Amphenol_ELVH-x_1_1"
 				(pin no_connect line
 					(at -7.62 5.08 0)
 					(length 2.54)
@@ -1447,6 +1447,112 @@
 		)
 	)
 	(symbol
+		(lib_id "MidiConcertina:Amphenol_ELVH-x")
+		(at 158.75 80.01 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "259f612f-09c7-4ffb-b559-320f179d1d51")
+		(property "Reference" "U2"
+			(at 156.21 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "ELVH-001D-HRRJ-C-N2A4"
+			(at 156.21 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MidiConcertina:Amphenol_ELVH-x-xJ-x-x"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://428059.fs1.hubspotusercontent-na1.net/hubfs/428059/Product-Data-Sheets/DS-0376.pdf"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Pressure Sensor ±1PSI (±6.89kPa) Differential Male - 0.06\" (1.6mm) Tube, Dual Ports, Same Side, ROHS"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C3241336"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part" "Amphenol ELVH-001D-HRRJ-C-N2A4"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "8"
+			(uuid "1a0559cb-8fa1-4431-9092-576f951f441d")
+		)
+		(pin "4"
+			(uuid "72823fda-0964-4307-a54a-7caab65e0397")
+		)
+		(pin "1"
+			(uuid "54965f0f-c14a-442b-8359-d471378eb76f")
+		)
+		(pin "3"
+			(uuid "f85bbb23-0a9b-4e21-92e4-e4de1dc21f65")
+		)
+		(pin "6"
+			(uuid "246cb42f-4795-4dea-b503-3096e4f38370")
+		)
+		(pin "7"
+			(uuid "63aa0a1c-cd5e-466c-818a-dca487eae4f5")
+		)
+		(pin "2"
+			(uuid "2d9b14c3-5d74-4c41-8eb8-ed474403acdf")
+		)
+		(pin "5"
+			(uuid "e1d1f373-ff4d-4a4e-b4bc-97aa3526910f")
+		)
+		(instances
+			(project ""
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "U2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 114.3 99.06 0)
 		(unit 1)
@@ -2150,112 +2256,6 @@
 			(project "BellowsSensor"
 				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
 					(reference "#PWR01")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "MidiConcertina:Honeywell_HSCx2x")
-		(at 158.75 80.01 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bdd3ae44-e22b-4dac-91c1-230669c3274d")
-		(property "Reference" "U1"
-			(at 156.21 67.31 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "HSCMRRV001PD2A3"
-			(at 156.21 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MidiConcertina:Honeywell_HSCMRRx"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/siot/en-us/products/sensors/pressure-sensors/board-mount-pressure-sensors/trustability-hsc-series/documents/sps-siot-trustability-hsc-series-high-accuracy-board-mount-pressure-sensors-50099148-a-en-ciid-151133.pdf"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Pressure Sensor ±1PSI (±6.89kPa) Differential Male - 0.06\" (1.6mm) Tube, Dual Ports, Same Side, ROHS"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C21442059"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part" "Honeywell ABPMRRV001PD2A3"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "4"
-			(uuid "1e365294-bc0c-4fa6-a937-843a0513bec4")
-		)
-		(pin "2"
-			(uuid "cd70b064-ce76-4060-b078-943d1a110719")
-		)
-		(pin "1"
-			(uuid "de11bad9-c2b6-4a83-b6ce-860f861637aa")
-		)
-		(pin "8"
-			(uuid "587ba7fc-ae5b-42f3-b7a9-20eb01a84906")
-		)
-		(pin "7"
-			(uuid "17e00eff-f7c8-4c42-8dbb-be633e2851b2")
-		)
-		(pin "5"
-			(uuid "4d0bc2bb-1991-4e54-b47e-36fcb45da212")
-		)
-		(pin "6"
-			(uuid "5384707c-adb4-4b14-bfb4-0d81a69905b2")
-		)
-		(pin "3"
-			(uuid "4e754b23-7850-4af3-86f6-587b0889dde9")
-		)
-		(instances
-			(project ""
-				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
-					(reference "U1")
 					(unit 1)
 				)
 			)
