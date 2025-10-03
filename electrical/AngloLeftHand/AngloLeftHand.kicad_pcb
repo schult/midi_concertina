@@ -8,6 +8,8 @@
 	)
 	(paper "USLetter")
 	(title_block
+		(date "2025-10-01")
+		(rev "1")
 		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
 		(comment 2 "Licensed under CERN-OHL-S v2 or any later version")
 		(comment 3 "Copyright 2025 Steven Schulteis")
@@ -4212,7 +4214,7 @@
 			(net 25 "unconnected-(J1-MountPin-PadMP)_1")
 			(pinfunction "MountPin")
 			(pintype "passive+no_connect")
-			(uuid "3aa219a3-edb3-4643-a25a-69b75378e4d7")
+			(uuid "e09d5bc3-b2d4-4b88-9089-1171b96bdd43")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_Molex.3dshapes/Molex_PicoBlade_53261-0671_1x06-1MP_P1.25mm_Horizontal.step"
@@ -5579,7 +5581,7 @@
 			(net 28 "unconnected-(J2-MountPin-PadMP)_1")
 			(pinfunction "MountPin")
 			(pintype "passive+no_connect")
-			(uuid "0853ad39-32f7-4f07-9ec0-aa0d387f254b")
+			(uuid "04e59d66-4601-42ae-b5d9-3fd18dba82d7")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_Molex.3dshapes/Molex_PicoBlade_53261-0671_1x06-1MP_P1.25mm_Horizontal.step"
