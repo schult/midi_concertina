@@ -11,8 +11,13 @@ fn main() -> ! {
     let dp = embassy_stm32::init(config);
 
     let mut led = gpio::Output::new(dp.PB4, gpio::Level::High, gpio::Speed::Low);
+    let switch = gpio::Input::new(dp.PB5, gpio::Pull::Up);
     loop {
-        cortex_m::asm::delay(3_000_000);
-        led.toggle();
+        led.set_level(
+            match switch.get_level() {
+                gpio::Level::Low => gpio::Level::High,
+                gpio::Level::High => gpio::Level::Low,
+            }
+        );
     }
 }
