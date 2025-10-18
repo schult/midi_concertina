@@ -8,6 +8,7 @@ use embassy_stm32::{
     bind_interrupts,
     gpio,
     peripherals,
+    rcc,
     usb,
 };
 use embassy_time::Timer;
@@ -24,20 +25,10 @@ bind_interrupts!(struct Irqs {
 #[embassy_executor::main]
 async fn main(_spawner: embassy_executor::Spawner) {
     let mut config = embassy_stm32::Config::default();
-    {
-        use embassy_stm32::rcc::*;
-
-        config.rcc.hsi = true;
-        config.rcc.pll = Some(Pll {
-            source: PllSource::HSI,
-            mul: PllMul::MUL3,  // PLLVCO = 16*3 = 48Mhz
-            div: PllDiv::DIV2,  // 24Mhz clock (16 * 3 / 2)
-        });
-        config.rcc.sys = Sysclk::PLL1_R;
-
-        config.rcc.hsi48 = Some(Hsi48Config { sync_from_usb: true });
-        config.rcc.mux.clk48sel = mux::Clk48sel::HSI48;
-    }
+    config.rcc.hsi = true;
+    config.rcc.sys = rcc::Sysclk::HSI;
+    config.rcc.hsi48 = Some(rcc::Hsi48Config { sync_from_usb: true });
+    config.rcc.mux.clk48sel = rcc::mux::Clk48sel::HSI48;
     let p = embassy_stm32::init(config);
 
     let usb_driver = embassy_stm32::usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
