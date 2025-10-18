@@ -10,15 +10,16 @@ use embassy_stm32::{
     peripherals,
     usb,
 };
-use embassy_usb::class::cdc_acm;
+use embassy_time::Timer;
+use embassy_usb::class::midi;
 use embassy_usb::driver::EndpointError;
 use panic_probe as _;
+
+const MAX_MIDI_PACKET_SIZE: usize = 64;
 
 bind_interrupts!(struct Irqs {
     USB => usb::InterruptHandler<peripherals::USB>;
 });
-
-const MAX_PACKET_SIZE: usize = 128;
 
 #[embassy_executor::main]
 async fn main(_spawner: embassy_executor::Spawner) {
@@ -41,20 +42,18 @@ async fn main(_spawner: embassy_executor::Spawner) {
 
     let usb_driver = embassy_stm32::usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
 
-    const USB_VID: u16 = 0xC0DE;  // TODO
-    const USB_PID: u16 = 0xCAFF;  // TODO
-    // const USB_VID: u16 = 0xCAFE;  // TODO?
-    // const USB_PID: u16 = 0x4008;  // TODO
+    // TODO: Get IDs from https://pid.codes/howto/
+    const USB_VID: u16 = 0xCAFE;  // Default VID in TinyUSB
+    const USB_PID: u16 = 0x4000 | (1 << 3);  // PID for MIDI-only device in TinyUSB
     let mut usb_config = embassy_usb::Config::new(USB_VID, USB_PID);
-    usb_config.manufacturer = Some("Bushel Basket Musical Instruments");
-    usb_config.product = Some("Anglo Concertina M");
+    usb_config.manufacturer = Some("Bushel Basket");
+    usb_config.product = Some("Anglo M");
     usb_config.serial_number = Some("0001");  // TODO
 
     let mut config_descriptor = [0; 256];
     let mut bos_descriptor = [0; 256];
-    let mut control_buf = [0; MAX_PACKET_SIZE];
+    let mut control_buf = [0; 64];
 
-    let mut usb_state = cdc_acm::State::new();
     let mut usb_builder = embassy_usb::Builder::new(
         usb_driver,
         usb_config,
@@ -63,19 +62,53 @@ async fn main(_spawner: embassy_executor::Spawner) {
         &mut [], // no msos descriptors
         &mut control_buf,
     );
-    let mut usb_class = cdc_acm::CdcAcmClass::new(&mut usb_builder, &mut usb_state, MAX_PACKET_SIZE as u16);
+    let midi_class = midi::MidiClass::new(&mut usb_builder, 1, 1, MAX_MIDI_PACKET_SIZE as u16);
+    let (mut midi_sender, mut midi_reciever) = midi_class.split();
 
     let mut usb = usb_builder.build();
-    let usb_fut = usb.run();
+    let usb_task = usb.run();
 
-    let echo_fut = async {
+    let midi_receive_task = async {
+        let mut data = [0; MAX_MIDI_PACKET_SIZE];
+
         loop {
-            usb_class.wait_connection().await;
-            let _ = echo(&mut usb_class).await;
+            midi_reciever.wait_connection().await;
+
+            loop {
+                match midi_reciever.read_packet(&mut data).await {
+                    Ok(_) => (),
+                    Err(EndpointError::BufferOverflow) => panic!("Buffer overflow"),
+                    Err(EndpointError::Disabled) => break,
+                }
+            }
         }
     };
 
-    let led_fut = async {
+    let midi_send_task = async {
+        let mut playing = false;
+        let note_on: [u8; 4] = [0x09, 0x90, 69, 127];
+        let note_off: [u8; 4] = [0x08, 0x80, 69, 127];
+
+        loop {
+            midi_sender.wait_connection().await;
+
+            loop {
+                Timer::after_secs(1).await;
+                let packet = match playing {
+                    true => &note_off,
+                    false => &note_on,
+                };
+                match midi_sender.write_packet(packet).await {
+                    Ok(_) => (),
+                    Err(EndpointError::BufferOverflow) => panic!("Buffer overflow"),
+                    Err(EndpointError::Disabled) => break,
+                }
+                playing = !playing
+            }
+        }
+    };
+
+    let led_task = async {
         let mut led = gpio::Output::new(p.PB4, gpio::Level::High, gpio::Speed::Low);
         let switch = gpio::Input::new(p.PB5, gpio::Pull::Up);
         loop {
@@ -89,25 +122,5 @@ async fn main(_spawner: embassy_executor::Spawner) {
         }
     };
 
-    join::join3(usb_fut, echo_fut, led_fut).await;
-}
-
-struct Disconnected {}
-
-impl From<EndpointError> for Disconnected {
-    fn from(val: EndpointError) -> Self {
-        match val {
-            EndpointError::BufferOverflow => panic!("Buffer overflow"),
-            EndpointError::Disabled => Disconnected {},
-        }
-    }
-}
-
-async fn echo<'d, T: embassy_stm32::usb::Instance + 'd>(class: &mut cdc_acm::CdcAcmClass<'d, embassy_stm32::usb::Driver<'d, T>>) -> Result<(), Disconnected> {
-    let mut buf = [0; MAX_PACKET_SIZE];
-    loop {
-        let n = class.read_packet(&mut buf).await?;
-        let data = &buf[..n];
-        class.write_packet(data).await?;
-    }
+    join::join4(usb_task, midi_receive_task, midi_send_task, led_task).await;
 }
