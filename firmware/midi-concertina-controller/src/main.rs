@@ -85,6 +85,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
     };
 
     let midi_send_task = async {
+        let mut led = gpio::Output::new(p.PB4, gpio::Level::High, gpio::Speed::Low);
         let mut playing = false;
         let note_on: [u8; 4] = [0x09, 0x90, 69, 127];
         let note_off: [u8; 4] = [0x08, 0x80, 69, 127];
@@ -93,34 +94,21 @@ async fn main(_spawner: embassy_executor::Spawner) {
             midi_sender.wait_connection().await;
 
             loop {
-                Timer::after_secs(1).await;
+                playing = !playing;
                 let packet = match playing {
-                    true => &note_off,
-                    false => &note_on,
+                    false => &note_off,
+                    true => &note_on,
                 };
                 match midi_sender.write_packet(packet).await {
                     Ok(_) => (),
                     Err(EndpointError::BufferOverflow) => panic!("Buffer overflow"),
                     Err(EndpointError::Disabled) => break,
                 }
-                playing = !playing
+                led.set_level(if playing { gpio::Level::High } else { gpio::Level::Low });
+                Timer::after_secs(1).await;
             }
         }
     };
 
-    let led_task = async {
-        let mut led = gpio::Output::new(p.PB4, gpio::Level::High, gpio::Speed::Low);
-        let switch = gpio::Input::new(p.PB5, gpio::Pull::Up);
-        loop {
-            led.set_level(
-                match switch.get_level() {
-                    gpio::Level::Low => gpio::Level::High,
-                    gpio::Level::High => gpio::Level::Low,
-                }
-            );
-            embassy_futures::yield_now().await;
-        }
-    };
-
-    join::join4(usb_task, midi_receive_task, midi_send_task, led_task).await;
+    join::join3(usb_task, midi_receive_task, midi_send_task).await;
 }
