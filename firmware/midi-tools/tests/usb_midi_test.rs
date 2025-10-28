@@ -1,10 +1,10 @@
 use hex_literal::hex;
-use midi_tools::usb;
+use midi_tools::usb_midi;
 
 #[test]
 fn cin_u8_conversions_are_consistent() {
     for i in 0..16u8 {
-        let cin = usb::Cin::from(i);
+        let cin = usb_midi::Cin::from(i);
         assert_eq!(i, cin as u8);
     }
 }
@@ -12,13 +12,13 @@ fn cin_u8_conversions_are_consistent() {
 #[test]
 #[should_panic]
 fn cin_from_oversize_u8_panics() {
-    let _ = usb::Cin::from(16u8);
+    let _ = usb_midi::Cin::from(16u8);
 }
 
 #[test]
 fn event_packet_parse_gets_no_packets_from_empty_buffer() {
     let buffer = [];
-    let packets = usb::EventPacket::parse(&buffer);
+    let packets = usb_midi::EventPacket::parse(&buffer);
     assert_eq!(packets.count(), 0);
 }
 
@@ -30,7 +30,7 @@ fn event_packet_parse_gets_one_packet_per_four_bytes() {
         "19 90 48 7f"
         "18 80 48 7f"
     );
-    let packets = usb::EventPacket::parse(&buffer);
+    let packets = usb_midi::EventPacket::parse(&buffer);
     assert_eq!(packets.count(), 4);
 }
 
@@ -54,7 +54,7 @@ fn event_packet_extracts_cable_number() {
         "6e e2 34 56"
         "7f 12 00 00"
     );
-    let mut packets = usb::EventPacket::parse(&buffer);
+    let mut packets = usb_midi::EventPacket::parse(&buffer);
     assert_eq!(packets.next().unwrap().cable(), 0x8);
     assert_eq!(packets.next().unwrap().cable(), 0x9);
     assert_eq!(packets.next().unwrap().cable(), 0xa);
@@ -93,23 +93,23 @@ fn event_packet_extracts_cin() {
         "e6 12 34 00"
         "f7 12 34 56"
     );
-    let mut packets = usb::EventPacket::parse(&buffer);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::NoteOff);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::NoteOn);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::PolyKeyPress);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::ControlChange);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::ProgramChange);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::ChannelPressure);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::PitchBendChange);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::SingleByte);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::Misc);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::CableEvent);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::SysCommon2Byte);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::SysCommon3Byte);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::SysEx);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::Sys1Byte);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::SysExEnd2Byte);
-    assert_eq!(packets.next().unwrap().cin(), usb::Cin::SysExEnd3Byte);
+    let mut packets = usb_midi::EventPacket::parse(&buffer);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::NoteOff);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::NoteOn);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::PolyKeyPress);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::ControlChange);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::ProgramChange);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::ChannelPressure);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::PitchBendChange);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::SingleByte);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::Misc);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::CableEvent);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::SysCommon2Byte);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::SysCommon3Byte);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::SysEx);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::Sys1Byte);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::SysExEnd2Byte);
+    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::SysExEnd3Byte);
 }
 
 #[test]
@@ -132,7 +132,7 @@ fn event_packet_extracts_payload() {
         "e6 12 34 00"
         "f7 12 34 56"
     );
-    let mut packets = usb::EventPacket::parse(&buffer);
+    let mut packets = usb_midi::EventPacket::parse(&buffer);
     assert_eq!(packets.next().unwrap().payload(), hex!("82 34 56"));
     assert_eq!(packets.next().unwrap().payload(), hex!("92 34 56"));
     assert_eq!(packets.next().unwrap().payload(), hex!("a2 34 56"));
