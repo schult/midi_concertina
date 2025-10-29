@@ -87,6 +87,14 @@ pub mod sysex {
         Some(SysEx::Wait(parse_handshake(it, 0x7C)?))
     }
 
+    fn parse_cancel<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+        Some(SysEx::Cancel(parse_handshake(it, 0x7D)?))
+    }
+
+    fn parse_eof<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+        Some(SysEx::Eof(parse_handshake(it, 0x7B)?))
+    }
+
     fn is_data(x: &u8) -> bool {
         return (*x & 0x80) == 0;
     }
@@ -122,6 +130,8 @@ pub mod sysex {
                     Some(0x7F) => parse_ack(&mut raw_it),
                     Some(0x7E) => parse_nak(&mut raw_it),
                     Some(0x7C) => parse_wait(&mut raw_it),
+                    Some(0x7D) => parse_cancel(&mut raw_it),
+                    Some(0x7B) => parse_eof(&mut raw_it),
                     None => None,
                     _ => {
                         // Ignore unrecognized message types

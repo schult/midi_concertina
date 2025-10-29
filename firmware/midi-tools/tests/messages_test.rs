@@ -149,3 +149,39 @@ fn sysex_read_parses_wait_data() {
     }));
     assert_eq!(result, expected);
 }
+
+#[test]
+fn sysex_read_identifies_cancel_message() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7d 3b"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, Some(SysEx::Cancel(_))));
+}
+
+#[test]
+fn sysex_read_parses_cancel_data() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7d 3b"));
+    let result = SysEx::read(&mut data);
+    let expected = Some(SysEx::Cancel(HandshakeData{
+        device_id: 0x03,
+        packet_num: 0x3b,
+    }));
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn sysex_read_identifies_eof_message() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7b 3b"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, Some(SysEx::Eof(_))));
+}
+
+#[test]
+fn sysex_read_parses_eof_data() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7b 3b"));
+    let result = SysEx::read(&mut data);
+    let expected = Some(SysEx::Eof(HandshakeData{
+        device_id: 0x03,
+        packet_num: 0x3b,
+    }));
+    assert_eq!(result, expected);
+}
