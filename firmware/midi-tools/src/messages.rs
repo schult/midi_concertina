@@ -68,11 +68,13 @@ pub mod sysex {
 
     impl SysEx {
         pub fn read(reader: &mut impl BufRead) -> Option<Self> {
-            let len = match reader.fill_buf() {
-                Ok(buffer) => buffer.len(),
-                Err(_) => 0,
-            };
-            reader.consume(len);
+            if let Ok(buffer) = reader.fill_buf() {
+                let begin = match buffer.iter().position(|x| *x == 0xF0) {
+                    Some(i) => i,
+                    None => buffer.len(),
+                };
+                reader.consume(begin);
+            }
 
             None
         }
