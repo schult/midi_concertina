@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+embedded-io = "0.6.1"
 
 [dev-dependencies]
 hex-literal = "1.0.0"
+circular-buffer = { version = "1.2.0", default-features = false, features = ["embedded-io"] }
