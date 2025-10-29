@@ -73,7 +73,30 @@ pub mod sysex {
                     Some(i) => i,
                     None => buffer.len(),
                 };
-                reader.consume(begin);
+                let length = match buffer[begin..].iter().skip(1).position(|x| (*x & 0x80) != 0) {
+                    Some(i) => i + 1,
+                    None => buffer[begin..].len(),
+                };
+                let end = begin + length;
+                let raw = &buffer[begin..end];
+
+                if raw.len() < 5 {
+                    reader.consume(begin);
+                    return None;
+                }
+
+                if raw[1] != 0x7E {
+                    reader.consume(end);
+                    return None;
+                }
+
+                let message = match raw[3] {
+                    0x7F => Some(SysEx::Ack(HandshakeData { device_id: raw[2], packet_num: raw[4] })),
+                    0x7E => Some(SysEx::Nak(HandshakeData { device_id: raw[2], packet_num: raw[4] })),
+                    _ => None,
+                };
+                reader.consume(end);
+                return message;
             }
 
             None
