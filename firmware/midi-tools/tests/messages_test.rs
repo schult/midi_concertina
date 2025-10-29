@@ -131,3 +131,21 @@ fn sysex_read_discards_unrecognized_messages() {
     assert_eq!(result, None);
     assert_eq!(data, []);
 }
+
+#[test]
+fn sysex_read_identifies_wait_message() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7c 3b"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, Some(SysEx::Wait(_))));
+}
+
+#[test]
+fn sysex_read_parses_wait_data() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7c 3b"));
+    let result = SysEx::read(&mut data);
+    let expected = Some(SysEx::Wait(HandshakeData{
+        device_id: 0x03,
+        packet_num: 0x3b,
+    }));
+    assert_eq!(result, expected);
+}

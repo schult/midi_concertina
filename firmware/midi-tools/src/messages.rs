@@ -66,22 +66,25 @@ pub mod sysex {
         ShowControl, // 02
     }
 
-    fn parse_ack<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+    fn parse_handshake<'a>(it: &mut impl Iterator<Item = &'a u8>, sub_id_1: u8) -> Option<HandshakeData> {
         if *it.next()? != 0xF0 { return None; }
         if *it.next()? != 0x7E { return None; }
         let device_id = *it.next()?;
-        if *it.next()? != 0x7F { return None; }
+        if *it.next()? != sub_id_1 { return None; }
         let packet_num = *it.next()?;
-        Some(SysEx::Ack(HandshakeData { device_id, packet_num }))
+        Some(HandshakeData { device_id, packet_num })
+    }
+
+    fn parse_ack<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+        Some(SysEx::Ack(parse_handshake(it, 0x7F)?))
     }
 
     fn parse_nak<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
-        if *it.next()? != 0xF0 { return None; }
-        if *it.next()? != 0x7E { return None; }
-        let device_id = *it.next()?;
-        if *it.next()? != 0x7E { return None; }
-        let packet_num = *it.next()?;
-        Some(SysEx::Nak(HandshakeData { device_id, packet_num }))
+        Some(SysEx::Nak(parse_handshake(it, 0x7E)?))
+    }
+
+    fn parse_wait<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+        Some(SysEx::Wait(parse_handshake(it, 0x7C)?))
     }
 
     fn is_data(x: &u8) -> bool {
@@ -118,6 +121,7 @@ pub mod sysex {
                 let message = match sub_id_1 {
                     Some(0x7F) => parse_ack(&mut raw_it),
                     Some(0x7E) => parse_nak(&mut raw_it),
+                    Some(0x7C) => parse_wait(&mut raw_it),
                     None => None,
                     _ => {
                         // Ignore unrecognized message types
