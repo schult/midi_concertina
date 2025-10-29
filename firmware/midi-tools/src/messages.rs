@@ -66,6 +66,24 @@ pub mod sysex {
         ShowControl, // 02
     }
 
+    fn parse_ack<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+        if *it.next()? != 0xF0 { return None; }
+        if *it.next()? != 0x7E { return None; }
+        let device_id = *it.next()?;
+        if *it.next()? != 0x7F { return None; }
+        let packet_num = *it.next()?;
+        Some(SysEx::Ack(HandshakeData { device_id, packet_num }))
+    }
+
+    fn parse_nak<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+        if *it.next()? != 0xF0 { return None; }
+        if *it.next()? != 0x7E { return None; }
+        let device_id = *it.next()?;
+        if *it.next()? != 0x7E { return None; }
+        let packet_num = *it.next()?;
+        Some(SysEx::Nak(HandshakeData { device_id, packet_num }))
+    }
+
     impl SysEx {
         pub fn read(reader: &mut impl BufRead) -> Option<Self> {
             if let Ok(buffer) = reader.fill_buf() {
@@ -80,22 +98,23 @@ pub mod sysex {
                 let end = begin + length;
                 let raw = &buffer[begin..end];
 
-                if raw.len() < 5 {
-                    reader.consume(begin);
-                    return None;
-                }
-
-                if raw[1] != 0x7E {
+                let sysex_id = raw.get(1);
+                if sysex_id.is_some_and(|x| *x != 0x7E) {
+                    // Ignore non-universal SysEx messages
                     reader.consume(end);
                     return None;
                 }
 
-                let message = match raw[3] {
-                    0x7F => Some(SysEx::Ack(HandshakeData { device_id: raw[2], packet_num: raw[4] })),
-                    0x7E => Some(SysEx::Nak(HandshakeData { device_id: raw[2], packet_num: raw[4] })),
+                let mut it = raw.iter();
+
+                let sub_id_1 = raw.get(3);
+                let message = match sub_id_1 {
+                    Some(0x7F) => parse_ack(&mut it),
+                    Some(0x7E) => parse_nak(&mut it),
                     _ => None,
                 };
-                reader.consume(end);
+
+                reader.consume(if message.is_some() { end } else { begin });
                 return message;
             }
 
