@@ -84,6 +84,14 @@ pub mod sysex {
         Some(SysEx::Nak(HandshakeData { device_id, packet_num }))
     }
 
+    fn is_data(x: &u8) -> bool {
+        return (*x & 0x80) == 0;
+    }
+
+    fn is_sys_rt(x: &u8) -> bool {
+        return (*x & 0xF8) == 0xF8;
+    }
+
     impl SysEx {
         pub fn read(reader: &mut impl BufRead) -> Option<Self> {
             if let Ok(buffer) = reader.fill_buf() {
@@ -91,26 +99,25 @@ pub mod sysex {
                     Some(i) => i,
                     None => buffer.len(),
                 };
-                let length = match buffer[begin..].iter().skip(1).position(|x| (*x & 0x80) != 0) {
+                let length = match buffer[begin..].iter().skip(1).position(|x| !is_data(x) && !is_sys_rt(x)) {
                     Some(i) => i + 1,
                     None => buffer[begin..].len(),
                 };
                 let end = begin + length;
                 let raw = &buffer[begin..end];
+                let mut raw_it = raw.iter().filter(|x| !is_sys_rt(x));
 
-                let sysex_id = raw.get(1);
+                let sysex_id = raw_it.clone().nth(1);
                 if sysex_id.is_some_and(|x| *x != 0x7E) {
                     // Ignore non-universal SysEx messages
                     reader.consume(end);
                     return None;
                 }
 
-                let mut it = raw.iter();
-
-                let sub_id_1 = raw.get(3);
+                let sub_id_1 = raw_it.clone().nth(3);
                 let message = match sub_id_1 {
-                    Some(0x7F) => parse_ack(&mut it),
-                    Some(0x7E) => parse_nak(&mut it),
+                    Some(0x7F) => parse_ack(&mut raw_it),
+                    Some(0x7E) => parse_nak(&mut raw_it),
                     _ => None,
                 };
 

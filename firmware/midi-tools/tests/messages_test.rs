@@ -107,3 +107,15 @@ fn sysex_read_parses_nak_data() {
     }));
     assert_eq!(result, expected);
 }
+
+#[test]
+fn sysex_read_ignores_system_real_time_messages() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 f8 7e fa 03 fb fc 7f fe ff 3b"));
+    let result = SysEx::read(&mut data);
+    let expected = Some(SysEx::Ack(HandshakeData{
+        device_id: 0x03,
+        packet_num: 0x3b,
+    }));
+    assert_eq!(result, expected);
+    assert_eq!(data, []);
+}
