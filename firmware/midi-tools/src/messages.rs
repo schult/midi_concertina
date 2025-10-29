@@ -118,7 +118,12 @@ pub mod sysex {
                 let message = match sub_id_1 {
                     Some(0x7F) => parse_ack(&mut raw_it),
                     Some(0x7E) => parse_nak(&mut raw_it),
-                    _ => None,
+                    None => None,
+                    _ => {
+                        // Ignore unrecognized message types
+                        reader.consume(end);
+                        return None;
+                    },
                 };
 
                 reader.consume(if message.is_some() { end } else { begin });

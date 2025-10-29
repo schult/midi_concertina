@@ -32,6 +32,10 @@ fn sysex_read_returns_none_if_sysex_data_is_incomplete() {
 
 #[test]
 fn sysex_read_does_not_consume_incomplete_sysex_data() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e"));
+    let _ = SysEx::read(&mut data);
+    assert_eq!(data, hex!("f0 7e"));
+
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7f"));
     let _ = SysEx::read(&mut data);
     assert_eq!(data, hex!("f0 7e 03 7f"));
@@ -117,5 +121,13 @@ fn sysex_read_ignores_system_real_time_messages() {
         packet_num: 0x3b,
     }));
     assert_eq!(result, expected);
+    assert_eq!(data, []);
+}
+
+#[test]
+fn sysex_read_discards_unrecognized_messages() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 33 3b"));
+    let result = SysEx::read(&mut data);
+    assert_eq!(result, None);
     assert_eq!(data, []);
 }
