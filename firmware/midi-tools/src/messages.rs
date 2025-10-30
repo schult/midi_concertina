@@ -25,14 +25,13 @@ pub mod sysex {
     pub struct FileDumpHeaderData {
         pub device_id: u8,
         pub source_id: u8,
-        pub length: u32,
-
-        file_type: [u8; 4],
+        pub length: u16,
+        pub raw_file_type: [u8; 4],
     }
 
     impl FileDumpHeaderData {
         pub fn file_type(&self) -> &str {
-            core::str::from_utf8(&self.file_type).unwrap()
+            core::str::from_utf8(&self.raw_file_type).unwrap()
         }
     }
 
@@ -95,6 +94,31 @@ pub mod sysex {
         Some(SysEx::Eof(parse_handshake(it, 0x7B)?))
     }
 
+    fn parse_file_dump_header<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+        if *it.next()? != 0xF0 { return None; }
+        if *it.next()? != 0x7E { return None; }
+        let device_id = *it.next()?;
+        if *it.next()? != 0x07 { return None; }
+        if *it.next()? != 0x01 { return None; }
+        let source_id = *it.next()?;
+
+        let mut raw_file_type = [0; 4];
+        for i in 0..raw_file_type.len() {
+            raw_file_type[i] = *it.next()?;
+        }
+
+        let length_low = *it.next()? as u16;
+        let length_high = *it.next()? as u16;
+        let length = (length_high << 7) | length_low;
+
+        Some(SysEx::FileDumpHeader(FileDumpHeaderData {
+            device_id,
+            source_id,
+            length,
+            raw_file_type
+        }))
+    }
+
     fn is_data(x: &u8) -> bool {
         return (*x & 0x80) == 0;
     }
@@ -127,13 +151,15 @@ pub mod sysex {
                 }
 
                 let sub_id_1 = raw_it.clone().nth(3);
-                let message = match sub_id_1 {
-                    Some(0x7F) => parse_ack(&mut raw_it),
-                    Some(0x7E) => parse_nak(&mut raw_it),
-                    Some(0x7C) => parse_wait(&mut raw_it),
-                    Some(0x7D) => parse_cancel(&mut raw_it),
-                    Some(0x7B) => parse_eof(&mut raw_it),
-                    None => None,
+                let sub_id_2 = raw_it.clone().nth(4);
+                let message = match (sub_id_1, sub_id_2) {
+                    (Some(0x7F), _) => parse_ack(&mut raw_it),
+                    (Some(0x7E), _) => parse_nak(&mut raw_it),
+                    (Some(0x7C), _) => parse_wait(&mut raw_it),
+                    (Some(0x7D), _) => parse_cancel(&mut raw_it),
+                    (Some(0x7B), _) => parse_eof(&mut raw_it),
+                    (Some(0x07), Some(0x01)) => parse_file_dump_header(&mut raw_it),
+                    (None, _) => None,
                     _ => {
                         // Ignore unrecognized message types
                         reader.consume(end);

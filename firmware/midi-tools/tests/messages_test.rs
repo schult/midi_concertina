@@ -1,6 +1,6 @@
 use circular_buffer::CircularBuffer;
 use hex_literal::hex;
-use midi_tools::messages::sysex::{HandshakeData, SysEx};
+use midi_tools::messages::sysex::{FileDumpHeaderData, HandshakeData, SysEx};
 
 #[test]
 fn sysex_read_returns_none_if_no_data() {
@@ -194,4 +194,43 @@ fn sysex_read_discards_truncated_message() {
     assert_eq!(data, hex!("f0 7e 03 7f 3c"));
 }
 
-// TODO: Discard invalid message (e.g. bad sub-id-2?)
+#[test]
+fn sysex_read_identifies_file_dump_header_message() {
+    let mut data = CircularBuffer::<64, u8>::from(
+        hex!("f0 7e 03 07 01 00  42 49 4e 20  1e 64  66 69 6c 65 2e 62 69 6e"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, Some(SysEx::FileDumpHeader(_))));
+}
+
+#[test]
+fn sysex_read_parses_file_dump_header_data() {
+    let mut data = CircularBuffer::<64, u8>::from(
+        hex!("f0 7e 03 07 01 01  42 49 4e 20  1e 24  66 69 6c 65 2e 62 69 6e"));
+    let result = SysEx::read(&mut data);
+    let expected = Some(SysEx::FileDumpHeader(FileDumpHeaderData{
+        device_id: 3,
+        source_id: 1,
+        length: 0x121e,
+        raw_file_type: hex!("42 49 4e 20"),
+    }));
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn sysex_read_consumes_all_file_dump_header_data() {
+    let mut data = CircularBuffer::<64, u8>::from(
+        hex!("f0 7e 03 07 01 01  42 49 4e 20  1e 24  66 69 6c 65 2e 62 69 6e   f0 7e"));
+    let _ = SysEx::read(&mut data);
+    assert_eq!(data, hex!("f0 7e"));
+}
+
+#[test]
+fn file_dump_header_data_file_type_as_str() {
+    let data = FileDumpHeaderData{
+        device_id: 0,
+        source_id: 0,
+        length: 0,
+        raw_file_type: hex!("42 49 4e 20"),
+    };
+    assert_eq!(data.file_type(), "BIN ");
+}
