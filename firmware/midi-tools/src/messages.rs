@@ -106,6 +106,7 @@ pub mod sysex {
     impl SysEx {
         pub fn read(reader: &mut impl BufRead) -> Option<Self> {
             if let Ok(buffer) = reader.fill_buf() {
+                let total_length = buffer.len();
                 let begin = match buffer.iter().position(|x| *x == 0xF0) {
                     Some(i) => i,
                     None => buffer.len(),
@@ -140,7 +141,7 @@ pub mod sysex {
                     },
                 };
 
-                reader.consume(if message.is_some() { end } else { begin });
+                reader.consume(if message.is_some() || (end < total_length) { end } else { begin });
                 return message;
             }
 

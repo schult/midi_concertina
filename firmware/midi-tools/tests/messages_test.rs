@@ -185,3 +185,13 @@ fn sysex_read_parses_eof_data() {
     }));
     assert_eq!(result, expected);
 }
+
+#[test]
+fn sysex_read_discards_truncated_message() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7f   f0 7e 03 7f 3c"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, None));
+    assert_eq!(data, hex!("f0 7e 03 7f 3c"));
+}
+
+// TODO: Discard invalid message (e.g. bad sub-id-2?)
