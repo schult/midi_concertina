@@ -61,7 +61,6 @@ pub mod sysex {
         IdentityReply(IdentityReplyData),
         FileDumpHeader(FileDumpHeaderData),
         FileDumpPacket(FileDumpPacketData),
-        ShowControl,
     }
 
     fn parse_handshake<'a>(
@@ -340,7 +339,6 @@ pub mod sysex {
                     // TODO: (Some(0x06), Some(0x02)) => IdentityReply
                     (Some(0x07), Some(0x01)) => parse_file_dump_header(&mut raw_it),
                     (Some(0x07), Some(0x02)) => parse_file_dump_packet(&mut raw_it),
-                    // TODO: (Some(0x02), ???) => ShowControl
                     (None, _) => None,
                     _ => {
                         // Ignore unrecognized message types
@@ -367,11 +365,10 @@ pub mod sysex {
                 SysEx::Wait(data) => write_wait(data, writer),
                 SysEx::Cancel(data) => write_cancel(data, writer),
                 SysEx::Eof(data) => write_eof(data, writer),
-                SysEx::IdentityRequest(_) => Ok(()),
-                SysEx::IdentityReply(data) => Ok(()),
-                SysEx::FileDumpHeader(_) => Ok(()),
-                SysEx::FileDumpPacket(_) => Ok(()),
-                SysEx::ShowControl => Ok(()),
+                SysEx::IdentityRequest(_) => Ok(()), // TODO
+                SysEx::IdentityReply(_) => Ok(()), // TODO
+                SysEx::FileDumpHeader(_) => Ok(()), // TODO
+                SysEx::FileDumpPacket(_) => Ok(()), // TODO
             }
         }
     }
