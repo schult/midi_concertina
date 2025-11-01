@@ -52,16 +52,16 @@ pub mod sysex {
 
     #[derive(Debug, PartialEq)]
     pub enum SysEx {
-        Ack(HandshakeData),                   // 7f
-        Nak(HandshakeData),                   // 7e
-        Wait(HandshakeData),                  // 7c
-        Cancel(HandshakeData),                // 7d
-        Eof(HandshakeData),                   // 7b
-        IdentityRequest(IdentityRequestData), // 06 01
-        IdentityReply(IdentityReplyData),     // 06 02
-        FileDumpHeader(FileDumpHeaderData),   // 07 01
-        FileDumpPacket(FileDumpPacketData),   // 07 02
-        ShowControl,                          // 02
+        Ack(HandshakeData),
+        Nak(HandshakeData),
+        Wait(HandshakeData),
+        Cancel(HandshakeData),
+        Eof(HandshakeData),
+        IdentityRequest(IdentityRequestData),
+        IdentityReply(IdentityReplyData),
+        FileDumpHeader(FileDumpHeaderData),
+        FileDumpPacket(FileDumpPacketData),
+        ShowControl,
     }
 
     fn parse_handshake<'a>(
@@ -226,8 +226,11 @@ pub mod sysex {
                     (Some(0x7C), _) => parse_wait(&mut raw_it),
                     (Some(0x7D), _) => parse_cancel(&mut raw_it),
                     (Some(0x7B), _) => parse_eof(&mut raw_it),
+                    // TODO: (Some(0x06), Some(0x01)) => IdentityRequest
+                    // TODO: (Some(0x06), Some(0x02)) => IdentityReply
                     (Some(0x07), Some(0x01)) => parse_file_dump_header(&mut raw_it),
                     (Some(0x07), Some(0x02)) => parse_file_dump_packet(&mut raw_it),
+                    // TODO: (Some(0x02), ???) => ShowControl
                     (None, _) => None,
                     _ => {
                         // Ignore unrecognized message types
