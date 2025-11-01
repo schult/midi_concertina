@@ -1,6 +1,11 @@
 use circular_buffer::CircularBuffer;
 use hex_literal::hex;
-use midi_tools::messages::sysex::{FileDumpHeaderData, HandshakeData, SysEx};
+use midi_tools::messages::sysex::{
+    FileDumpHeaderData,
+    FileDumpPacketData,
+    HandshakeData,
+    SysEx
+};
 
 #[test]
 fn sysex_read_returns_none_if_no_data() {
@@ -233,4 +238,30 @@ fn file_dump_header_data_file_type_as_str() {
         raw_file_type: hex!("42 49 4e 20"),
     };
     assert_eq!(data.file_type(), "BIN ");
+}
+
+#[test]
+fn sysex_read_identifies_file_dump_packet_message() {
+    let mut data = CircularBuffer::<64, u8>::from(
+        hex!("f0 7e 03 07 02 71 0f  00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60  5c"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, Some(SysEx::FileDumpPacket(_))));
+}
+
+#[test]
+fn sysex_read_parses_file_dump_packet_data() {
+    let mut data = CircularBuffer::<64, u8>::from(
+        hex!("f0 7e 03 07 02 71 0f  00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60  5c"));
+    let result = SysEx::read(&mut data);
+
+    let mut expected_data = FileDumpPacketData{
+        device_id: 3,
+        packet_num: 113,
+        checksum_ok: true,
+        data: [0; 112],
+        data_size: 14,
+    };
+    expected_data.data[..14].copy_from_slice(&hex!("01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"));
+    let expected = Some(SysEx::FileDumpPacket(expected_data));
+    assert_eq!(result, expected);
 }

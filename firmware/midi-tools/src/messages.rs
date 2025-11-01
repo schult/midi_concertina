@@ -40,9 +40,8 @@ pub mod sysex {
         pub device_id: u8,
         pub packet_num: u8,
         pub checksum_ok: bool,
-
-        data: [u8; 112],
-        data_size: usize,
+        pub data: [u8; 112],
+        pub data_size: usize,
     }
 
     impl FileDumpPacketData {
@@ -119,6 +118,43 @@ pub mod sysex {
         }))
     }
 
+    fn parse_file_dump_packet<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+        if *it.next()? != 0xF0 { return None; }
+        if *it.next()? != 0x7E { return None; }
+        let device_id = *it.next()?;
+        if *it.next()? != 0x07 { return None; }
+        if *it.next()? != 0x02 { return None; }
+        let packet_num = *it.next()?;
+        let encoded_size = *it.next()?;
+
+        let mut checksum = 0x7B ^ device_id ^ packet_num ^ encoded_size;
+        let mut data = [0; 112];
+        let mut data_size = 0;
+
+        let mut high_bits = 0;
+        for i in 0..=encoded_size {
+            let byte = *it.next()?;
+            checksum ^= byte;
+            if i % 8 == 0 {
+                high_bits = byte;
+            } else {
+                high_bits <<= 1;
+                data[data_size] = byte | (high_bits & 0x80);
+                data_size += 1;
+            }
+        }
+
+        let checksum_ok = *it.next()? == checksum;
+
+        Some(SysEx::FileDumpPacket(FileDumpPacketData {
+            device_id,
+            packet_num,
+            checksum_ok,
+            data,
+            data_size,
+        }))
+    }
+
     fn is_data(x: &u8) -> bool {
         return (*x & 0x80) == 0;
     }
@@ -159,6 +195,7 @@ pub mod sysex {
                     (Some(0x7D), _) => parse_cancel(&mut raw_it),
                     (Some(0x7B), _) => parse_eof(&mut raw_it),
                     (Some(0x07), Some(0x01)) => parse_file_dump_header(&mut raw_it),
+                    (Some(0x07), Some(0x02)) => parse_file_dump_packet(&mut raw_it),
                     (None, _) => None,
                     _ => {
                         // Ignore unrecognized message types
