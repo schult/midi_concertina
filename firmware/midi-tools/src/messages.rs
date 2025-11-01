@@ -25,7 +25,7 @@ pub mod sysex {
     pub struct FileDumpHeaderData {
         pub device_id: u8,
         pub source_id: u8,
-        pub length: u16,
+        pub length: u32,
         pub raw_file_type: [u8; 4],
     }
 
@@ -126,8 +126,9 @@ pub mod sysex {
             raw_file_type[i] = *it.next()?;
         }
 
-        let length_low = *it.next()? as u16;
-        let length_high = *it.next()? as u16;
+        // TODO: There should be 4 bytes for length
+        let length_low = *it.next()? as u32;
+        let length_high = *it.next()? as u32;
         let length = (length_high << 7) | length_low;
 
         Some(SysEx::FileDumpHeader(FileDumpHeaderData {
@@ -192,6 +193,87 @@ pub mod sysex {
     }
 
     impl SysEx {
+        pub fn ack(device_id: u8, packet_num: u8) -> Self {
+            assert!(device_id <= 0x7F);
+            assert!(packet_num <= 0x7F);
+            SysEx::Ack(HandshakeData { device_id, packet_num })
+        }
+
+        pub fn nak(device_id: u8, packet_num: u8) -> Self {
+            assert!(device_id <= 0x7F);
+            assert!(packet_num <= 0x7F);
+            SysEx::Nak(HandshakeData { device_id, packet_num })
+        }
+
+        pub fn wait(device_id: u8, packet_num: u8) -> Self {
+            assert!(device_id <= 0x7F);
+            assert!(packet_num <= 0x7F);
+            SysEx::Wait(HandshakeData { device_id, packet_num })
+        }
+
+        pub fn cancel(device_id: u8, packet_num: u8) -> Self {
+            assert!(device_id <= 0x7F);
+            assert!(packet_num <= 0x7F);
+            SysEx::Cancel(HandshakeData { device_id, packet_num })
+        }
+
+        pub fn eof(device_id: u8, packet_num: u8) -> Self {
+            assert!(device_id <= 0x7F);
+            assert!(packet_num <= 0x7F);
+            SysEx::Eof(HandshakeData { device_id, packet_num })
+        }
+
+        pub fn identity_request(device_id: u8) -> Self {
+            assert!(device_id <= 0x7F);
+            SysEx::IdentityRequest(IdentityRequestData { device_id })
+        }
+
+        pub fn identity_reply(device_id: u8, manufacturer_id: u8, device_family_code: u16, device_family_member_code: u16, software_rev: &[u8]) -> Self {
+            assert!(device_id <= 0x7F);
+            assert!(manufacturer_id <= 0x7F);
+            assert!(device_family_code <= 0x3FFF);
+            assert!(device_family_member_code <= 0x3FFF);
+            assert!(software_rev.iter().all(|x| *x < 0x7F));
+            let mut software_rev_array = [0; 4];
+            software_rev_array.copy_from_slice(software_rev);
+            SysEx::IdentityReply(IdentityReplyData {
+                device_id,
+                manufacturer_id,
+                device_family_code,
+                device_family_member_code,
+                software_rev: software_rev_array,
+            })
+        }
+
+        pub fn file_dump_header(device_id: u8, source_id: u8, length: u32, file_type: &str) -> Self {
+            assert!(device_id <= 0x7F);
+            assert!(source_id <= 0x7F);
+            assert!(length <= 0x0FFFFFFF);
+            let mut raw_file_type = [b' '; 4];
+            raw_file_type.copy_from_slice(file_type.as_bytes());
+            assert!(raw_file_type.iter().all(|x| *x < 0x7F));
+            SysEx::FileDumpHeader(FileDumpHeaderData {
+                device_id,
+                source_id,
+                length,
+                raw_file_type,
+            })
+        }
+
+        pub fn file_dump_packet(device_id: u8, packet_num: u8, data: &[u8]) -> Self {
+            assert!(device_id <= 0x7F);
+            assert!(packet_num <= 0x7F);
+            let mut data_array = [0; 112];
+            data_array[..data.len()].copy_from_slice(data);
+            SysEx::FileDumpPacket(FileDumpPacketData {
+                device_id,
+                packet_num,
+                checksum_ok: true,
+                data: data_array,
+                data_size: data.len(),
+            })
+        }
+
         pub fn read(reader: &mut impl BufRead) -> Option<Self> {
             if let Ok(buffer) = reader.fill_buf() {
                 let total_length = buffer.len();

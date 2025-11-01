@@ -1,6 +1,6 @@
 use circular_buffer::CircularBuffer;
 use hex_literal::hex;
-use midi_tools::messages::sysex::{FileDumpHeaderData, FileDumpPacketData, HandshakeData, SysEx};
+use midi_tools::messages::sysex::*;
 
 #[test]
 fn sysex_read_returns_none_if_no_data() {
@@ -374,4 +374,256 @@ fn sysex_read_detects_file_dump_packet_checksum_validity() {
             ..
         })
     ));
+}
+
+#[test]
+fn sysex_ack_constructor() {
+    let value = SysEx::ack(1, 14);
+    assert_eq!(value, SysEx::Ack(HandshakeData {
+        device_id: 1,
+        packet_num: 14,
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_ack_constructor_panics_if_device_id_over_7_bits() {
+    let _ = SysEx::ack(1 << 7, 14);
+}
+
+#[test]
+#[should_panic]
+fn sysex_ack_constructor_panics_if_packet_num_over_7_bits() {
+    let _ = SysEx::ack(1, 1 << 7);
+}
+
+#[test]
+fn sysex_nak_constructor() {
+    let value = SysEx::nak(1, 14);
+    assert_eq!(value, SysEx::Nak(HandshakeData {
+        device_id: 1,
+        packet_num: 14,
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_nak_constructor_panics_if_device_id_over_7_bits() {
+    let _ = SysEx::nak(1 << 7, 14);
+}
+
+#[test]
+#[should_panic]
+fn sysex_nak_constructor_panics_if_packet_num_over_7_bits() {
+    let _ = SysEx::nak(1, 1 << 7);
+}
+
+#[test]
+fn sysex_wait_constructor() {
+    let value = SysEx::wait(1, 14);
+    assert_eq!(value, SysEx::Wait(HandshakeData {
+        device_id: 1,
+        packet_num: 14,
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_wait_constructor_panics_if_device_id_over_7_bits() {
+    let _ = SysEx::wait(1 << 7, 14);
+}
+
+#[test]
+#[should_panic]
+fn sysex_wait_constructor_panics_if_packet_num_over_7_bits() {
+    let _ = SysEx::wait(1, 1 << 7);
+}
+
+#[test]
+fn sysex_cancel_constructor() {
+    let value = SysEx::cancel(1, 14);
+    assert_eq!(value, SysEx::Cancel(HandshakeData {
+        device_id: 1,
+        packet_num: 14,
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_cancel_constructor_panics_if_device_id_over_7_bits() {
+    let _ = SysEx::cancel(1 << 7, 14);
+}
+
+#[test]
+#[should_panic]
+fn sysex_cancel_constructor_panics_if_packet_num_over_7_bits() {
+    let _ = SysEx::cancel(1, 1 << 7);
+}
+
+#[test]
+fn sysex_eof_constructor() {
+    let value = SysEx::eof(1, 14);
+    assert_eq!(value, SysEx::Eof(HandshakeData {
+        device_id: 1,
+        packet_num: 14,
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_eof_constructor_panics_if_device_id_over_7_bits() {
+    let _ = SysEx::eof(1 << 7, 14);
+}
+
+#[test]
+#[should_panic]
+fn sysex_eof_constructor_panics_if_packet_num_over_7_bits() {
+    let _ = SysEx::eof(1, 1 << 7);
+}
+
+#[test]
+fn sysex_identity_request_constructor() {
+    let value = SysEx::identity_request(1);
+    assert_eq!(value, SysEx::IdentityRequest(IdentityRequestData {
+        device_id: 1,
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_identity_request_constructor_panics_if_device_id_over_7_bits() {
+    let _ = SysEx::identity_request(1 << 7);
+}
+
+#[test]
+fn sysex_identity_reply_constructor() {
+    let value = SysEx::identity_reply(3, 0x7F, 0x1253, 0x2430, &[1, 9, 8, 5]);
+    assert_eq!(value, SysEx::IdentityReply(IdentityReplyData {
+        device_id: 3,
+        manufacturer_id: 0x7F,
+        device_family_code: 0x1253,
+        device_family_member_code: 0x2430,
+        software_rev: [1, 9, 8, 5],
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_identity_reply_constructor_panics_if_device_id_over_7_bits() {
+    let _ = SysEx::identity_reply(1 << 7, 0x7F, 0x1253, 0x2430, &[1, 9, 8, 5]);
+}
+
+#[test]
+#[should_panic]
+fn sysex_identity_reply_constructor_panics_if_manufacturer_id_over_7_bits() {
+    let _ = SysEx::identity_reply(3, 1 << 7, 0x1253, 0x2430, &[1, 9, 8, 5]);
+}
+
+#[test]
+#[should_panic]
+fn sysex_identity_reply_constructor_panics_if_device_family_code_over_14_bits() {
+    let _ = SysEx::identity_reply(3, 0x7F, 1 << 14, 0x2430, &[1, 9, 8, 5]);
+}
+
+#[test]
+#[should_panic]
+fn sysex_identity_reply_constructor_panics_if_device_family_member_code_over_14_bits() {
+    let _ = SysEx::identity_reply(3, 0x7F, 0x1253, 1 << 14, &[1, 9, 8, 5]);
+}
+
+#[test]
+#[should_panic]
+fn sysex_identity_reply_constructor_panics_if_version_contains_value_over_7_bits() {
+    let _ = SysEx::identity_reply(3, 0x7F, 0x1253, 0x2430, &[1, 9, 1 << 7, 5]);
+}
+
+#[test]
+#[should_panic]
+fn sysex_identity_reply_constructor_panics_if_version_too_short() {
+    let _ = SysEx::identity_reply(3, 0x7F, 0x1253, 0x2430, &[1, 9, 8]);
+}
+
+#[test]
+#[should_panic]
+fn sysex_identity_reply_constructor_panics_if_version_too_long() {
+    let _ = SysEx::identity_reply(3, 0x7F, 0x1253, 0x2430, &[1, 9, 8, 5, 6]);
+}
+
+#[test]
+fn sysex_file_dump_header_constructor() {
+    let value = SysEx::file_dump_header(2, 1, 1_382_550, &"TEXT");
+    assert_eq!(value, SysEx::FileDumpHeader(FileDumpHeaderData {
+        device_id: 2,
+        source_id: 1,
+        length: 1_382_550,
+        raw_file_type: hex!("54 45 58 54"),
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_header_constructor_panics_if_device_id_over_7_bits() {
+    let _ = SysEx::file_dump_header(1 << 7, 1, 1_382_550, &"TEXT");
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_header_constructor_panics_if_source_id_over_7_bits() {
+    let _ = SysEx::file_dump_header(2, 1 << 7, 1_382_550, &"TEXT");
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_header_constructor_panics_if_length_over_28_bits() {
+    let _ = SysEx::file_dump_header(2, 1, 1 << 28, &"TEXT");
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_header_constructor_panics_if_file_type_too_short() {
+    let _ = SysEx::file_dump_header(2, 1, 1_382_550, &"BIN");
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_header_constructor_panics_if_file_type_too_long() {
+    let _ = SysEx::file_dump_header(2, 1, 1_382_550, &"MIDIEX");
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_header_constructor_panics_if_file_type_not_ascii() {
+    let _ = SysEx::file_dump_header(2, 1, 1_382_550, &"ÀBI");
+}
+
+#[test]
+fn sysex_file_dump_packet_constructor() {
+    let value = SysEx::file_dump_packet(2, 110, &hex!("7f 00 ff 56"));
+    let mut data = [0; 112];
+    data[..4].copy_from_slice(&hex!("7f 00 ff 56"));
+    assert_eq!(value, SysEx::FileDumpPacket(FileDumpPacketData {
+        device_id: 2,
+        packet_num: 110,
+        checksum_ok: true,
+        data,
+        data_size: 4,
+    }));
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_packet_constructor_device_id_over_7_bits() {
+    let _ = SysEx::file_dump_packet(1 << 7, 110, &hex!("7f 00 ff 56"));
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_packet_constructor_packet_num_over_7_bits() {
+    let _ = SysEx::file_dump_packet(2, 1 << 7, &hex!("7f 00 ff 56"));
+}
+
+#[test]
+#[should_panic]
+fn sysex_file_dump_packet_constructor_panics_if_data_too_long() {
+    let _ = SysEx::file_dump_packet(2, 110, &[0xCC; 113]);
 }
