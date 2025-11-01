@@ -126,10 +126,11 @@ pub mod sysex {
             raw_file_type[i] = *it.next()?;
         }
 
-        // TODO: There should be 4 bytes for length
-        let length_low = *it.next()? as u32;
-        let length_high = *it.next()? as u32;
-        let length = (length_high << 7) | length_low;
+        let mut length = 0;
+        for i in 0..4 {
+            let byte = *it.next()? as u32;
+            length |= byte << (7 * i);
+        }
 
         Some(SysEx::FileDumpHeader(FileDumpHeaderData {
             device_id,

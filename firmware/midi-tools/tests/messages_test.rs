@@ -197,7 +197,7 @@ fn sysex_read_discards_truncated_message() {
 #[test]
 fn sysex_read_identifies_file_dump_header_message() {
     let mut data = CircularBuffer::<64, u8>::from(hex!(
-        "f0 7e 03 07 01 00  42 49 4e 20  1e 64  66 69 6c 65 2e 62 69 6e"
+        "f0 7e 03 07 01 00  42 49 4e 20  1e 64 77 32  66 69 6c 65 2e 62 69 6e"
     ));
     let result = SysEx::read(&mut data);
     assert!(matches!(result, Some(SysEx::FileDumpHeader(_))));
@@ -206,13 +206,13 @@ fn sysex_read_identifies_file_dump_header_message() {
 #[test]
 fn sysex_read_parses_file_dump_header_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!(
-        "f0 7e 03 07 01 01  42 49 4e 20  1e 24  66 69 6c 65 2e 62 69 6e"
+        "f0 7e 03 07 01 01  42 49 4e 20  1e 24 77 32  66 69 6c 65 2e 62 69 6e"
     ));
     let result = SysEx::read(&mut data);
     let expected = Some(SysEx::FileDumpHeader(FileDumpHeaderData {
         device_id: 3,
         source_id: 1,
-        length: 0x121e,
+        length: 0x65DD21E,
         raw_file_type: hex!("42 49 4e 20"),
     }));
     assert_eq!(result, expected);
@@ -221,7 +221,7 @@ fn sysex_read_parses_file_dump_header_data() {
 #[test]
 fn sysex_read_consumes_all_file_dump_header_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!(
-        "f0 7e 03 07 01 01  42 49 4e 20  1e 24  66 69 6c 65 2e 62 69 6e   f0 7e"
+        "f0 7e 03 07 01 01  42 49 4e 20  1e 24 77 32  66 69 6c 65 2e 62 69 6e   f0 7e"
     ));
     let _ = SysEx::read(&mut data);
     assert_eq!(data, hex!("f0 7e"));
