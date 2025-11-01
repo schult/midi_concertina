@@ -1,5 +1,5 @@
 pub mod sysex {
-    use embedded_io::BufRead;
+    use embedded_io::{ BufRead, Write };
 
     #[derive(Debug, PartialEq)]
     pub struct HandshakeData {
@@ -185,6 +185,11 @@ pub mod sysex {
         }))
     }
 
+    fn write_ack<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+        let raw_data = [0xF0, 0x7E, data.device_id, 0x7F, data.packet_num, 0xF7];
+        writer.write_all(&raw_data)
+    }
+
     fn is_data(x: &u8) -> bool {
         return (*x & 0x80) == 0;
     }
@@ -276,6 +281,8 @@ pub mod sysex {
         }
 
         pub fn read(reader: &mut impl BufRead) -> Option<Self> {
+            // TODO: If bytes consumed without finding valid packet, try again. Only return None
+            //       when no valid packet exists in the data stream.
             if let Ok(buffer) = reader.fill_buf() {
                 let total_length = buffer.len();
                 let begin = match buffer.iter().position(|x| *x == 0xF0) {
@@ -331,6 +338,21 @@ pub mod sysex {
             }
 
             None
+        }
+
+        pub fn write<T: Write>(self, writer: &mut T) -> Result<(), T::Error> {
+            match self {
+                SysEx::Ack(data) => write_ack(data, writer),
+                SysEx::Nak(data) => Ok(()),
+                SysEx::Wait(data) => Ok(()),
+                SysEx::Cancel(data) => Ok(()),
+                SysEx::Eof(data) => Ok(()),
+                SysEx::IdentityRequest(_) => Ok(()),
+                SysEx::IdentityReply(data) => Ok(()),
+                SysEx::FileDumpHeader(_) => Ok(()),
+                SysEx::FileDumpPacket(_) => Ok(()),
+                SysEx::ShowControl => Ok(()),
+            }
         }
     }
 } // mod sysex

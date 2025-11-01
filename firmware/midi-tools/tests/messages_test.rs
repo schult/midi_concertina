@@ -627,3 +627,12 @@ fn sysex_file_dump_packet_constructor_packet_num_over_7_bits() {
 fn sysex_file_dump_packet_constructor_panics_if_data_too_long() {
     let _ = SysEx::file_dump_packet(2, 110, &[0xCC; 113]);
 }
+
+#[test]
+fn sysex_write_ack() {
+    let mut output = CircularBuffer::<64, u8>::new();
+    let message = SysEx::ack(5, 31);
+    let result = message.write(&mut output);
+    assert_eq!(result, Ok(()));
+    assert_eq!(output, hex!("f0 7e 05 7f 1F f7"));
+}
