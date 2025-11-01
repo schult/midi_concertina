@@ -190,6 +190,26 @@ pub mod sysex {
         writer.write_all(&raw_data)
     }
 
+    fn write_nak<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+        let raw_data = [0xF0, 0x7E, data.device_id, 0x7E, data.packet_num, 0xF7];
+        writer.write_all(&raw_data)
+    }
+
+    fn write_wait<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+        let raw_data = [0xF0, 0x7E, data.device_id, 0x7C, data.packet_num, 0xF7];
+        writer.write_all(&raw_data)
+    }
+
+    fn write_cancel<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+        let raw_data = [0xF0, 0x7E, data.device_id, 0x7D, data.packet_num, 0xF7];
+        writer.write_all(&raw_data)
+    }
+
+    fn write_eof<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+        let raw_data = [0xF0, 0x7E, data.device_id, 0x7B, data.packet_num, 0xF7];
+        writer.write_all(&raw_data)
+    }
+
     fn is_data(x: &u8) -> bool {
         return (*x & 0x80) == 0;
     }
@@ -343,10 +363,10 @@ pub mod sysex {
         pub fn write<T: Write>(self, writer: &mut T) -> Result<(), T::Error> {
             match self {
                 SysEx::Ack(data) => write_ack(data, writer),
-                SysEx::Nak(data) => Ok(()),
-                SysEx::Wait(data) => Ok(()),
-                SysEx::Cancel(data) => Ok(()),
-                SysEx::Eof(data) => Ok(()),
+                SysEx::Nak(data) => write_nak(data, writer),
+                SysEx::Wait(data) => write_wait(data, writer),
+                SysEx::Cancel(data) => write_cancel(data, writer),
+                SysEx::Eof(data) => write_eof(data, writer),
                 SysEx::IdentityRequest(_) => Ok(()),
                 SysEx::IdentityReply(data) => Ok(()),
                 SysEx::FileDumpHeader(_) => Ok(()),

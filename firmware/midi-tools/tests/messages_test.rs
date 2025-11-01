@@ -636,3 +636,39 @@ fn sysex_write_ack() {
     assert_eq!(result, Ok(()));
     assert_eq!(output, hex!("f0 7e 05 7f 1F f7"));
 }
+
+#[test]
+fn sysex_write_nak() {
+    let mut output = CircularBuffer::<64, u8>::new();
+    let message = SysEx::nak(5, 31);
+    let result = message.write(&mut output);
+    assert_eq!(result, Ok(()));
+    assert_eq!(output, hex!("f0 7e 05 7e 1F f7"));
+}
+
+#[test]
+fn sysex_write_wait() {
+    let mut output = CircularBuffer::<64, u8>::new();
+    let message = SysEx::wait(5, 31);
+    let result = message.write(&mut output);
+    assert_eq!(result, Ok(()));
+    assert_eq!(output, hex!("f0 7e 05 7c 1F f7"));
+}
+
+#[test]
+fn sysex_write_cancel() {
+    let mut output = CircularBuffer::<64, u8>::new();
+    let message = SysEx::cancel(5, 31);
+    let result = message.write(&mut output);
+    assert_eq!(result, Ok(()));
+    assert_eq!(output, hex!("f0 7e 05 7d 1F f7"));
+}
+
+#[test]
+fn sysex_write_eof() {
+    let mut output = CircularBuffer::<64, u8>::new();
+    let message = SysEx::eof(5, 31);
+    let result = message.write(&mut output);
+    assert_eq!(result, Ok(()));
+    assert_eq!(output, hex!("f0 7e 05 7b 1F f7"));
+}
