@@ -99,8 +99,14 @@ fn event_packet_extracts_cin() {
     assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::PolyKeyPress);
     assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::ControlChange);
     assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::ProgramChange);
-    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::ChannelPressure);
-    assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::PitchBendChange);
+    assert_eq!(
+        packets.next().unwrap().cin(),
+        usb_midi::Cin::ChannelPressure
+    );
+    assert_eq!(
+        packets.next().unwrap().cin(),
+        usb_midi::Cin::PitchBendChange
+    );
     assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::SingleByte);
     assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::Misc);
     assert_eq!(packets.next().unwrap().cin(), usb_midi::Cin::CableEvent);

@@ -52,25 +52,37 @@ pub mod sysex {
 
     #[derive(Debug, PartialEq)]
     pub enum SysEx {
-        Ack(HandshakeData), // 7f
-        Nak(HandshakeData), // 7e
-        Wait(HandshakeData), // 7c
-        Cancel(HandshakeData), // 7d
-        Eof(HandshakeData), // 7b
+        Ack(HandshakeData),                   // 7f
+        Nak(HandshakeData),                   // 7e
+        Wait(HandshakeData),                  // 7c
+        Cancel(HandshakeData),                // 7d
+        Eof(HandshakeData),                   // 7b
         IdentityRequest(IdentityRequestData), // 06 01
-        IdentityReply(IdentityReplyData), // 06 02
-        FileDumpHeader(FileDumpHeaderData), // 07 01
-        FileDumpPacket(FileDumpPacketData), // 07 02
-        ShowControl, // 02
+        IdentityReply(IdentityReplyData),     // 06 02
+        FileDumpHeader(FileDumpHeaderData),   // 07 01
+        FileDumpPacket(FileDumpPacketData),   // 07 02
+        ShowControl,                          // 02
     }
 
-    fn parse_handshake<'a>(it: &mut impl Iterator<Item = &'a u8>, sub_id_1: u8) -> Option<HandshakeData> {
-        if *it.next()? != 0xF0 { return None; }
-        if *it.next()? != 0x7E { return None; }
+    fn parse_handshake<'a>(
+        it: &mut impl Iterator<Item = &'a u8>,
+        sub_id_1: u8,
+    ) -> Option<HandshakeData> {
+        if *it.next()? != 0xF0 {
+            return None;
+        }
+        if *it.next()? != 0x7E {
+            return None;
+        }
         let device_id = *it.next()?;
-        if *it.next()? != sub_id_1 { return None; }
+        if *it.next()? != sub_id_1 {
+            return None;
+        }
         let packet_num = *it.next()?;
-        Some(HandshakeData { device_id, packet_num })
+        Some(HandshakeData {
+            device_id,
+            packet_num,
+        })
     }
 
     fn parse_ack<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
@@ -94,11 +106,19 @@ pub mod sysex {
     }
 
     fn parse_file_dump_header<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
-        if *it.next()? != 0xF0 { return None; }
-        if *it.next()? != 0x7E { return None; }
+        if *it.next()? != 0xF0 {
+            return None;
+        }
+        if *it.next()? != 0x7E {
+            return None;
+        }
         let device_id = *it.next()?;
-        if *it.next()? != 0x07 { return None; }
-        if *it.next()? != 0x01 { return None; }
+        if *it.next()? != 0x07 {
+            return None;
+        }
+        if *it.next()? != 0x01 {
+            return None;
+        }
         let source_id = *it.next()?;
 
         let mut raw_file_type = [0; 4];
@@ -114,16 +134,24 @@ pub mod sysex {
             device_id,
             source_id,
             length,
-            raw_file_type
+            raw_file_type,
         }))
     }
 
     fn parse_file_dump_packet<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
-        if *it.next()? != 0xF0 { return None; }
-        if *it.next()? != 0x7E { return None; }
+        if *it.next()? != 0xF0 {
+            return None;
+        }
+        if *it.next()? != 0x7E {
+            return None;
+        }
         let device_id = *it.next()?;
-        if *it.next()? != 0x07 { return None; }
-        if *it.next()? != 0x02 { return None; }
+        if *it.next()? != 0x07 {
+            return None;
+        }
+        if *it.next()? != 0x02 {
+            return None;
+        }
         let packet_num = *it.next()?;
         let encoded_size = *it.next()?;
 
@@ -171,7 +199,11 @@ pub mod sysex {
                     Some(i) => i,
                     None => buffer.len(),
                 };
-                let length = match buffer[begin..].iter().skip(1).position(|x| !is_data(x) && !is_sys_rt(x)) {
+                let length = match buffer[begin..]
+                    .iter()
+                    .skip(1)
+                    .position(|x| !is_data(x) && !is_sys_rt(x))
+                {
                     Some(i) => i + 1,
                     None => buffer[begin..].len(),
                 };
@@ -201,15 +233,18 @@ pub mod sysex {
                         // Ignore unrecognized message types
                         reader.consume(end);
                         return None;
-                    },
+                    }
                 };
 
-                reader.consume(if message.is_some() || (end < total_length) { end } else { begin });
+                reader.consume(if message.is_some() || (end < total_length) {
+                    end
+                } else {
+                    begin
+                });
                 return message;
             }
 
             None
         }
     }
-
 } // mod sysex

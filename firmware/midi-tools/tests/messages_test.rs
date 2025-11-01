@@ -1,11 +1,6 @@
 use circular_buffer::CircularBuffer;
 use hex_literal::hex;
-use midi_tools::messages::sysex::{
-    FileDumpHeaderData,
-    FileDumpPacketData,
-    HandshakeData,
-    SysEx
-};
+use midi_tools::messages::sysex::{FileDumpHeaderData, FileDumpPacketData, HandshakeData, SysEx};
 
 #[test]
 fn sysex_read_returns_none_if_no_data() {
@@ -92,7 +87,7 @@ fn sysex_ignores_non_universal_messages() {
 fn sysex_read_parses_ack_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7f 3b"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Ack(HandshakeData{
+    let expected = Some(SysEx::Ack(HandshakeData {
         device_id: 0x03,
         packet_num: 0x3b,
     }));
@@ -110,7 +105,7 @@ fn sysex_read_identifies_nak_message() {
 fn sysex_read_parses_nak_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7e 3b"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Nak(HandshakeData{
+    let expected = Some(SysEx::Nak(HandshakeData {
         device_id: 0x03,
         packet_num: 0x3b,
     }));
@@ -121,7 +116,7 @@ fn sysex_read_parses_nak_data() {
 fn sysex_read_ignores_system_real_time_messages() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 f8 7e fa 03 fb fc 7f fe ff 3b"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Ack(HandshakeData{
+    let expected = Some(SysEx::Ack(HandshakeData {
         device_id: 0x03,
         packet_num: 0x3b,
     }));
@@ -148,7 +143,7 @@ fn sysex_read_identifies_wait_message() {
 fn sysex_read_parses_wait_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7c 3b"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Wait(HandshakeData{
+    let expected = Some(SysEx::Wait(HandshakeData {
         device_id: 0x03,
         packet_num: 0x3b,
     }));
@@ -166,7 +161,7 @@ fn sysex_read_identifies_cancel_message() {
 fn sysex_read_parses_cancel_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7d 3b"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Cancel(HandshakeData{
+    let expected = Some(SysEx::Cancel(HandshakeData {
         device_id: 0x03,
         packet_num: 0x3b,
     }));
@@ -184,7 +179,7 @@ fn sysex_read_identifies_eof_message() {
 fn sysex_read_parses_eof_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7b 3b"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Eof(HandshakeData{
+    let expected = Some(SysEx::Eof(HandshakeData {
         device_id: 0x03,
         packet_num: 0x3b,
     }));
@@ -201,18 +196,20 @@ fn sysex_read_discards_truncated_message() {
 
 #[test]
 fn sysex_read_identifies_file_dump_header_message() {
-    let mut data = CircularBuffer::<64, u8>::from(
-        hex!("f0 7e 03 07 01 00  42 49 4e 20  1e 64  66 69 6c 65 2e 62 69 6e"));
+    let mut data = CircularBuffer::<64, u8>::from(hex!(
+        "f0 7e 03 07 01 00  42 49 4e 20  1e 64  66 69 6c 65 2e 62 69 6e"
+    ));
     let result = SysEx::read(&mut data);
     assert!(matches!(result, Some(SysEx::FileDumpHeader(_))));
 }
 
 #[test]
 fn sysex_read_parses_file_dump_header_data() {
-    let mut data = CircularBuffer::<64, u8>::from(
-        hex!("f0 7e 03 07 01 01  42 49 4e 20  1e 24  66 69 6c 65 2e 62 69 6e"));
+    let mut data = CircularBuffer::<64, u8>::from(hex!(
+        "f0 7e 03 07 01 01  42 49 4e 20  1e 24  66 69 6c 65 2e 62 69 6e"
+    ));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::FileDumpHeader(FileDumpHeaderData{
+    let expected = Some(SysEx::FileDumpHeader(FileDumpHeaderData {
         device_id: 3,
         source_id: 1,
         length: 0x121e,
@@ -223,15 +220,16 @@ fn sysex_read_parses_file_dump_header_data() {
 
 #[test]
 fn sysex_read_consumes_all_file_dump_header_data() {
-    let mut data = CircularBuffer::<64, u8>::from(
-        hex!("f0 7e 03 07 01 01  42 49 4e 20  1e 24  66 69 6c 65 2e 62 69 6e   f0 7e"));
+    let mut data = CircularBuffer::<64, u8>::from(hex!(
+        "f0 7e 03 07 01 01  42 49 4e 20  1e 24  66 69 6c 65 2e 62 69 6e   f0 7e"
+    ));
     let _ = SysEx::read(&mut data);
     assert_eq!(data, hex!("f0 7e"));
 }
 
 #[test]
 fn file_dump_header_data_file_type_as_str() {
-    let data = FileDumpHeaderData{
+    let data = FileDumpHeaderData {
         device_id: 0,
         source_id: 0,
         length: 0,
@@ -242,19 +240,21 @@ fn file_dump_header_data_file_type_as_str() {
 
 #[test]
 fn sysex_read_identifies_file_dump_packet_message() {
-    let mut data = CircularBuffer::<64, u8>::from(
-        hex!("f0 7e 03 07 02 71 0f  00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60  5c"));
+    let mut data = CircularBuffer::<64, u8>::from(hex!(
+        "f0 7e 03 07 02 71 0f  00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60  5c"
+    ));
     let result = SysEx::read(&mut data);
     assert!(matches!(result, Some(SysEx::FileDumpPacket(_))));
 }
 
 #[test]
 fn sysex_read_parses_file_dump_packet_data() {
-    let mut data = CircularBuffer::<64, u8>::from(
-        hex!("f0 7e 03 07 02 71 0f  00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60  5c"));
+    let mut data = CircularBuffer::<64, u8>::from(hex!(
+        "f0 7e 03 07 02 71 0f  00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60  5c"
+    ));
     let result = SysEx::read(&mut data);
 
-    let mut expected_data = FileDumpPacketData{
+    let mut expected_data = FileDumpPacketData {
         device_id: 3,
         packet_num: 113,
         checksum_ok: true,
@@ -281,7 +281,7 @@ fn sysex_read_parses_max_length_file_dump_packet() {
         "76"));
     let result = SysEx::read(&mut data);
 
-    let expected_data = FileDumpPacketData{
+    let expected_data = FileDumpPacketData {
         device_id: 3,
         packet_num: 113,
         checksum_ok: true,
@@ -318,7 +318,9 @@ fn sysex_read_rejects_byte_count_over_127() {
         "76"));
     let result = SysEx::read(&mut data);
     assert_eq!(result, None);
-    assert_eq!(data, hex!(
+    assert_eq!(
+        data,
+        hex!(
         "9f"
         "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
         "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
@@ -330,7 +332,8 @@ fn sysex_read_rejects_byte_count_over_127() {
         "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
         "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
         "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "76"));
+        "76")
+    );
 }
 
 #[test]
@@ -338,7 +341,7 @@ fn sysex_read_parses_odd_length_file_dump_packet() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 07 02 71 03  00 01 20 03  28"));
     let result = SysEx::read(&mut data);
 
-    let mut expected_data = FileDumpPacketData{
+    let mut expected_data = FileDumpPacketData {
         device_id: 3,
         packet_num: 113,
         checksum_ok: true,
@@ -354,9 +357,21 @@ fn sysex_read_parses_odd_length_file_dump_packet() {
 fn sysex_read_detects_file_dump_packet_checksum_validity() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 07 02 71 03  00 01 20 03  28"));
     let result = SysEx::read(&mut data).unwrap();
-    assert!(matches!(result, SysEx::FileDumpPacket(FileDumpPacketData{ checksum_ok: true, .. })));
+    assert!(matches!(
+        result,
+        SysEx::FileDumpPacket(FileDumpPacketData {
+            checksum_ok: true,
+            ..
+        })
+    ));
 
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 07 02 71 03  00 01 20 03  29"));
     let result = SysEx::read(&mut data).unwrap();
-    assert!(matches!(result, SysEx::FileDumpPacket(FileDumpPacketData{ checksum_ok: false, .. })));
+    assert!(matches!(
+        result,
+        SysEx::FileDumpPacket(FileDumpPacketData {
+            checksum_ok: false,
+            ..
+        })
+    ));
 }
