@@ -265,3 +265,98 @@ fn sysex_read_parses_file_dump_packet_data() {
     let expected = Some(SysEx::FileDumpPacket(expected_data));
     assert_eq!(result, expected);
 }
+
+#[test]
+fn sysex_read_parses_max_length_file_dump_packet() {
+    let mut data = CircularBuffer::<137, u8>::from(hex!(
+        "f0 7e 03 07 02 71 7f"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "76"));
+    let result = SysEx::read(&mut data);
+
+    let expected_data = FileDumpPacketData{
+        device_id: 3,
+        packet_num: 113,
+        checksum_ok: true,
+        data: hex!(
+            "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
+            "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
+            "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
+            "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
+            "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
+            "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
+            "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
+            "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
+        ),
+        data_size: 112,
+    };
+    let expected = Some(SysEx::FileDumpPacket(expected_data));
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn sysex_read_rejects_byte_count_over_127() {
+    let mut data = CircularBuffer::<256, u8>::from(hex!(
+        "f0 7e 03 07 02 71 9f"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "76"));
+    let result = SysEx::read(&mut data);
+    assert_eq!(result, None);
+    assert_eq!(data, hex!(
+        "9f"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
+        "76"));
+}
+
+#[test]
+fn sysex_read_parses_odd_length_file_dump_packet() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 07 02 71 03  00 01 20 03  28"));
+    let result = SysEx::read(&mut data);
+
+    let mut expected_data = FileDumpPacketData{
+        device_id: 3,
+        packet_num: 113,
+        checksum_ok: true,
+        data: [0; 112],
+        data_size: 3,
+    };
+    expected_data.data[..3].copy_from_slice(&hex!("01 20 03"));
+    let expected = Some(SysEx::FileDumpPacket(expected_data));
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn sysex_read_detects_file_dump_packet_checksum_validity() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 07 02 71 03  00 01 20 03  28"));
+    let result = SysEx::read(&mut data).unwrap();
+    assert!(matches!(result, SysEx::FileDumpPacket(FileDumpPacketData{ checksum_ok: true, .. })));
+
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 07 02 71 03  00 01 20 03  29"));
+    let result = SysEx::read(&mut data).unwrap();
+    assert!(matches!(result, SysEx::FileDumpPacket(FileDumpPacketData{ checksum_ok: false, .. })));
+}
