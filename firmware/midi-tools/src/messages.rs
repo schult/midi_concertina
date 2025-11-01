@@ -300,9 +300,7 @@ pub mod sysex {
         }
 
         pub fn read(reader: &mut impl BufRead) -> Option<Self> {
-            // TODO: If bytes consumed without finding valid packet, try again. Only return None
-            //       when no valid packet exists in the data stream.
-            if let Ok(buffer) = reader.fill_buf() {
+            while let Ok(buffer) = reader.fill_buf() {
                 let total_length = buffer.len();
                 let begin = match buffer.iter().position(|x| *x == 0xF0) {
                     Some(i) => i,
@@ -324,7 +322,7 @@ pub mod sysex {
                 if sysex_id.is_some_and(|x| *x != 0x7E) {
                     // Ignore non-universal SysEx messages
                     reader.consume(end);
-                    return None;
+                    continue;
                 }
 
                 let sub_id_1 = raw_it.clone().nth(3);
@@ -343,16 +341,20 @@ pub mod sysex {
                     _ => {
                         // Ignore unrecognized message types
                         reader.consume(end);
-                        return None;
+                        continue;
                     }
                 };
 
-                reader.consume(if message.is_some() || (end < total_length) {
-                    end
+                if message.is_some() {
+                    reader.consume(end);
+                    return message;
+                } else if end < total_length {
+                    reader.consume(end);
+                    continue;
                 } else {
-                    begin
-                });
-                return message;
+                    reader.consume(begin);
+                    return None;
+                }
             }
 
             None

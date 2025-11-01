@@ -71,6 +71,14 @@ fn sysex_reads_message_after_ignored_data() {
 }
 
 #[test]
+fn sysex_reads_message_after_incomplete_message() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7f   f0 7e 03 7f 3b"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, Some(SysEx::Ack(_))));
+    assert_eq!(data, []);
+}
+
+#[test]
 fn sysex_ignores_non_universal_messages() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 55 03 7f 3b"));
     let result = SysEx::read(&mut data);
@@ -80,6 +88,14 @@ fn sysex_ignores_non_universal_messages() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 00 10 56 03 7f 3b"));
     let result = SysEx::read(&mut data);
     assert!(matches!(result, None));
+    assert_eq!(data, []);
+}
+
+#[test]
+fn sysex_reads_message_after_non_universal_message() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 55 03 7f 3b   f0 7e 03 7f 3b"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, Some(SysEx::Ack(_))));
     assert_eq!(data, []);
 }
 
@@ -129,6 +145,14 @@ fn sysex_read_discards_unrecognized_messages() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 33 3b"));
     let result = SysEx::read(&mut data);
     assert_eq!(result, None);
+    assert_eq!(data, []);
+}
+
+#[test]
+fn sysex_reads_message_unrecognized_message() {
+    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 33 3b   f0 7e 03 7f 3b"));
+    let result = SysEx::read(&mut data);
+    assert!(matches!(result, Some(SysEx::Ack(_))));
     assert_eq!(data, []);
 }
 
@@ -184,14 +208,6 @@ fn sysex_read_parses_eof_data() {
         packet_num: 0x3b,
     }));
     assert_eq!(result, expected);
-}
-
-#[test]
-fn sysex_read_discards_truncated_message() {
-    let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7f   f0 7e 03 7f 3c"));
-    let result = SysEx::read(&mut data);
-    assert!(matches!(result, None));
-    assert_eq!(data, hex!("f0 7e 03 7f 3c"));
 }
 
 #[test]
@@ -318,22 +334,7 @@ fn sysex_read_rejects_byte_count_over_127() {
         "76"));
     let result = SysEx::read(&mut data);
     assert_eq!(result, None);
-    assert_eq!(
-        data,
-        hex!(
-        "9f"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
-        "76")
-    );
+    assert_eq!(data, []);
 }
 
 #[test]
