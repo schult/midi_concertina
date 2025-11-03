@@ -184,27 +184,27 @@ pub mod sysex {
         }))
     }
 
-    fn write_ack<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+    fn write_ack<T: Write>(data: &HandshakeData, writer: &mut T) -> Result<(), T::Error> {
         let raw_data = [0xF0, 0x7E, data.device_id, 0x7F, data.packet_num, 0xF7];
         writer.write_all(&raw_data)
     }
 
-    fn write_nak<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+    fn write_nak<T: Write>(data: &HandshakeData, writer: &mut T) -> Result<(), T::Error> {
         let raw_data = [0xF0, 0x7E, data.device_id, 0x7E, data.packet_num, 0xF7];
         writer.write_all(&raw_data)
     }
 
-    fn write_wait<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+    fn write_wait<T: Write>(data: &HandshakeData, writer: &mut T) -> Result<(), T::Error> {
         let raw_data = [0xF0, 0x7E, data.device_id, 0x7C, data.packet_num, 0xF7];
         writer.write_all(&raw_data)
     }
 
-    fn write_cancel<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+    fn write_cancel<T: Write>(data: &HandshakeData, writer: &mut T) -> Result<(), T::Error> {
         let raw_data = [0xF0, 0x7E, data.device_id, 0x7D, data.packet_num, 0xF7];
         writer.write_all(&raw_data)
     }
 
-    fn write_eof<T: Write>(data: HandshakeData, writer: &mut T) -> Result<(), T::Error> {
+    fn write_eof<T: Write>(data: &HandshakeData, writer: &mut T) -> Result<(), T::Error> {
         let raw_data = [0xF0, 0x7E, data.device_id, 0x7B, data.packet_num, 0xF7];
         writer.write_all(&raw_data)
     }
@@ -360,7 +360,7 @@ pub mod sysex {
             None
         }
 
-        pub fn write<T: Write>(self, writer: &mut T) -> Result<(), T::Error> {
+        pub fn write<T: Write>(&self, writer: &mut T) -> Result<(), T::Error> {
             match self {
                 SysEx::Ack(data) => write_ack(data, writer),
                 SysEx::Nak(data) => write_nak(data, writer),

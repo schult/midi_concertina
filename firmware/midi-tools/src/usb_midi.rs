@@ -1,3 +1,6 @@
+use circular_buffer::CircularBuffer;
+use crate::messages::sysex::SysEx;
+
 #[derive(Debug, PartialEq)]
 #[repr(u8)]
 pub enum Cin {
@@ -43,16 +46,27 @@ impl From<u8> for Cin {
     }
 }
 
-pub struct EventPacket<'a> {
-    pub raw: &'a [u8],
+#[derive(Debug, PartialEq)]
+pub struct EventPacket {
+    pub raw: [u8; 4],
 }
 
-impl<'a> EventPacket<'a> {
-    pub fn parse(buffer: &'a [u8]) -> impl Iterator<Item = Self> {
+impl EventPacket {
+    pub fn parse(buffer: &[u8]) -> impl Iterator<Item = Self> {
         const EVENT_PACKET_SIZE: usize = 4;
         buffer.chunks_exact(EVENT_PACKET_SIZE).map(|x| EventPacket {
             raw: x.try_into().unwrap(),
         })
+    }
+
+    pub fn encode_sysex(cable: u8, message: &SysEx) -> EncodeSysEx {
+        assert!(cable <= 0x0F);
+        let mut it = EncodeSysEx {
+            cable,
+            midi_data: CircularBuffer::<138, u8>::new(),
+        };
+        let _ = message.write(&mut it.midi_data);
+        it
     }
 
     pub fn cable(&self) -> u8 {
@@ -74,5 +88,44 @@ impl<'a> EventPacket<'a> {
         };
         let end = size + 1;
         &self.raw[1..end]
+    }
+}
+
+pub struct EncodeSysEx {
+    cable: u8,
+    midi_data: CircularBuffer<138, u8>,
+}
+
+fn is_data(x: &u8) -> bool {
+    return (*x & 0x80) == 0;
+}
+
+impl Iterator for EncodeSysEx {
+    type Item = EventPacket;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.midi_data.is_empty() {
+            return None;
+        }
+
+        let mut raw = [0; 4];
+
+        raw[0] = 0x05;
+        raw[1] = self.midi_data.pop_front().unwrap();
+        if raw[1] != 0xF7 {
+            let mut i = 2;
+            while i < raw.len() && let Some(byte) = self.midi_data.get(0) && is_data(byte) {
+                raw[0] += 1;
+                raw[i] = self.midi_data.pop_front().unwrap();
+                i += 1;
+            }
+
+            if let Some(byte) = self.midi_data.get(0) && is_data(byte) {
+                raw[0] = 0x04;
+            }
+        }
+
+        raw[0] |= self.cable << 4;
+        Some(EventPacket { raw })
     }
 }
