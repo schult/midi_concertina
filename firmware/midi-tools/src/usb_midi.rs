@@ -96,10 +96,6 @@ pub struct EncodeSysEx {
     midi_data: CircularBuffer<138, u8>,
 }
 
-fn is_data(x: &u8) -> bool {
-    return (*x & 0x80) == 0;
-}
-
 impl Iterator for EncodeSysEx {
     type Item = EventPacket;
 
@@ -109,20 +105,20 @@ impl Iterator for EncodeSysEx {
         }
 
         let mut raw = [0; 4];
+        raw[0] = 0x04;
 
-        raw[0] = 0x05;
-        raw[1] = self.midi_data.pop_front().unwrap();
-        if raw[1] != 0xF7 {
-            let mut i = 2;
-            while i < raw.len() && let Some(byte) = self.midi_data.get(0) && is_data(byte) {
-                raw[0] += 1;
-                raw[i] = self.midi_data.pop_front().unwrap();
-                i += 1;
+        for i in 1..4 {
+            match self.midi_data.pop_front() {
+                Some(byte) => {
+                    raw[0] += 1;
+                    raw[i] = byte;
+                }
+                None => break
             }
+        }
 
-            if let Some(byte) = self.midi_data.get(0) && is_data(byte) {
-                raw[0] = 0x04;
-            }
+        if !self.midi_data.is_empty() {
+            raw[0] = 0x04;
         }
 
         raw[0] |= self.cable << 4;

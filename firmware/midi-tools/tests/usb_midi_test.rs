@@ -176,7 +176,6 @@ fn encode_sysex_ack() {
     let message = SysEx::ack(device_id, packet_num);
     let mut it = EventPacket::encode_sysex(cable, &message);
     assert_eq!(it.next(), Some(EventPacket{ raw: hex!("c4 f0 7e 01") }));
-    assert_eq!(it.next(), Some(EventPacket{ raw: hex!("c6 7f 4b 00") }));
-    assert_eq!(it.next(), Some(EventPacket{ raw: hex!("c5 f7 00 00") }));
+    assert_eq!(it.next(), Some(EventPacket{ raw: hex!("c7 7f 4b f7") }));
     assert_eq!(it.next(), None);
 }
