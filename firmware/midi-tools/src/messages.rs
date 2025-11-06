@@ -78,6 +78,9 @@ pub mod sysex {
             return None;
         }
         let packet_num = *it.next()?;
+        if *it.next()? != 0xF7 {
+            return None;
+        }
         Some(HandshakeData {
             device_id,
             packet_num,
@@ -131,6 +134,8 @@ pub mod sysex {
             length |= byte << (7 * i);
         }
 
+        while *it.next()? != 0xF7 {}
+
         Some(SysEx::FileDumpHeader(FileDumpHeaderData {
             device_id,
             source_id,
@@ -174,6 +179,10 @@ pub mod sysex {
         }
 
         let checksum_ok = *it.next()? == checksum;
+
+        if *it.next()? != 0xF7 {
+            return None;
+        }
 
         Some(SysEx::FileDumpPacket(FileDumpPacketData {
             device_id,
@@ -301,21 +310,34 @@ pub mod sysex {
 
         pub fn read(reader: &mut impl BufRead) -> Option<Self> {
             while let Ok(buffer) = reader.fill_buf() {
-                let total_length = buffer.len();
-                let begin = match buffer.iter().position(|x| *x == 0xF0) {
-                    Some(i) => i,
-                    None => buffer.len(),
+                match buffer.iter().position(|x| *x == 0xF0) {
+                    Some(0) => (),
+                    // Ignore non-SysEx messages
+                    Some(i) => {
+                        reader.consume(i);
+                        continue;
+                    },
+                    None => {
+                        let length = buffer.len();
+                        reader.consume(length);
+                        break;
+                    },
                 };
-                let length = match buffer[begin..]
+
+                let data_end = match buffer
                     .iter()
                     .skip(1)
                     .position(|x| !is_data(x) && !is_sys_rt(x))
                 {
                     Some(i) => i + 1,
-                    None => buffer[begin..].len(),
+                    None => break,
                 };
-                let end = begin + length;
-                let raw = &buffer[begin..end];
+                let end = match buffer.get(data_end) {
+                    Some(0xF7) => data_end + 1,
+                    _ => data_end,
+                };
+
+                let raw = &buffer[..end];
                 let mut raw_it = raw.iter().filter(|x| !is_sys_rt(x));
 
                 let sysex_id = raw_it.clone().nth(1);
@@ -337,23 +359,12 @@ pub mod sysex {
                     // TODO: (Some(0x06), Some(0x02)) => IdentityReply
                     (Some(0x07), Some(0x01)) => parse_file_dump_header(&mut raw_it),
                     (Some(0x07), Some(0x02)) => parse_file_dump_packet(&mut raw_it),
-                    (None, _) => None,
-                    _ => {
-                        // Ignore unrecognized message types
-                        reader.consume(end);
-                        continue;
-                    }
+                    _ => None,
                 };
 
+                reader.consume(end);
                 if message.is_some() {
-                    reader.consume(end);
                     return message;
-                } else if end < total_length {
-                    reader.consume(end);
-                    continue;
-                } else {
-                    reader.consume(begin);
-                    return None;
                 }
             }
 
