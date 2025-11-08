@@ -4,12 +4,9 @@
 use core::cell::RefCell;
 
 use cortex_m_rt::entry;
-use embassy_boot_stm32::{
-    BootLoader,
-    BootLoaderConfig,
-};
-use embassy_stm32::rcc;
+use embassy_boot_stm32::{BootLoader, BootLoaderConfig};
 use embassy_stm32::flash::{self, Flash};
+use embassy_stm32::rcc;
 use embassy_sync::blocking_mutex::Mutex;
 use embedded_storage::nor_flash::NorFlash;
 use panic_reset as _;

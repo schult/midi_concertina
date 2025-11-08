@@ -85,8 +85,12 @@ async fn control_panel_task(
         playing = !playing;
 
         let packet = match playing {
-            false => usb_midi::EventPacket{ raw: [0x08, 0x80, 69, 127] },
-            true => usb_midi::EventPacket{ raw: [0x09, 0x90, 69, 127] },
+            false => usb_midi::EventPacket {
+                raw: [0x08, 0x80, 69, 127],
+            },
+            true => usb_midi::EventPacket {
+                raw: [0x09, 0x90, 69, 127],
+            },
         };
         midi_out_channel.send(packet).await;
 
