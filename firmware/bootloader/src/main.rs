@@ -8,11 +8,10 @@ use embassy_boot_stm32::{
     BootLoader,
     BootLoaderConfig,
 };
-use embassy_stm32::{
-    flash,
-    rcc,
-};
+use embassy_stm32::rcc;
+use embassy_stm32::flash::{self, Flash};
 use embassy_sync::blocking_mutex::Mutex;
+use embedded_storage::nor_flash::NorFlash;
 use panic_reset as _;
 
 #[entry]
@@ -22,12 +21,13 @@ fn main() -> ! {
     config.rcc.sys = rcc::Sysclk::HSI;
     let p = embassy_stm32::init(config);
 
-    let flash_layout = flash::Flash::new_blocking(p.FLASH).into_blocking_regions();
+    let flash_layout = Flash::new_blocking(p.FLASH).into_blocking_regions();
     let flash = Mutex::new(RefCell::new(flash_layout.bank1_region));
 
     let config = BootLoaderConfig::from_linkerfile_blocking(&flash, &flash, &flash);
     let active_offset = config.active.offset();
-    let bl = BootLoader::prepare::<_, _, _, 128>(config);
+    const PAGE_SIZE: usize = Flash::<flash::Blocking>::ERASE_SIZE;
+    let bl = BootLoader::prepare::<_, _, _, PAGE_SIZE>(config);
 
     unsafe { bl.load(flash::BANK1_REGION.base + active_offset) }
 }
