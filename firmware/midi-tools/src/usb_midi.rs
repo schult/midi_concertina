@@ -1,5 +1,5 @@
-use circular_buffer::CircularBuffer;
 use crate::messages::sysex::SysEx;
+use circular_buffer::CircularBuffer;
 
 #[derive(Debug, PartialEq)]
 #[repr(u8)]
@@ -113,7 +113,7 @@ impl Iterator for EncodeSysEx {
                     raw[0] += 1;
                     raw[i] = byte;
                 }
-                None => break
+                None => break,
             }
         }
 

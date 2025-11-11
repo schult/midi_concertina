@@ -1,5 +1,5 @@
 pub mod sysex {
-    use embedded_io::{ BufRead, Write };
+    use embedded_io::{BufRead, Write};
 
     #[derive(Debug, PartialEq)]
     pub struct HandshakeData {
@@ -218,6 +218,69 @@ pub mod sysex {
         writer.write_all(&raw_data)
     }
 
+    fn write_file_dump_header<T: Write>(
+        data: &FileDumpHeaderData,
+        writer: &mut T,
+    ) -> Result<(), T::Error> {
+        let raw_data = [
+            0xF0,
+            0x7E,
+            data.device_id,
+            0x07,
+            0x01,
+            data.source_id,
+            data.raw_file_type[0],
+            data.raw_file_type[1],
+            data.raw_file_type[2],
+            data.raw_file_type[3],
+            (data.length & 0x7F) as u8,
+            ((data.length >> 7) & 0x7F) as u8,
+            ((data.length >> 14) & 0x7F) as u8,
+            ((data.length >> 21) & 0x7F) as u8,
+            0xF7,
+        ];
+        writer.write_all(&raw_data)
+    }
+
+    fn write_file_dump_packet<T: Write>(
+        data: &FileDumpPacketData,
+        writer: &mut T,
+    ) -> Result<(), T::Error> {
+        let unencoded = data.data();
+        let byte_count = unencoded.len() + ((unencoded.len() + 6) / 7) - 1;
+        let byte_count = byte_count as u8;
+
+        let prelude = [0xF0, 0x7E, data.device_id, 0x07, 0x02, data.packet_num, byte_count];
+        writer.write_all(&prelude)?;
+
+        let mut checksum = 0x7E ^ data.device_id ^ 0x07 ^ 0x02 ^ data.packet_num ^ byte_count;
+
+        let chunks = unencoded.chunks_exact(7);
+        let remainder = chunks.remainder();
+        for chunk in chunks {
+            let mut encoded = [0; 8];
+            for (i, byte) in chunk.iter().enumerate() {
+                encoded[0] |= (byte & 0x80) >> (i+1);
+                encoded[i+1] = byte & 0x7F;
+                checksum ^= encoded[i+1];
+            }
+            checksum ^= encoded[0];
+            writer.write_all(&encoded)?;
+        }
+
+        let mut encoded = [0; 8];
+        for (i, byte) in remainder.iter().enumerate() {
+            encoded[0] |= (byte & 0x80) >> (i+1);
+            encoded[i+1] = byte & 0x7F;
+            checksum ^= encoded[i+1];
+        }
+        checksum ^= encoded[0];
+        writer.write_all(&encoded[..=remainder.len()])?;
+
+        let postlude = [checksum, 0xF7];
+        writer.write_all(&postlude)
+    }
+
     fn is_data(x: &u8) -> bool {
         return (*x & 0x80) == 0;
     }
@@ -230,31 +293,46 @@ pub mod sysex {
         pub fn ack(device_id: u8, packet_num: u8) -> Self {
             assert!(device_id <= 0x7F);
             assert!(packet_num <= 0x7F);
-            SysEx::Ack(HandshakeData { device_id, packet_num })
+            SysEx::Ack(HandshakeData {
+                device_id,
+                packet_num,
+            })
         }
 
         pub fn nak(device_id: u8, packet_num: u8) -> Self {
             assert!(device_id <= 0x7F);
             assert!(packet_num <= 0x7F);
-            SysEx::Nak(HandshakeData { device_id, packet_num })
+            SysEx::Nak(HandshakeData {
+                device_id,
+                packet_num,
+            })
         }
 
         pub fn wait(device_id: u8, packet_num: u8) -> Self {
             assert!(device_id <= 0x7F);
             assert!(packet_num <= 0x7F);
-            SysEx::Wait(HandshakeData { device_id, packet_num })
+            SysEx::Wait(HandshakeData {
+                device_id,
+                packet_num,
+            })
         }
 
         pub fn cancel(device_id: u8, packet_num: u8) -> Self {
             assert!(device_id <= 0x7F);
             assert!(packet_num <= 0x7F);
-            SysEx::Cancel(HandshakeData { device_id, packet_num })
+            SysEx::Cancel(HandshakeData {
+                device_id,
+                packet_num,
+            })
         }
 
         pub fn eof(device_id: u8, packet_num: u8) -> Self {
             assert!(device_id <= 0x7F);
             assert!(packet_num <= 0x7F);
-            SysEx::Eof(HandshakeData { device_id, packet_num })
+            SysEx::Eof(HandshakeData {
+                device_id,
+                packet_num,
+            })
         }
 
         pub fn identity_request(device_id: u8) -> Self {
@@ -262,7 +340,13 @@ pub mod sysex {
             SysEx::IdentityRequest(IdentityRequestData { device_id })
         }
 
-        pub fn identity_reply(device_id: u8, manufacturer_id: u8, device_family_code: u16, device_family_member_code: u16, software_rev: &[u8]) -> Self {
+        pub fn identity_reply(
+            device_id: u8,
+            manufacturer_id: u8,
+            device_family_code: u16,
+            device_family_member_code: u16,
+            software_rev: &[u8],
+        ) -> Self {
             assert!(device_id <= 0x7F);
             assert!(manufacturer_id <= 0x7F);
             assert!(device_family_code <= 0x3FFF);
@@ -279,7 +363,12 @@ pub mod sysex {
             })
         }
 
-        pub fn file_dump_header(device_id: u8, source_id: u8, length: u32, file_type: &str) -> Self {
+        pub fn file_dump_header(
+            device_id: u8,
+            source_id: u8,
+            length: u32,
+            file_type: &str,
+        ) -> Self {
             assert!(device_id <= 0x7F);
             assert!(source_id <= 0x7F);
             assert!(length <= 0x0FFFFFFF);
@@ -316,12 +405,12 @@ pub mod sysex {
                     Some(i) => {
                         reader.consume(i);
                         continue;
-                    },
+                    }
                     None => {
                         let length = buffer.len();
                         reader.consume(length);
                         break;
-                    },
+                    }
                 };
 
                 let data_end = match buffer
@@ -379,9 +468,9 @@ pub mod sysex {
                 SysEx::Cancel(data) => write_cancel(data, writer),
                 SysEx::Eof(data) => write_eof(data, writer),
                 SysEx::IdentityRequest(_) => Ok(()), // TODO
-                SysEx::IdentityReply(_) => Ok(()), // TODO
-                SysEx::FileDumpHeader(_) => Ok(()), // TODO
-                SysEx::FileDumpPacket(_) => Ok(()), // TODO
+                SysEx::IdentityReply(_) => Ok(()),   // TODO
+                SysEx::FileDumpHeader(data) => write_file_dump_header(data, writer),
+                SysEx::FileDumpPacket(data) => write_file_dump_packet(data, writer),
             }
         }
     }

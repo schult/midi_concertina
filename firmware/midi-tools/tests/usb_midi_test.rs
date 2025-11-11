@@ -100,14 +100,8 @@ fn event_packet_extracts_cin() {
     assert_eq!(packets.next().unwrap().cin(), Cin::PolyKeyPress);
     assert_eq!(packets.next().unwrap().cin(), Cin::ControlChange);
     assert_eq!(packets.next().unwrap().cin(), Cin::ProgramChange);
-    assert_eq!(
-        packets.next().unwrap().cin(),
-        Cin::ChannelPressure
-    );
-    assert_eq!(
-        packets.next().unwrap().cin(),
-        Cin::PitchBendChange
-    );
+    assert_eq!(packets.next().unwrap().cin(), Cin::ChannelPressure);
+    assert_eq!(packets.next().unwrap().cin(), Cin::PitchBendChange);
     assert_eq!(packets.next().unwrap().cin(), Cin::SingleByte);
     assert_eq!(packets.next().unwrap().cin(), Cin::Misc);
     assert_eq!(packets.next().unwrap().cin(), Cin::CableEvent);
@@ -175,7 +169,17 @@ fn encode_sysex_ack() {
     let packet_num = 0x4B;
     let message = SysEx::ack(device_id, packet_num);
     let mut it = EventPacket::encode_sysex(cable, &message);
-    assert_eq!(it.next(), Some(EventPacket{ raw: hex!("c4 f0 7e 01") }));
-    assert_eq!(it.next(), Some(EventPacket{ raw: hex!("c7 7f 4b f7") }));
+    assert_eq!(
+        it.next(),
+        Some(EventPacket {
+            raw: hex!("c4 f0 7e 01")
+        })
+    );
+    assert_eq!(
+        it.next(),
+        Some(EventPacket {
+            raw: hex!("c7 7f 4b f7")
+        })
+    );
     assert_eq!(it.next(), None);
 }
