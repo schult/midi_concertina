@@ -268,14 +268,16 @@ pub mod sysex {
             writer.write_all(&encoded)?;
         }
 
-        let mut encoded = [0; 8];
-        for (i, byte) in remainder.iter().enumerate() {
-            encoded[0] |= (byte & 0x80) >> (i+1);
-            encoded[i+1] = byte & 0x7F;
-            checksum ^= encoded[i+1];
+        if !remainder.is_empty() {
+            let mut encoded = [0; 8];
+            for (i, byte) in remainder.iter().enumerate() {
+                encoded[0] |= (byte & 0x80) >> (i+1);
+                encoded[i+1] = byte & 0x7F;
+                checksum ^= encoded[i+1];
+            }
+            checksum ^= encoded[0];
+            writer.write_all(&encoded[..=remainder.len()])?;
         }
-        checksum ^= encoded[0];
-        writer.write_all(&encoded[..=remainder.len()])?;
 
         let postlude = [checksum, 0xF7];
         writer.write_all(&postlude)
