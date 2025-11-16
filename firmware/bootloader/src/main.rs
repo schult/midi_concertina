@@ -21,9 +21,9 @@ fn main() -> ! {
     let flash = Mutex::new(RefCell::new(flash));
 
     let config = BootLoaderConfig::from_linkerfile_blocking(&flash, &flash, &flash);
-    let active_offset = config.active.offset();
-    const PAGE_SIZE: usize = flash::BANK1_REGION.erase_size as usize;
+    let boot_address = flash::BANK1_REGION.base + config.active.offset();
+    const PAGE_SIZE: usize = flash::MAX_ERASE_SIZE;
     let bl = BootLoader::prepare::<_, _, _, PAGE_SIZE>(config);
 
-    unsafe { bl.load(flash::BANK1_REGION.base + active_offset) }
+    unsafe { bl.load(boot_address) }
 }
