@@ -718,12 +718,25 @@ fn sysex_write_file_dump_header() {
 }
 
 #[test]
-fn sysex_write_file_dump_packet() {
+fn sysex_write_file_dump_packet_with_payload_divisible_by_7_bytes() {
     let mut output = CircularBuffer::<64, u8>::new();
     const DEVICE_ID: u8 = 3;
     const PACKET_NUM: u8 = 0x3A;
-    let data = hex!("20 03 40 0c d0 0e f0  f0 80 77");
-    let message = SysEx::file_dump_packet(DEVICE_ID, PACKET_NUM, &data);
+    let payload = hex!("20 03 40 0c d0 0e f0");
+    let message = SysEx::file_dump_packet(DEVICE_ID, PACKET_NUM, &payload);
+    let result = message.write(&mut output);
+    assert_eq!(result, Ok(()));
+    assert_eq!(output, hex!("f0 7e 03 07 02 3a  07  05 20 03 40 0c 50 0e 70  01 f7"));
+    assert_eq!(Some(message), SysEx::read(&mut output));
+}
+
+#[test]
+fn sysex_write_file_dump_packet_with_payload_not_divisible_by_7_bytes() {
+    let mut output = CircularBuffer::<64, u8>::new();
+    const DEVICE_ID: u8 = 3;
+    const PACKET_NUM: u8 = 0x3A;
+    let payload = hex!("20 03 40 0c d0 0e f0  f0 80 77");
+    let message = SysEx::file_dump_packet(DEVICE_ID, PACKET_NUM, &payload);
     let result = message.write(&mut output);
     assert_eq!(result, Ok(()));
     assert_eq!(output, hex!("f0 7e 03 07 02 3a  0b  05 20 03 40 0c 50 0e 70  60 70 00 77  6a f7"));
