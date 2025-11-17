@@ -82,6 +82,6 @@ fn main() {
             break;
         }
 
-        packet_num = (packet_num + 1) % 0x7F;
+        packet_num = (packet_num + 1) % 0x80;
     }
 }

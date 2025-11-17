@@ -722,7 +722,7 @@ dependencies = [
  "embassy-sync",
  "embassy-time",
  "embassy-usb",
- "embedded-storage",
+ "embedded-storage-async",
  "midi-tools",
  "panic-probe",
  "portable-atomic",

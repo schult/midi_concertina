@@ -2,8 +2,9 @@
 #![no_main]
 
 use circular_buffer::CircularBuffer;
-use defmt::{info, warn, panic};
+use defmt::panic;
 use defmt_rtt as _;
+use embassy_boot::FirmwareUpdaterError;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::{self, Flash};
@@ -14,8 +15,10 @@ use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
 use embassy_usb::class::midi;
 use embassy_usb::driver::EndpointError;
+use embedded_storage_async::nor_flash::NorFlash;
 use midi_tools::messages::sysex::SysEx;
 use midi_tools::usb_midi;
+use midi_tools::file_dump::{FileDumpReceiver, FileWriter, SysExOutput};
 use panic_probe as _;
 use static_cell::StaticCell;
 
@@ -25,11 +28,88 @@ bind_interrupts!(struct Irqs {
 
 const USB_MIDI_CABLE: u8 = 0;
 const SYSEX_DEVICE_ID: u8 = 0x01;
-const SYSEX_ANY_DEVICE: u8 = 0x7F;
 
 type EventPacketChannel = Channel<NoopRawMutex, usb_midi::EventPacket, 32>;
 type EventPacketSender = Sender<'static, NoopRawMutex, usb_midi::EventPacket, 32>;
 type EventPacketReceiver = Receiver<'static, NoopRawMutex, usb_midi::EventPacket, 32>;
+
+struct DfuWriter<'a, DFU: NorFlash, STATE: NorFlash> {
+    updater: FirmwareUpdater<'a, DFU, STATE>,
+    buffer: CircularBuffer<256, u8>,
+    offset: usize,
+}
+
+impl<'a, DFU: NorFlash, STATE: NorFlash> DfuWriter<'a, DFU, STATE> {
+    const PAGE_SIZE: usize = DFU::ERASE_SIZE;
+
+    fn new(updater: FirmwareUpdater<'a, DFU, STATE>) -> Self {
+        let writer = DfuWriter {
+            updater,
+            buffer: CircularBuffer::<256, u8>::new(),
+            offset: 0,
+        };
+        assert!(writer.buffer.capacity() >= 2 * Self::PAGE_SIZE);
+        writer
+    }
+
+    async fn write_len(&mut self, len: usize) -> Result<(), FirmwareUpdaterError> {
+        assert!(len <= self.buffer.len());
+        assert!(len <= Self::PAGE_SIZE);
+        while self.buffer.len() < Self::PAGE_SIZE {
+            self.buffer.push_back(0);
+        }
+        self.updater.write_firmware(self.offset, &self.buffer.make_contiguous()[..Self::PAGE_SIZE]).await?;
+        let _ = self.buffer.drain(..Self::PAGE_SIZE);
+        self.offset += len;
+        Ok(())
+    }
+}
+
+impl<'a, DFU: NorFlash, STATE: NorFlash> FileWriter for DfuWriter<'a, DFU, STATE> {
+    type ErrorType = FirmwareUpdaterError;
+
+    async fn open(&mut self) -> Result<(), Self::ErrorType> {
+        self.buffer.clear();
+        self.offset = 0;
+        Ok(())
+    }
+
+    async fn write(&mut self, data: &[u8]) -> Result<(), Self::ErrorType> {
+        self.buffer.extend_from_slice(data);
+        while self.buffer.len() >= Self::PAGE_SIZE {
+            self.write_len(Self::PAGE_SIZE).await?;
+        }
+        Ok(())
+    }
+
+    async fn close(&mut self) -> Result<(), Self::ErrorType> {
+        if !self.buffer.is_empty() {
+            self.write_len(self.buffer.len()).await?;
+        }
+        self.updater.mark_updated().await?;
+        cortex_m::peripheral::SCB::sys_reset();
+    }
+}
+
+struct SysExChannelAdapter {
+    channel: EventPacketSender,
+    cable: u8,
+}
+
+impl SysExChannelAdapter {
+    fn new(channel: EventPacketSender, cable: u8) -> Self {
+        assert!(cable <= 0x0F);
+        SysExChannelAdapter { channel, cable }
+    }
+}
+
+impl SysExOutput for SysExChannelAdapter {
+    async fn send(&mut self, sysex: SysEx) {
+        for event_packet in usb_midi::EventPacket::encode_sysex(self.cable, &sysex) {
+            self.channel.send(event_packet).await;
+        }
+    }
+}
 
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
@@ -89,27 +169,15 @@ async fn firmware_task(
     let flash = Mutex::new(BlockingAsync::new(flash));
     let updater_config = FirmwareUpdaterConfig::from_linkerfile(&flash, &flash);
 
-    const PAGE_SIZE: usize = flash::MAX_ERASE_SIZE;
-    let max_firmware_size: usize = updater_config.dfu.size() as usize - PAGE_SIZE;
     let mut aligned_buffer = AlignedBuffer([0; flash::WRITE_SIZE]);
     let mut updater = FirmwareUpdater::new(updater_config, aligned_buffer.as_mut());
     updater.mark_booted().await.unwrap();
 
-    let send = async |sysex: SysEx| {
-        for event_packet in usb_midi::EventPacket::encode_sysex(USB_MIDI_CABLE, &sysex) {
-            midi_out_channel.send(event_packet).await;
-        }
-    };
-
-    struct FileDumpProgress {
-        source_id: u8,
-        next_packet: u8,
-        offset: usize,
-    }
-    let mut state: Option<FileDumpProgress> = None;
+    let mut dfu_writer = DfuWriter::new(updater);
+    let mut sysex_adapter = SysExChannelAdapter::new(midi_out_channel, USB_MIDI_CABLE);
+    let mut receiver = FileDumpReceiver::new(&mut dfu_writer, &mut sysex_adapter, SYSEX_DEVICE_ID, "BIN ");
 
     let mut midi_buffer = CircularBuffer::<512, u8>::new();
-    let mut file_buffer = CircularBuffer::<256, u8>::new();
 
     loop {
         let event_packet = midi_in_channel.receive().await;
@@ -120,107 +188,7 @@ async fn firmware_task(
             None => continue,
         };
 
-        if let SysEx::FileDumpHeader(header) = sysex {
-            if header.device_id != SYSEX_DEVICE_ID && header.device_id != SYSEX_ANY_DEVICE {
-                continue;
-            }
-
-            if header.file_type() != "BIN " {
-                warn!("CANCEL");
-                send(SysEx::cancel(header.source_id, 0)).await;
-                continue;
-            }
-
-            if header.length as usize > max_firmware_size {
-                warn!("CANCEL");
-                send(SysEx::cancel(header.source_id, 0)).await;
-                continue;
-            }
-
-            file_buffer.clear();
-            /*
-            let result = updater.prepare_update().await;
-            if result.is_ok() {
-                send(SysEx::ack(header.source_id, 0)).await;
-                state = Some(FileDumpProgress{ source_id: header.source_id, next_packet: 0, offset: 0 });
-            } else {
-                warn!("CANCEL");
-                send(SysEx::cancel(header.source_id, 0)).await;
-            }
-            */
-            send(SysEx::ack(header.source_id, 0)).await;
-            state = Some(FileDumpProgress{ source_id: header.source_id, next_packet: 0, offset: 0 });
-        } else if let Some(progress) = &mut state {
-            match sysex {
-                SysEx::FileDumpPacket(packet) => {
-                    if packet.device_id != SYSEX_DEVICE_ID && packet.device_id != SYSEX_ANY_DEVICE {
-                        continue;
-                    }
-
-                    if packet.packet_num != progress.next_packet {
-                        warn!("CANCEL");
-                        send(SysEx::cancel(progress.source_id, packet.packet_num)).await;
-                        state = None;
-                        continue;
-                    }
-
-                    if !packet.checksum_ok {
-                        send(SysEx::nak(progress.source_id, packet.packet_num)).await;
-                        continue;
-                    }
-
-                    file_buffer.extend_from_slice(packet.data());
-                    if file_buffer.len() >= PAGE_SIZE {
-                        if progress.offset + PAGE_SIZE > max_firmware_size {
-                            warn!("CANCEL");
-                            send(SysEx::cancel(progress.source_id, packet.packet_num)).await;
-                            state = None;
-                            continue;
-                        }
-
-                        let mut buffer = [0; PAGE_SIZE];
-                        for i in 0..PAGE_SIZE {
-                            buffer[i] = file_buffer.pop_front().unwrap();
-                        }
-                        // info!("{:x}", buffer);
-                        let result = updater.write_firmware(progress.offset, &buffer).await;
-                        if result.is_err() {
-                            warn!("CANCEL");
-                            send(SysEx::cancel(progress.source_id, packet.packet_num)).await;
-                            state = None;
-                            continue;
-                        }
-                        progress.offset += buffer.len();
-                    }
-
-                    progress.next_packet = (progress.next_packet + 1) % 0x7F;
-
-                    send(SysEx::ack(progress.source_id, packet.packet_num)).await;
-                },
-                SysEx::Eof(_) => {
-                    if !file_buffer.is_empty() {
-                        let mut buffer = [0; PAGE_SIZE];
-                        for i in 0..file_buffer.len() {
-                            buffer[i] = file_buffer.pop_front().unwrap();
-                        }
-                        // info!("{:x}", buffer);
-                        let result = updater.write_firmware(progress.offset, &buffer).await;
-                        if result.is_err() {
-                            state = None;
-                            continue;
-                        }
-                    }
-
-                    info!("MARKING UPDATED");
-                    Timer::after_secs(1).await;
-                    let _ = updater.mark_updated().await;
-                    info!("RESET");
-                    Timer::after_secs(1).await;
-                    cortex_m::peripheral::SCB::sys_reset();
-                },
-                _ => (),
-            }
-        }
+        receiver.process(sysex).await;
     }
 }
 
@@ -233,8 +201,8 @@ async fn control_panel_task(
     let mut playing = false;
 
     loop {
-        // playing = !playing;
-        playing = button.is_high();
+        playing = !playing;
+        // playing = button.is_high();
 
         // TODO: This is disabled so it doesn't interfere with sending sysex messages
         // let packet = match playing {
