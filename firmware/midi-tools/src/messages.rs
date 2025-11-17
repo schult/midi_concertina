@@ -1,6 +1,8 @@
 pub mod sysex {
     use embedded_io::{BufRead, Write};
 
+    pub const ALL_CALL_DEVICE_ID: u8 = 0x7F;
+
     #[derive(Debug, PartialEq)]
     pub struct HandshakeData {
         pub device_id: u8,
