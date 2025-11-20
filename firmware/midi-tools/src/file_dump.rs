@@ -68,14 +68,14 @@ impl<'a, T: FileWriter, U: SysExOutput> FileDumpReceiver<'a, T, U> {
                 return;
             }
 
-            // TODO: Send SysEx::wait()
+            self.sysex.send(SysEx::wait(header.source_id, 0)).await;
             let result = self.file.open().await;
             if result.is_err() {
                 self.sysex.send(SysEx::cancel(header.source_id, 0)).await;
                 return;
             }
             self.sysex.send(SysEx::ack(header.source_id, 0)).await;
-            self.progress = Some(FileDumpProgress{ source_id: header.source_id, packet_num: 0x7F });
+            self.progress = Some(FileDumpProgress{ source_id: header.source_id, packet_num: 0 });
         } else if let Some(progress) = &mut self.progress {
             match sysex {
                 SysEx::FileDumpPacket(packet) => {
@@ -83,27 +83,30 @@ impl<'a, T: FileWriter, U: SysExOutput> FileDumpReceiver<'a, T, U> {
                         return;
                     }
 
-                    if packet.packet_num != progress.next_packet() {
+                    if packet.packet_num != progress.packet_num {
                         self.cancel().await;
                         return;
                     }
-
-                    progress.packet_num = packet.packet_num;
 
                     if !packet.checksum_ok {
                         self.sysex.send(SysEx::nak(progress.source_id, progress.packet_num)).await;
                         return;
                     }
 
-                    // TODO: Send SysEx::wait()
+                    self.sysex.send(SysEx::wait(progress.source_id, progress.packet_num)).await;
                     let result = self.file.write(packet.data()).await;
                     if result.is_err() {
                         self.cancel().await;
                         return;
                     }
                     self.sysex.send(SysEx::ack(progress.source_id, progress.packet_num)).await;
+                    progress.packet_num = progress.next_packet();
                 },
-                SysEx::Eof(_) => {
+                SysEx::Eof(handshake) => {
+                    if ![self.device_id, ALL_CALL_DEVICE_ID].contains(&handshake.device_id) {
+                        return;
+                    }
+
                     let _ = self.file.close().await;
                     self.progress = None;
                 },
