@@ -9,6 +9,7 @@
 	(paper "USLetter")
 	(title_block
 		(title "MIDI Concertina Bellows Sensor")
+		(rev "1")
 		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
 		(comment 2 "Licensed under CERN-OHL-S v2 or any later version")
 		(comment 3 "Copyright 2025 Steven Schulteis")
@@ -1940,7 +1941,7 @@
 		(layer "Edge.Cuts")
 		(uuid "e1af28ce-0e2b-4e7f-881d-4adc5c42c330")
 	)
-	(gr_text "MIDI Concertina\nBellows Sensor - Rev 1"
+	(gr_text "MIDI Concertina\nBellows Sensor - Rev ${REVISION}"
 		(at 156 96 0)
 		(layer "B.SilkS")
 		(uuid "d1309236-4a74-4bc4-8d44-f9a8090289ec")

@@ -17284,7 +17284,7 @@
 		(layer "Edge.Cuts")
 		(uuid "c9bdcece-96f9-41ca-b922-2e8a9cbf3949")
 	)
-	(gr_text "MIDI Anglo Left Hand - Rev 1"
+	(gr_text "MIDI Anglo Left Hand - Rev ${REVISION}"
 		(at 80 106 0)
 		(layer "B.SilkS")
 		(uuid "88e265b4-388e-4724-bf36-434e51063549")
