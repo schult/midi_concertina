@@ -3382,6 +3382,10 @@
 		(uuid "72dfd69e-a978-4a05-874e-5ca648ba29ea")
 	)
 	(no_connect
+		(at 88.9 110.49)
+		(uuid "77ba056d-c93f-45c9-be94-9acfb2f0c2d5")
+	)
+	(no_connect
 		(at 88.9 85.09)
 		(uuid "78ad09c0-260d-4b37-a208-0e62918cb792")
 	)
@@ -3396,6 +3400,10 @@
 	(no_connect
 		(at 124.46 105.41)
 		(uuid "8bf462d8-9505-4a75-9987-8690a99d9ac7")
+	)
+	(no_connect
+		(at 194.31 187.96)
+		(uuid "9e68a138-899f-4590-82e4-cd7417ff9c54")
 	)
 	(no_connect
 		(at 88.9 120.65)
@@ -4453,16 +4461,6 @@
 	)
 	(wire
 		(pts
-			(xy 196.85 187.96) (xy 194.31 187.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "67d58e56-c191-41e1-84bd-bce06372c81f")
-	)
-	(wire
-		(pts
 			(xy 335.28 149.86) (xy 337.82 149.86)
 		)
 		(stroke
@@ -5150,16 +5148,6 @@
 			(type default)
 		)
 		(uuid "9c386262-a918-4448-9e59-6ca7921c6bc6")
-	)
-	(wire
-		(pts
-			(xy 86.36 110.49) (xy 88.9 110.49)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9c8813e8-8a46-4099-b3e4-133fc9544582")
 	)
 	(wire
 		(pts
@@ -6519,28 +6507,6 @@
 			)
 		)
 	)
-	(global_label "UART_TX"
-		(shape output)
-		(at 86.36 110.49 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "19c5b092-dfdc-474d-a2d0-1fc496d21ab4")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 75.5734 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "BUTTON_EN_5a"
 		(shape output)
 		(at 127 87.63 0)
@@ -7395,28 +7361,6 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "UART_TX"
-		(shape input)
-		(at 196.85 187.96 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "b1a7b3dd-fd20-4910-87a1-5ce1cbce485e")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 207.6366 187.96 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
 				(hide yes)
 			)
 		)
