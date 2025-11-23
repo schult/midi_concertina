@@ -1,16 +1,17 @@
 #![no_std]
 #![no_main]
 
-use defmt::info;
 use defmt_rtt as _;
-use embassy_stm32::{adc::{self, AdcChannel}, bind_interrupts, gpio, peripherals, rcc, Peri};
-use embassy_sync::signal::Signal;
+use embassy_stm32::adc::AdcChannel;
+use embassy_stm32::{adc, bind_interrupts, gpio, i2c, peripherals, rcc, time::khz, Peri};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
+use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
 use panic_probe as _;
 
 bind_interrupts!(struct Irqs {
     ADC1_COMP => adc::InterruptHandler<peripherals::ADC1>;
+    I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
 });
 
 const BUTTON_COUNT: usize = 15;
@@ -84,6 +85,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         Chirality::Right
     };
 
+
     // Right hand mapping
     let buttons = match chirality {
         Chirality::Left => [
@@ -131,9 +133,44 @@ async fn main(spawner: embassy_executor::Spawner) {
     spawner.spawn(button_scan_task(buttons, mux, adc1, adc_pin.degrade_adc())).unwrap();
 
 
+    let mut i2c_config = i2c::Config::default();
+    i2c_config.sda_pullup = false;
+    i2c_config.scl_pullup = false;
+    // TODO: Increase frequency after fixing controller hardware.
+    i2c_config.frequency = khz(10);
+
+    let i2c_master = i2c::I2c::new(
+        p.I2C1,
+        p.PB8, // SCL
+        p.PB9, // SDA
+        Irqs,
+        p.DMA1_CH2, // TX DMA
+        p.DMA1_CH3, // RX DMA
+        i2c_config,
+    );
+
+    let i2c_addr = match chirality {
+        Chirality::Left => 0x22,
+        Chirality::Right => 0x23,
+    };
+    let slave_config = i2c::SlaveAddrConfig::basic(i2c_addr);
+    let mut i2c_slave = i2c_master.into_slave_multimaster(slave_config);
+
+    let mut response_buffer = [0u8; 2];
     loop {
-        let state = BUTTON_STATE_SIGNAL.wait().await;
-        info!("{:015b}", state);
+        match i2c_slave.listen().await {
+            Ok(i2c::SlaveCommand {
+                kind: i2c::SlaveCommandKind::Read,
+                address: _,
+            }) => {
+                let update = BUTTON_STATE_SIGNAL.try_take();
+                if let Some(state) = update {
+                    response_buffer = state.to_be_bytes();
+                }
+                let _ = i2c_slave.respond_to_read(&response_buffer).await;
+            },
+            _ => (),
+        }
     }
 }
 

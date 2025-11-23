@@ -2,13 +2,13 @@
 #![no_main]
 
 use circular_buffer::CircularBuffer;
-use defmt::panic;
+use defmt::{info, panic};
 use defmt_rtt as _;
 use embassy_boot::FirmwareUpdaterError;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
-use embassy_stm32::flash::{self, Flash};
-use embassy_stm32::{bind_interrupts, gpio, peripherals, rcc, usb};
+use embassy_stm32::flash::Flash;
+use embassy_stm32::{bind_interrupts, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::Mutex;
@@ -16,14 +16,15 @@ use embassy_time::Timer;
 use embassy_usb::class::midi;
 use embassy_usb::driver::EndpointError;
 use embedded_storage_async::nor_flash::NorFlash;
+use midi_tools::file_dump::{FileDumpReceiver, FileWriter, SysExOutput};
 use midi_tools::messages::sysex::SysEx;
 use midi_tools::usb_midi;
-use midi_tools::file_dump::{FileDumpReceiver, FileWriter, SysExOutput};
 use panic_probe as _;
 use static_cell::StaticCell;
 
 bind_interrupts!(struct Irqs {
     USB => usb::InterruptHandler<peripherals::USB>;
+    I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
 });
 
 const USB_MIDI_CABLE: u8 = 0;
@@ -146,6 +147,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         .spawn(control_panel_task(led, button, midi_out_channel.sender()))
         .unwrap();
 
+
     let usb_driver = usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
     spawner
         .spawn(usb_task(
@@ -155,9 +157,41 @@ async fn main(spawner: embassy_executor::Spawner) {
         ))
         .unwrap();
 
-    // TODO: Do actual work here?
-    let forever = embassy_sync::signal::Signal::<NoopRawMutex, ()>::new();
-    forever.wait().await;
+
+    let mut i2c_config = i2c::Config::default();
+    // TODO: Disable pull-ups and increase frequency after fixing hardware.
+    i2c_config.sda_pullup = true;
+    i2c_config.scl_pullup = true;
+    i2c_config.frequency = khz(10);
+
+    let mut i2c_master = i2c::I2c::new(
+        p.I2C1,
+        p.PB8, // SCL
+        p.PB9, // SDA
+        Irqs,
+        p.DMA1_CH2, // TX DMA
+        p.DMA1_CH3, // RX DMA
+        i2c_config,
+    );
+
+    const LEFT_ADDR: u8 = 0x22;
+    const RIGHT_ADDR: u8 = 0x23;
+    let mut buffer = [0; 2];
+    let mut left_buttons: u16 = 0;
+    let mut right_buttons: u16 = 0;
+    loop {
+        if i2c_master.read(LEFT_ADDR, &mut buffer).await.is_ok() {
+            left_buttons = u16::from_be_bytes(buffer);
+        }
+        match i2c_master.read(RIGHT_ADDR, &mut buffer).await {
+            Ok(_) => right_buttons = u16::from_be_bytes(buffer),
+            Err(e) => info!("{}", e),
+        }
+        info!(" ---- ---- ----");
+        info!("{:015b}", left_buttons);
+        info!("{:015b}", right_buttons);
+        // Timer::after_millis(100).await;
+    }
 }
 
 #[embassy_executor::task]
