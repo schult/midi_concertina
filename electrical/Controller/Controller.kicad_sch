@@ -7241,7 +7241,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C22939.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C4190.pdf"
 			(at 281.94 149.86 0)
 			(effects
 				(font
@@ -7259,7 +7259,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C22939"
+		(property "LCSC" "C4190"
 			(at 281.94 149.86 0)
 			(effects
 				(font
@@ -7268,7 +7268,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part" "UNI-ROYAL 0603WAF220KT5E"
+		(property "Part" "UNI-ROYAL 0603WAF2201T5E"
 			(at 281.94 149.86 0)
 			(effects
 				(font
@@ -9287,7 +9287,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C22939.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C4190.pdf"
 			(at 292.1 149.86 0)
 			(effects
 				(font
@@ -9305,7 +9305,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C22939"
+		(property "LCSC" "C4190"
 			(at 292.1 149.86 0)
 			(effects
 				(font
@@ -9314,7 +9314,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part" "UNI-ROYAL 0603WAF220KT5E"
+		(property "Part" "UNI-ROYAL 0603WAF2201T5E"
 			(at 292.1 149.86 0)
 			(effects
 				(font

@@ -3133,7 +3133,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C22939.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C4190.pdf"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -3157,7 +3157,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C22939"
+		(property "LCSC" "C4190"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3170,7 +3170,7 @@
 				)
 			)
 		)
-		(property "Part" "UNI-ROYAL 0603WAF220KT5E"
+		(property "Part" "UNI-ROYAL 0603WAF2201T5E"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7424,7 +7424,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C22939.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C4190.pdf"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7448,7 +7448,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C22939"
+		(property "LCSC" "C4190"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7461,7 +7461,7 @@
 				)
 			)
 		)
-		(property "Part" "UNI-ROYAL 0603WAF220KT5E"
+		(property "Part" "UNI-ROYAL 0603WAF2201T5E"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
