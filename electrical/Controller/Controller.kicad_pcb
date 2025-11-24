@@ -137,7 +137,7 @@
 	(net 9 "Net-(J1-CC2)")
 	(net 10 "unconnected-(U3-PB14-Pad27)")
 	(net 11 "unconnected-(U3-PB13-Pad26)")
-	(net 12 "unconnected-(J3-SWO-Pad6)")
+	(net 12 "unconnected-(J2-SWO-Pad6)")
 	(net 13 "/SWDIO")
 	(net 14 "/I2C_SCL")
 	(net 15 "/I2C_SDA")
@@ -8182,7 +8182,7 @@
 		(layer "B.Cu")
 		(uuid "2d74b562-e7f5-4fcb-ad8f-3a8a7044d222")
 		(at 184 79)
-		(property "Reference" "J4"
+		(property "Reference" "J3"
 			(at -4 8 90)
 			(unlocked yes)
 			(layer "B.SilkS")
@@ -8435,7 +8435,7 @@
 		(at 163.75 84.25)
 		(descr "Tag-Connect programming header; http://www.tag-connect.com/Materials/TC2030-IDC-NL.pdf")
 		(tags "tag connect programming header pogo pins")
-		(property "Reference" "J3"
+		(property "Reference" "J2"
 			(at -3.4 0 0)
 			(layer "B.SilkS")
 			(hide yes)
@@ -8689,7 +8689,7 @@
 			(at 1.27 0.635)
 			(size 0.7874 0.7874)
 			(layers "B.Cu" "B.Mask")
-			(net 12 "unconnected-(J3-SWO-Pad6)")
+			(net 12 "unconnected-(J2-SWO-Pad6)")
 			(pinfunction "SWO")
 			(pintype "input+no_connect")
 			(uuid "4ca999d8-d92f-4ea4-a038-bc9fdc80c833")

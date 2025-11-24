@@ -12299,7 +12299,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a29dd440-889e-4206-96a1-6cf0b20ef76c")
-		(property "Reference" "J3"
+		(property "Reference" "J2"
 			(at 138.43 170.18 0)
 			(effects
 				(font
@@ -12401,7 +12401,7 @@
 		(instances
 			(project "control"
 				(path "/da26d94e-7a50-4b99-9678-5aaaf6987a15"
-					(reference "J3")
+					(reference "J2")
 					(unit 1)
 				)
 			)
