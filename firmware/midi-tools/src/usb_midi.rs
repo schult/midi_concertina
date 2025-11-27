@@ -1,3 +1,4 @@
+use crate::messages::midi::Midi;
 use crate::messages::sysex::SysEx;
 use circular_buffer::CircularBuffer;
 
@@ -59,13 +60,30 @@ impl EventPacket {
         })
     }
 
+    pub fn encode_midi(cable: u8, message: &Midi) -> Self {
+        assert!(cable <= 0x0F);
+
+        let mut packet = EventPacket { raw: [0; 4] };
+        packet.raw[0] = (cable << 4) | match message {
+            Midi::NoteOn(_) => 0x09,
+            Midi::NoteOff(_) => 0x08,
+            Midi::ControlChange(_) => 0x0B,
+        };
+
+        let mut buffer = CircularBuffer::<{ Midi::MAX_LENGTH }, u8>::new();
+        message.write(&mut buffer).unwrap();
+        packet.raw[1..(1+buffer.len())].copy_from_slice(buffer.make_contiguous());
+
+        packet
+    }
+
     pub fn encode_sysex(cable: u8, message: &SysEx) -> EncodeSysEx {
         assert!(cable <= 0x0F);
         let mut it = EncodeSysEx {
             cable,
-            midi_data: CircularBuffer::<138, u8>::new(),
+            midi_data: CircularBuffer::<{ SysEx::MAX_LENGTH }, u8>::new(),
         };
-        let _ = message.write(&mut it.midi_data);
+        message.write(&mut it.midi_data).unwrap();
         it
     }
 
@@ -93,7 +111,7 @@ impl EventPacket {
 
 pub struct EncodeSysEx {
     cable: u8,
-    midi_data: CircularBuffer<138, u8>,
+    midi_data: CircularBuffer<{ SysEx::MAX_LENGTH }, u8>,
 }
 
 impl Iterator for EncodeSysEx {

@@ -1,4 +1,5 @@
 use hex_literal::hex;
+use midi_tools::messages::midi::{Channel, Midi, Note};
 use midi_tools::messages::sysex::SysEx;
 use midi_tools::usb_midi::*;
 
@@ -182,4 +183,36 @@ fn encode_sysex_ack() {
         })
     );
     assert_eq!(it.next(), None);
+}
+
+#[test]
+#[should_panic]
+fn encode_midi_panics_if_cable_over_4_bits() {
+    let cable = 1 << 4;
+    let message = Midi::note_on(Channel::Ch1, Note::C4, 96);
+    let _ = EventPacket::encode_midi(cable, &message);
+}
+
+#[test]
+fn encode_midi_note_on() {
+    let cable = 0x0C;
+    let message = Midi::note_on(Channel::Ch4, Note::C4, 96);
+    let packet = EventPacket::encode_midi(cable, &message);
+    assert_eq!(packet.raw, hex!("c9 93 3c 60"));
+}
+
+#[test]
+fn encode_midi_note_off() {
+    let cable = 0x0C;
+    let message = Midi::note_off(Channel::Ch4, Note::C4, 96);
+    let packet = EventPacket::encode_midi(cable, &message);
+    assert_eq!(packet.raw, hex!("c8 83 3c 60"));
+}
+
+#[test]
+fn encode_midi_control_change() {
+    let cable = 0x0C;
+    let message = Midi::control_change(Channel::Ch4, 39, 32);
+    let packet = EventPacket::encode_midi(cable, &message);
+    assert_eq!(packet.raw, hex!("cb b3 27 20"));
 }
