@@ -4,17 +4,20 @@ pub mod sysex {
     pub const ALL_CALL_DEVICE_ID: u8 = 0x7F;
 
     #[derive(Debug, PartialEq)]
+    #[non_exhaustive]
     pub struct HandshakeData {
         pub device_id: u8,
         pub packet_num: u8,
     }
 
     #[derive(Debug, PartialEq)]
+    #[non_exhaustive]
     pub struct IdentityRequestData {
         pub device_id: u8,
     }
 
     #[derive(Debug, PartialEq)]
+    #[non_exhaustive]
     pub struct IdentityReplyData {
         pub device_id: u8,
         pub manufacturer_id: u8,
@@ -24,6 +27,7 @@ pub mod sysex {
     }
 
     #[derive(Debug, PartialEq)]
+    #[non_exhaustive]
     pub struct FileDumpHeaderData {
         pub device_id: u8,
         pub source_id: u8,
@@ -38,6 +42,7 @@ pub mod sysex {
     }
 
     #[derive(Debug, PartialEq)]
+    #[non_exhaustive]
     pub struct FileDumpPacketData {
         pub device_id: u8,
         pub packet_num: u8,
@@ -252,7 +257,15 @@ pub mod sysex {
         let byte_count = unencoded.len() + ((unencoded.len() + 6) / 7) - 1;
         let byte_count = byte_count as u8;
 
-        let prelude = [0xF0, 0x7E, data.device_id, 0x07, 0x02, data.packet_num, byte_count];
+        let prelude = [
+            0xF0,
+            0x7E,
+            data.device_id,
+            0x07,
+            0x02,
+            data.packet_num,
+            byte_count,
+        ];
         writer.write_all(&prelude)?;
 
         let mut checksum = 0x7E ^ data.device_id ^ 0x07 ^ 0x02 ^ data.packet_num ^ byte_count;
@@ -262,9 +275,9 @@ pub mod sysex {
         for chunk in chunks {
             let mut encoded = [0; 8];
             for (i, byte) in chunk.iter().enumerate() {
-                encoded[0] |= (byte & 0x80) >> (i+1);
-                encoded[i+1] = byte & 0x7F;
-                checksum ^= encoded[i+1];
+                encoded[0] |= (byte & 0x80) >> (i + 1);
+                encoded[i + 1] = byte & 0x7F;
+                checksum ^= encoded[i + 1];
             }
             checksum ^= encoded[0];
             writer.write_all(&encoded)?;
@@ -273,9 +286,9 @@ pub mod sysex {
         if !remainder.is_empty() {
             let mut encoded = [0; 8];
             for (i, byte) in remainder.iter().enumerate() {
-                encoded[0] |= (byte & 0x80) >> (i+1);
-                encoded[i+1] = byte & 0x7F;
-                checksum ^= encoded[i+1];
+                encoded[0] |= (byte & 0x80) >> (i + 1);
+                encoded[i + 1] = byte & 0x7F;
+                checksum ^= encoded[i + 1];
             }
             checksum ^= encoded[0];
             writer.write_all(&encoded[..=remainder.len()])?;
@@ -294,6 +307,8 @@ pub mod sysex {
     }
 
     impl SysEx {
+        pub const MAX_LENGTH: usize = 137;
+
         pub fn ack(device_id: u8, packet_num: u8) -> Self {
             assert!(device_id <= 0x7F);
             assert!(packet_num <= 0x7F);

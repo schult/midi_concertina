@@ -103,10 +103,7 @@ fn sysex_reads_message_after_non_universal_message() {
 fn sysex_read_parses_ack_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7f 3b f7"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Ack(HandshakeData {
-        device_id: 0x03,
-        packet_num: 0x3b,
-    }));
+    let expected = Some(SysEx::ack(0x03, 0x3b));
     assert_eq!(result, expected);
 }
 
@@ -121,10 +118,7 @@ fn sysex_read_identifies_nak_message() {
 fn sysex_read_parses_nak_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7e 3b f7"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Nak(HandshakeData {
-        device_id: 0x03,
-        packet_num: 0x3b,
-    }));
+    let expected = Some(SysEx::nak(0x03, 0x3b));
     assert_eq!(result, expected);
 }
 
@@ -132,10 +126,7 @@ fn sysex_read_parses_nak_data() {
 fn sysex_read_ignores_system_real_time_messages() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 f8 7e fa 03 fb fc 7f fe ff 3b f7"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Ack(HandshakeData {
-        device_id: 0x03,
-        packet_num: 0x3b,
-    }));
+    let expected = Some(SysEx::ack(0x03, 0x3b));
     assert_eq!(result, expected);
     assert_eq!(data, []);
 }
@@ -167,10 +158,7 @@ fn sysex_read_identifies_wait_message() {
 fn sysex_read_parses_wait_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7c 3b f7"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Wait(HandshakeData {
-        device_id: 0x03,
-        packet_num: 0x3b,
-    }));
+    let expected = Some(SysEx::wait(0x03, 0x3b));
     assert_eq!(result, expected);
 }
 
@@ -185,10 +173,7 @@ fn sysex_read_identifies_cancel_message() {
 fn sysex_read_parses_cancel_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7d 3b f7"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Cancel(HandshakeData {
-        device_id: 0x03,
-        packet_num: 0x3b,
-    }));
+    let expected = Some(SysEx::cancel(0x03, 0x3b));
     assert_eq!(result, expected);
 }
 
@@ -203,10 +188,7 @@ fn sysex_read_identifies_eof_message() {
 fn sysex_read_parses_eof_data() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 7b 3b f7"));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::Eof(HandshakeData {
-        device_id: 0x03,
-        packet_num: 0x3b,
-    }));
+    let expected = Some(SysEx::eof(0x03, 0x3b));
     assert_eq!(result, expected);
 }
 
@@ -225,12 +207,7 @@ fn sysex_read_parses_file_dump_header_data() {
         "f0 7e 03 07 01 01  42 49 4e 20  1e 24 77 32  66 69 6c 65 2e 62 69 6e f7"
     ));
     let result = SysEx::read(&mut data);
-    let expected = Some(SysEx::FileDumpHeader(FileDumpHeaderData {
-        device_id: 3,
-        source_id: 1,
-        length: 0x65DD21E,
-        raw_file_type: hex!("42 49 4e 20"),
-    }));
+    let expected = Some(SysEx::file_dump_header(3, 1, 0x65DD21E, "BIN "));
     assert_eq!(result, expected);
 }
 
@@ -245,13 +222,11 @@ fn sysex_read_consumes_all_file_dump_header_data() {
 
 #[test]
 fn file_dump_header_data_file_type_as_str() {
-    let data = FileDumpHeaderData {
-        device_id: 0,
-        source_id: 0,
-        length: 0,
-        raw_file_type: hex!("42 49 4e 20"),
-    };
-    assert_eq!(data.file_type(), "BIN ");
+    let data = SysEx::file_dump_header(0, 0, 0, "BIN ");
+    if let SysEx::FileDumpHeader(d) = data {
+        assert_eq!(d.raw_file_type, hex!("42 49 4e 20"));
+        assert_eq!(d.file_type(), "BIN ");
+    }
 }
 
 #[test]
@@ -270,21 +245,17 @@ fn sysex_read_parses_file_dump_packet_data() {
     ));
     let result = SysEx::read(&mut data);
 
-    let mut expected_data = FileDumpPacketData {
-        device_id: 3,
-        packet_num: 113,
-        checksum_ok: true,
-        data: [0; 112],
-        data_size: 14,
-    };
-    expected_data.data[..14].copy_from_slice(&hex!("01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"));
-    let expected = Some(SysEx::FileDumpPacket(expected_data));
+    let expected = Some(SysEx::file_dump_packet(
+        3,
+        113,
+        &hex!("01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"),
+    ));
     assert_eq!(result, expected);
 }
 
 #[test]
 fn sysex_read_parses_max_length_file_dump_packet() {
-    let mut data = CircularBuffer::<137, u8>::from(hex!(
+    let mut data = CircularBuffer::<{ SysEx::MAX_LENGTH }, u8>::from(hex!(
         "f0 7e 03 07 02 71 7f"
         "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
         "00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60"
@@ -297,11 +268,10 @@ fn sysex_read_parses_max_length_file_dump_packet() {
         "76 f7"));
     let result = SysEx::read(&mut data);
 
-    let expected_data = FileDumpPacketData {
-        device_id: 3,
-        packet_num: 113,
-        checksum_ok: true,
-        data: hex!(
+    let expected = Some(SysEx::file_dump_packet(
+        3,
+        113,
+        &hex!(
             "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
             "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
             "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
@@ -311,9 +281,7 @@ fn sysex_read_parses_max_length_file_dump_packet() {
             "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
             "01 20 03 40 05 60 07  80 09 A0 0B C0 0D E0"
         ),
-        data_size: 112,
-    };
-    let expected = Some(SysEx::FileDumpPacket(expected_data));
+    ));
     assert_eq!(result, expected);
 }
 
@@ -342,15 +310,7 @@ fn sysex_read_parses_odd_length_file_dump_packet() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 07 02 71 03  00 01 20 03  28 f7"));
     let result = SysEx::read(&mut data);
 
-    let mut expected_data = FileDumpPacketData {
-        device_id: 3,
-        packet_num: 113,
-        checksum_ok: true,
-        data: [0; 112],
-        data_size: 3,
-    };
-    expected_data.data[..3].copy_from_slice(&hex!("01 20 03"));
-    let expected = Some(SysEx::FileDumpPacket(expected_data));
+    let expected = Some(SysEx::file_dump_packet(3, 113, &hex!("01 20 03")));
     assert_eq!(result, expected);
 }
 
@@ -380,13 +340,12 @@ fn sysex_read_detects_file_dump_packet_checksum_validity() {
 #[test]
 fn sysex_ack_constructor() {
     let value = SysEx::ack(1, 14);
-    assert_eq!(
-        value,
-        SysEx::Ack(HandshakeData {
-            device_id: 1,
-            packet_num: 14,
-        })
-    );
+
+    assert!(matches!(value, SysEx::Ack(_)));
+    if let SysEx::Ack(d) = value {
+        assert_eq!(d.device_id, 1);
+        assert_eq!(d.packet_num, 14);
+    }
 }
 
 #[test]
@@ -404,13 +363,12 @@ fn sysex_ack_constructor_panics_if_packet_num_over_7_bits() {
 #[test]
 fn sysex_nak_constructor() {
     let value = SysEx::nak(1, 14);
-    assert_eq!(
-        value,
-        SysEx::Nak(HandshakeData {
-            device_id: 1,
-            packet_num: 14,
-        })
-    );
+
+    assert!(matches!(value, SysEx::Nak(_)));
+    if let SysEx::Nak(d) = value {
+        assert_eq!(d.device_id, 1);
+        assert_eq!(d.packet_num, 14);
+    }
 }
 
 #[test]
@@ -428,13 +386,12 @@ fn sysex_nak_constructor_panics_if_packet_num_over_7_bits() {
 #[test]
 fn sysex_wait_constructor() {
     let value = SysEx::wait(1, 14);
-    assert_eq!(
-        value,
-        SysEx::Wait(HandshakeData {
-            device_id: 1,
-            packet_num: 14,
-        })
-    );
+
+    assert!(matches!(value, SysEx::Wait(_)));
+    if let SysEx::Wait(d) = value {
+        assert_eq!(d.device_id, 1);
+        assert_eq!(d.packet_num, 14);
+    }
 }
 
 #[test]
@@ -452,13 +409,12 @@ fn sysex_wait_constructor_panics_if_packet_num_over_7_bits() {
 #[test]
 fn sysex_cancel_constructor() {
     let value = SysEx::cancel(1, 14);
-    assert_eq!(
-        value,
-        SysEx::Cancel(HandshakeData {
-            device_id: 1,
-            packet_num: 14,
-        })
-    );
+
+    assert!(matches!(value, SysEx::Cancel(_)));
+    if let SysEx::Cancel(d) = value {
+        assert_eq!(d.device_id, 1);
+        assert_eq!(d.packet_num, 14);
+    }
 }
 
 #[test]
@@ -476,13 +432,12 @@ fn sysex_cancel_constructor_panics_if_packet_num_over_7_bits() {
 #[test]
 fn sysex_eof_constructor() {
     let value = SysEx::eof(1, 14);
-    assert_eq!(
-        value,
-        SysEx::Eof(HandshakeData {
-            device_id: 1,
-            packet_num: 14,
-        })
-    );
+
+    assert!(matches!(value, SysEx::Eof(_)));
+    if let SysEx::Eof(d) = value {
+        assert_eq!(d.device_id, 1);
+        assert_eq!(d.packet_num, 14);
+    }
 }
 
 #[test]
@@ -500,10 +455,11 @@ fn sysex_eof_constructor_panics_if_packet_num_over_7_bits() {
 #[test]
 fn sysex_identity_request_constructor() {
     let value = SysEx::identity_request(1);
-    assert_eq!(
-        value,
-        SysEx::IdentityRequest(IdentityRequestData { device_id: 1 })
-    );
+
+    assert!(matches!(value, SysEx::IdentityRequest(_)));
+    if let SysEx::IdentityRequest(d) = value {
+        assert_eq!(d.device_id, 1);
+    }
 }
 
 #[test]
@@ -515,16 +471,15 @@ fn sysex_identity_request_constructor_panics_if_device_id_over_7_bits() {
 #[test]
 fn sysex_identity_reply_constructor() {
     let value = SysEx::identity_reply(3, 0x7F, 0x1253, 0x2430, &[1, 9, 8, 5]);
-    assert_eq!(
-        value,
-        SysEx::IdentityReply(IdentityReplyData {
-            device_id: 3,
-            manufacturer_id: 0x7F,
-            device_family_code: 0x1253,
-            device_family_member_code: 0x2430,
-            software_rev: [1, 9, 8, 5],
-        })
-    );
+
+    assert!(matches!(value, SysEx::IdentityReply(_)));
+    if let SysEx::IdentityReply(d) = value {
+        assert_eq!(d.device_id, 3);
+        assert_eq!(d.manufacturer_id, 0x7F);
+        assert_eq!(d.device_family_code, 0x1253);
+        assert_eq!(d.device_family_member_code, 0x2430);
+        assert_eq!(d.software_rev, [1, 9, 8, 5]);
+    }
 }
 
 #[test]
@@ -572,15 +527,14 @@ fn sysex_identity_reply_constructor_panics_if_version_too_long() {
 #[test]
 fn sysex_file_dump_header_constructor() {
     let value = SysEx::file_dump_header(2, 1, 1_382_550, &"TEXT");
-    assert_eq!(
-        value,
-        SysEx::FileDumpHeader(FileDumpHeaderData {
-            device_id: 2,
-            source_id: 1,
-            length: 1_382_550,
-            raw_file_type: hex!("54 45 58 54"),
-        })
-    );
+
+    assert!(matches!(value, SysEx::FileDumpHeader(_)));
+    if let SysEx::FileDumpHeader(d) = value {
+        assert_eq!(d.device_id, 2);
+        assert_eq!(d.source_id, 1);
+        assert_eq!(d.length, 1_382_550);
+        assert_eq!(d.raw_file_type, hex!("54 45 58 54"));
+    }
 }
 
 #[test]
@@ -624,16 +578,15 @@ fn sysex_file_dump_packet_constructor() {
     let value = SysEx::file_dump_packet(2, 110, &hex!("7f 00 ff 56"));
     let mut data = [0; 112];
     data[..4].copy_from_slice(&hex!("7f 00 ff 56"));
-    assert_eq!(
-        value,
-        SysEx::FileDumpPacket(FileDumpPacketData {
-            device_id: 2,
-            packet_num: 110,
-            checksum_ok: true,
-            data,
-            data_size: 4,
-        })
-    );
+
+    assert!(matches!(value, SysEx::FileDumpPacket(_)));
+    if let SysEx::FileDumpPacket(d) = value {
+        assert_eq!(d.device_id, 2);
+        assert_eq!(d.packet_num, 110);
+        assert_eq!(d.checksum_ok, true);
+        assert_eq!(d.data, data);
+        assert_eq!(d.data_size, 4);
+    }
 }
 
 #[test]
@@ -713,7 +666,10 @@ fn sysex_write_file_dump_header() {
     let message = SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, LENGTH, "TYPE");
     let result = message.write(&mut output);
     assert_eq!(result, Ok(()));
-    assert_eq!(output, hex!("f0 7e 03 07 01 04  54 59 50 45  7a 07 00 00  f7"));
+    assert_eq!(
+        output,
+        hex!("f0 7e 03 07 01 04  54 59 50 45  7a 07 00 00  f7")
+    );
     assert_eq!(Some(message), SysEx::read(&mut output));
 }
 
@@ -726,7 +682,10 @@ fn sysex_write_file_dump_packet_with_payload_divisible_by_7_bytes() {
     let message = SysEx::file_dump_packet(DEVICE_ID, PACKET_NUM, &payload);
     let result = message.write(&mut output);
     assert_eq!(result, Ok(()));
-    assert_eq!(output, hex!("f0 7e 03 07 02 3a  07  05 20 03 40 0c 50 0e 70  01 f7"));
+    assert_eq!(
+        output,
+        hex!("f0 7e 03 07 02 3a  07  05 20 03 40 0c 50 0e 70  01 f7")
+    );
     assert_eq!(Some(message), SysEx::read(&mut output));
 }
 
@@ -739,6 +698,9 @@ fn sysex_write_file_dump_packet_with_payload_not_divisible_by_7_bytes() {
     let message = SysEx::file_dump_packet(DEVICE_ID, PACKET_NUM, &payload);
     let result = message.write(&mut output);
     assert_eq!(result, Ok(()));
-    assert_eq!(output, hex!("f0 7e 03 07 02 3a  0b  05 20 03 40 0c 50 0e 70  60 70 00 77  6a f7"));
+    assert_eq!(
+        output,
+        hex!("f0 7e 03 07 02 3a  0b  05 20 03 40 0c 50 0e 70  60 70 00 77  6a f7")
+    );
     assert_eq!(Some(message), SysEx::read(&mut output));
 }
