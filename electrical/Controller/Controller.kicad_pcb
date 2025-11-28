@@ -8835,7 +8835,7 @@
 		(layer "User.2")
 		(uuid "417b2cc9-71e2-4a1e-ae03-bbb5e4b120c2")
 	)
-	(gr_text "MIDI Concertina Controller\nRev ${REVISION}"
+	(gr_text "${TITLE}\nRev ${REVISION}"
 		(at 117 88 180)
 		(layer "B.SilkS")
 		(uuid "88e265b4-388e-4724-bf36-434e51063549")
