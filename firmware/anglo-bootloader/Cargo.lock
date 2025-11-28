@@ -12,6 +12,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "anglo-bootloader"
+version = "0.1.0"
+dependencies = [
+ "cortex-m",
+ "cortex-m-rt",
+ "embassy-boot",
+ "embassy-boot-stm32",
+ "embassy-stm32",
+ "embassy-sync",
+ "embedded-storage",
+ "panic-reset",
+]
+
+[[package]]
 name = "as-slice"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -69,20 +83,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "44c051592f59fe68053524b4c4935249b806f72c1f544cfb7abe4f57c3be258e"
 dependencies = [
  "aligned",
-]
-
-[[package]]
-name = "bootloader"
-version = "0.1.0"
-dependencies = [
- "cortex-m",
- "cortex-m-rt",
- "embassy-boot",
- "embassy-boot-stm32",
- "embassy-stm32",
- "embassy-sync",
- "embedded-storage",
- "panic-reset",
 ]
 
 [[package]]
