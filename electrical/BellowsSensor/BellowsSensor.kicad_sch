@@ -5,7 +5,7 @@
 	(uuid "ceae7089-9cb4-4950-bb64-2f75302207fd")
 	(paper "USLetter")
 	(title_block
-		(title "MIDI Concertina Bellows Sensor")
+		(title "MIDI Bellows Sensor")
 		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
 		(comment 2 "Licensed under CERN-OHL-S v2 or any later version")
 		(comment 3 "Copyright 2025 Steven Schulteis")
