@@ -8,6 +8,7 @@
 	)
 	(paper "USLetter")
 	(title_block
+		(title "MIDI Anglo Left Hand")
 		(date "2025-10-01")
 		(rev "1")
 		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
@@ -83,6 +84,8 @@
 		(pad_to_mask_clearance 0)
 		(allow_soldermask_bridges_in_footprints no)
 		(tenting front back)
+		(aux_axis_origin 39 163)
+		(grid_origin 39 163)
 		(pcbplotparams
 			(layerselection 0x00000000_00000000_55555555_5755757f)
 			(plot_on_all_layers_selection 0x00000000_00000000_00000000_00000000)
