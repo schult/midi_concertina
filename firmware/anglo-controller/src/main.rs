@@ -4,7 +4,6 @@
 use circular_buffer::CircularBuffer;
 use defmt::{info, panic};
 use defmt_rtt as _;
-use embassy_boot::FirmwareUpdaterError;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
@@ -15,12 +14,13 @@ use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
 use embassy_usb::class::midi;
 use embassy_usb::driver::EndpointError;
-use embedded_storage_async::nor_flash::NorFlash;
-use midi_tools::file_dump::{FileDumpReceiver, FileWriter, SysExOutput};
+use midi_tools::file_dump::FileDumpReceiver;
 use midi_tools::messages::sysex::SysEx;
 use midi_tools::usb_midi;
 use panic_probe as _;
 use static_cell::StaticCell;
+
+mod file_dump_io;
 
 bind_interrupts!(struct Irqs {
     USB => usb::InterruptHandler<peripherals::USB>;
@@ -33,84 +33,6 @@ const SYSEX_DEVICE_ID: u8 = 0x01;
 type EventPacketChannel = Channel<NoopRawMutex, usb_midi::EventPacket, 32>;
 type EventPacketSender = Sender<'static, NoopRawMutex, usb_midi::EventPacket, 32>;
 type EventPacketReceiver = Receiver<'static, NoopRawMutex, usb_midi::EventPacket, 32>;
-
-struct DfuWriter<'a, DFU: NorFlash, STATE: NorFlash> {
-    updater: FirmwareUpdater<'a, DFU, STATE>,
-    buffer: CircularBuffer<256, u8>,
-    offset: usize,
-}
-
-impl<'a, DFU: NorFlash, STATE: NorFlash> DfuWriter<'a, DFU, STATE> {
-    const PAGE_SIZE: usize = DFU::ERASE_SIZE;
-
-    fn new(updater: FirmwareUpdater<'a, DFU, STATE>) -> Self {
-        let writer = DfuWriter {
-            updater,
-            buffer: CircularBuffer::<256, u8>::new(),
-            offset: 0,
-        };
-        assert!(writer.buffer.capacity() >= 2 * Self::PAGE_SIZE);
-        writer
-    }
-
-    async fn write_len(&mut self, len: usize) -> Result<(), FirmwareUpdaterError> {
-        assert!(len <= self.buffer.len());
-        assert!(len <= Self::PAGE_SIZE);
-        while self.buffer.len() < Self::PAGE_SIZE {
-            self.buffer.push_back(0);
-        }
-        self.updater.write_firmware(self.offset, &self.buffer.make_contiguous()[..Self::PAGE_SIZE]).await?;
-        let _ = self.buffer.drain(..Self::PAGE_SIZE);
-        self.offset += len;
-        Ok(())
-    }
-}
-
-impl<'a, DFU: NorFlash, STATE: NorFlash> FileWriter for DfuWriter<'a, DFU, STATE> {
-    type ErrorType = FirmwareUpdaterError;
-
-    async fn open(&mut self) -> Result<(), Self::ErrorType> {
-        self.buffer.clear();
-        self.offset = 0;
-        Ok(())
-    }
-
-    async fn write(&mut self, data: &[u8]) -> Result<(), Self::ErrorType> {
-        self.buffer.extend_from_slice(data);
-        while self.buffer.len() >= Self::PAGE_SIZE {
-            self.write_len(Self::PAGE_SIZE).await?;
-        }
-        Ok(())
-    }
-
-    async fn close(&mut self) -> Result<(), Self::ErrorType> {
-        if !self.buffer.is_empty() {
-            self.write_len(self.buffer.len()).await?;
-        }
-        self.updater.mark_updated().await?;
-        cortex_m::peripheral::SCB::sys_reset();
-    }
-}
-
-struct SysExChannelAdapter {
-    channel: EventPacketSender,
-    cable: u8,
-}
-
-impl SysExChannelAdapter {
-    fn new(channel: EventPacketSender, cable: u8) -> Self {
-        assert!(cable <= 0x0F);
-        SysExChannelAdapter { channel, cable }
-    }
-}
-
-impl SysExOutput for SysExChannelAdapter {
-    async fn send(&mut self, sysex: SysEx) {
-        for event_packet in usb_midi::EventPacket::encode_sysex(self.cable, &sysex) {
-            self.channel.send(event_packet).await;
-        }
-    }
-}
 
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
@@ -207,8 +129,8 @@ async fn firmware_task(
     let mut updater = FirmwareUpdater::new(updater_config, aligned_buffer.as_mut());
     updater.mark_booted().await.unwrap();
 
-    let mut dfu_writer = DfuWriter::new(updater);
-    let mut sysex_adapter = SysExChannelAdapter::new(midi_out_channel, USB_MIDI_CABLE);
+    let mut dfu_writer = file_dump_io::DfuWriter::new(updater);
+    let mut sysex_adapter = file_dump_io::SysExChannelAdapter::new(midi_out_channel, USB_MIDI_CABLE);
     let mut receiver = FileDumpReceiver::new(&mut dfu_writer, &mut sysex_adapter, SYSEX_DEVICE_ID, "BIN ");
 
     let mut midi_buffer = CircularBuffer::<512, u8>::new();
