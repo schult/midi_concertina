@@ -1,26 +1,5 @@
 use embedded_io::Write;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
-#[repr(u8)]
-pub enum Channel {
-    Ch1,
-    Ch2,
-    Ch3,
-    Ch4,
-    Ch5,
-    Ch6,
-    Ch7,
-    Ch8,
-    Ch9,
-    Ch10,
-    Ch11,
-    Ch12,
-    Ch13,
-    Ch14,
-    Ch15,
-    Ch16,
-}
-
 #[rustfmt::skip]
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u8)]
@@ -47,7 +26,7 @@ pub mod cc {
 #[derive(Debug, PartialEq)]
 #[non_exhaustive]
 pub struct NoteData {
-    pub channel: Channel,
+    pub channel: u8,
     pub note: Note,
     pub velocity: u8,
 }
@@ -55,7 +34,7 @@ pub struct NoteData {
 #[derive(Debug, PartialEq)]
 #[non_exhaustive]
 pub struct ControlData {
-    pub channel: Channel,
+    pub channel: u8,
     pub control: u8,
     pub value: u8,
 }
@@ -70,7 +49,8 @@ pub enum ChannelVoiceMessage {
 impl ChannelVoiceMessage {
     pub const MAX_LENGTH: usize = 3;
 
-    pub fn note_on(channel: Channel, note: Note, velocity: u8) -> Self {
+    pub fn note_on(channel: u8, note: Note, velocity: u8) -> Self {
+        assert!(channel <= 0x0F);
         assert!(velocity <= 0x7F);
         Self::NoteOn(NoteData {
             channel,
@@ -79,7 +59,8 @@ impl ChannelVoiceMessage {
         })
     }
 
-    pub fn note_off(channel: Channel, note: Note, velocity: u8) -> Self {
+    pub fn note_off(channel: u8, note: Note, velocity: u8) -> Self {
+        assert!(channel <= 0x0F);
         assert!(velocity <= 0x7F);
         Self::NoteOff(NoteData {
             channel,
@@ -88,7 +69,8 @@ impl ChannelVoiceMessage {
         })
     }
 
-    pub fn control_change(channel: Channel, control: u8, value: u8) -> Self {
+    pub fn control_change(channel: u8, control: u8, value: u8) -> Self {
+        assert!(channel <= 0x0F);
         assert!(control <= 0x7F);
         assert!(value <= 0x7F);
         Self::ControlChange(ControlData {
