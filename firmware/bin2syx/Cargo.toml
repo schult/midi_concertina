@@ -1,8 +1,8 @@
 [package]
 name = "bin2syx"
-version = "0.1.0"
+license = "GPL-3.0-only"
 edition = "2024"
 
 [dependencies]
 embedded-io-adapters = { version = "0.6.2", features = ["std"] }
-midi-tools = { version = "0.1.0", path = "../midi-tools" }
+midi-tools = { path = "../midi-tools" }
