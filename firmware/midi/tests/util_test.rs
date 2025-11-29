@@ -1,7 +1,6 @@
 use hex_literal::hex;
-use midi::messages::sysex;
-use midi::messages::sysex::SysEx;
 use midi::util::*;
+use midi::{ALL_CALL_DEVICE_ID, SysEx};
 use mockall::Sequence;
 use mockall::mock;
 use mockall::predicate::*;
@@ -19,7 +18,7 @@ mock! {
 mock! {
     SysExOutput {}
     impl SysExOutput for SysExOutput {
-        async fn send(&mut self, sysex: midi::messages::sysex::SysEx);
+        async fn send(&mut self, sysex: SysEx);
     }
 }
 
@@ -678,7 +677,7 @@ async fn file_dump_receiver_accepts_all_call_header() {
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
         .process(SysEx::file_dump_header(
-            sysex::ALL_CALL_DEVICE_ID,
+            ALL_CALL_DEVICE_ID,
             SOURCE_ID,
             0,
             FILE_TYPE,
@@ -708,7 +707,7 @@ async fn file_dump_receiver_accepts_all_call_packet() {
         .await;
     receiver
         .process(SysEx::file_dump_packet(
-            sysex::ALL_CALL_DEVICE_ID,
+            ALL_CALL_DEVICE_ID,
             0,
             &hex!("01 02 03 04"),
         ))

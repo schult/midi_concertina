@@ -1,5 +1,5 @@
 use crate::ChannelVoiceMessage;
-use crate::messages::sysex::SysEx;
+use crate::SysEx;
 use circular_buffer::CircularBuffer;
 
 #[derive(Debug, PartialEq)]

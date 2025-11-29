@@ -1,5 +1,5 @@
 use hex_literal::hex;
-use midi::messages::sysex::SysEx;
+use midi::SysEx;
 use midi::usb::*;
 use midi::{Channel, ChannelVoiceMessage, Note};
 

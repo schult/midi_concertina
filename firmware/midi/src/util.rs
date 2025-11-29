@@ -1,6 +1,6 @@
 #![allow(async_fn_in_trait)]
 
-use crate::messages::sysex::{ALL_CALL_DEVICE_ID, SysEx};
+use crate::{ALL_CALL_DEVICE_ID, SysEx};
 
 pub trait FileWriter {
     type ErrorType;

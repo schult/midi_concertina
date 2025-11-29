@@ -1,6 +1,6 @@
 use circular_buffer::CircularBuffer;
 use hex_literal::hex;
-use midi::messages::sysex::*;
+use midi::system_exclusive_message::*;
 
 #[test]
 fn sysex_read_returns_none_if_no_data() {

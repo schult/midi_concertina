@@ -14,7 +14,7 @@ use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
-use midi::messages::sysex::SysEx;
+use midi::SysEx;
 use midi::util::FileDumpReceiver;
 use panic_probe as _;
 use static_cell::StaticCell;
