@@ -1,7 +1,7 @@
 use hex_literal::hex;
-use midi_tools::file_dump::*;
-use midi_tools::messages::sysex;
-use midi_tools::messages::sysex::SysEx;
+use midi::file_dump::*;
+use midi::messages::sysex;
+use midi::messages::sysex::SysEx;
 use mockall::Sequence;
 use mockall::mock;
 use mockall::predicate::*;
@@ -19,7 +19,7 @@ mock! {
 mock! {
     SysExOutput {}
     impl SysExOutput for SysExOutput {
-        async fn send(&mut self, sysex: midi_tools::messages::sysex::SysEx);
+        async fn send(&mut self, sysex: midi::messages::sysex::SysEx);
     }
 }
 

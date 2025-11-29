@@ -9,8 +9,8 @@
   (.syx) files that can be used to update the controller firmware over MIDI with
   software such as [SysEx Librarian](https://www.snoize.com/SysExLibrarian/) or
   [MIDI-OX](http://www.midiox.com/).
-- [midi-tools](midi-tools/): Library that provides the MIDI features required by
-  `anglo-controller`.
+- [midi](midi/): Library that provides the MIDI features required by
+  `anglo-controller` and `bin2syx`.
 
 ## Environment Setup
 

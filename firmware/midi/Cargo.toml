@@ -1,5 +1,5 @@
 [package]
-name = "midi-tools"
+name = "midi"
 license = "GPL-3.0-only"
 edition = "2024"
 

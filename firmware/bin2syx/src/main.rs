@@ -1,5 +1,5 @@
 use embedded_io_adapters::std::FromStd;
-use midi_tools::messages::sysex::SysEx;
+use midi::messages::sysex::SysEx;
 use std::env;
 use std::fs::File;
 use std::io::{BufReader, BufWriter, Read};

@@ -12,11 +12,11 @@ use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
-use embassy_usb::class::midi;
+use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
-use midi_tools::file_dump::FileDumpReceiver;
-use midi_tools::messages::sysex::SysEx;
-use midi_tools::usb_midi;
+use midi::file_dump::FileDumpReceiver;
+use midi::messages::sysex::SysEx;
+use midi::usb_midi;
 use panic_probe as _;
 use static_cell::StaticCell;
 
@@ -203,7 +203,7 @@ async fn usb_task(
         &mut [], // no msos descriptors
         &mut control_buf,
     );
-    let midi_class = midi::MidiClass::new(&mut usb_builder, 1, 1, MAX_MIDI_PACKET_SIZE as u16);
+    let midi_class = MidiClass::new(&mut usb_builder, 1, 1, MAX_MIDI_PACKET_SIZE as u16);
     let (mut midi_sender, mut midi_reciever) = midi_class.split();
     let mut usb_device = usb_builder.build();
     let usb_fut = usb_device.run();

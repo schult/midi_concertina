@@ -7,7 +7,7 @@ name = "bin2syx"
 version = "0.0.0"
 dependencies = [
  "embedded-io-adapters",
- "midi-tools",
+ "midi",
 ]
 
 [[package]]
@@ -35,7 +35,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "midi-tools"
+name = "midi"
 version = "0.0.0"
 dependencies = [
  "circular-buffer",

@@ -4,9 +4,9 @@ use embassy_boot_stm32::FirmwareUpdater;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::Sender;
 use embedded_storage_async::nor_flash::NorFlash;
-use midi_tools::file_dump::{FileWriter, SysExOutput};
-use midi_tools::messages::sysex::SysEx;
-use midi_tools::usb_midi;
+use midi::file_dump::{FileWriter, SysExOutput};
+use midi::messages::sysex::SysEx;
+use midi::usb_midi;
 
 type EventPacketSender = Sender<'static, NoopRawMutex, usb_midi::EventPacket, 32>;
 
