@@ -4,7 +4,6 @@ use embassy_boot_stm32::FirmwareUpdater;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::Sender;
 use embedded_storage_async::nor_flash::NorFlash;
-use midi::file_dump::{FileWriter, SysExOutput};
 use midi::messages::sysex::SysEx;
 use midi::usb_midi;
 
@@ -22,7 +21,7 @@ impl SysExChannelAdapter {
     }
 }
 
-impl SysExOutput for SysExChannelAdapter {
+impl midi::util::SysExOutput for SysExChannelAdapter {
     async fn send(&mut self, sysex: SysEx) {
         for event_packet in usb_midi::EventPacket::encode_sysex(self.cable, &sysex) {
             self.channel.send(event_packet).await;
@@ -67,7 +66,7 @@ impl<'a, DFU: NorFlash, STATE: NorFlash> DfuWriter<'a, DFU, STATE> {
     }
 }
 
-impl<'a, DFU: NorFlash, STATE: NorFlash> FileWriter for DfuWriter<'a, DFU, STATE> {
+impl<'a, DFU: NorFlash, STATE: NorFlash> midi::util::FileWriter for DfuWriter<'a, DFU, STATE> {
     type ErrorType = FirmwareUpdaterError;
 
     async fn open(&mut self) -> Result<(), Self::ErrorType> {

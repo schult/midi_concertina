@@ -1,7 +1,7 @@
 use hex_literal::hex;
-use midi::file_dump::*;
 use midi::messages::sysex;
 use midi::messages::sysex::SysEx;
+use midi::util::*;
 use mockall::Sequence;
 use mockall::mock;
 use mockall::predicate::*;
