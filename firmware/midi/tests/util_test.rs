@@ -24,7 +24,7 @@ mock! {
 }
 
 #[tokio::test]
-async fn receiver_ignores_header_with_wrong_device_ids() {
+async fn file_dump_receiver_ignores_header_with_wrong_device_ids() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -48,7 +48,7 @@ async fn receiver_ignores_header_with_wrong_device_ids() {
 }
 
 #[tokio::test]
-async fn receiver_cancels_header_with_wrong_file_type() {
+async fn file_dump_receiver_cancels_header_with_wrong_file_type() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -76,7 +76,7 @@ async fn receiver_cancels_header_with_wrong_file_type() {
 }
 
 #[tokio::test]
-async fn receiver_opens_file_on_accepted_header() {
+async fn file_dump_receiver_opens_file_on_accepted_header() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -94,7 +94,7 @@ async fn receiver_opens_file_on_accepted_header() {
 }
 
 #[tokio::test]
-async fn receiver_requests_wait_before_open() {
+async fn file_dump_receiver_requests_wait_before_open() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -122,7 +122,7 @@ async fn receiver_requests_wait_before_open() {
 }
 
 #[tokio::test]
-async fn receiver_cancels_on_open_error() {
+async fn file_dump_receiver_cancels_on_open_error() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -155,7 +155,7 @@ async fn receiver_cancels_on_open_error() {
 }
 
 #[tokio::test]
-async fn receiver_acks_on_open_ok() {
+async fn file_dump_receiver_acks_on_open_ok() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -188,7 +188,7 @@ async fn receiver_acks_on_open_ok() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_eof_before_header() {
+async fn file_dump_receiver_ignores_eof_before_header() {
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
 
@@ -203,7 +203,7 @@ async fn receiver_ignores_eof_before_header() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_eof_with_wrong_device_id() {
+async fn file_dump_receiver_ignores_eof_with_wrong_device_id() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -225,7 +225,7 @@ async fn receiver_ignores_eof_with_wrong_device_id() {
 }
 
 #[tokio::test]
-async fn receiver_closes_file_on_eof() {
+async fn file_dump_receiver_closes_file_on_eof() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -245,7 +245,7 @@ async fn receiver_closes_file_on_eof() {
 }
 
 #[tokio::test]
-async fn receiver_accepts_any_eof_packet_num() {
+async fn file_dump_receiver_accepts_any_eof_packet_num() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -265,7 +265,7 @@ async fn receiver_accepts_any_eof_packet_num() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_packets_before_header() {
+async fn file_dump_receiver_ignores_packets_before_header() {
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
 
@@ -282,7 +282,7 @@ async fn receiver_ignores_packets_before_header() {
 }
 
 #[tokio::test]
-async fn receiver_writes_file_on_accepted_packet() {
+async fn file_dump_receiver_writes_file_on_accepted_packet() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -307,7 +307,7 @@ async fn receiver_writes_file_on_accepted_packet() {
 }
 
 #[tokio::test]
-async fn receiver_requests_wait_before_write() {
+async fn file_dump_receiver_requests_wait_before_write() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -354,7 +354,7 @@ async fn receiver_requests_wait_before_write() {
 }
 
 #[tokio::test]
-async fn receiver_cancels_on_write_error() {
+async fn file_dump_receiver_cancels_on_write_error() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -406,7 +406,7 @@ async fn receiver_cancels_on_write_error() {
 }
 
 #[tokio::test]
-async fn receiver_acks_on_valid_packet() {
+async fn file_dump_receiver_acks_on_valid_packet() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -485,7 +485,7 @@ async fn receiver_acks_on_valid_packet() {
 }
 
 #[tokio::test]
-async fn receiver_naks_on_bad_checksum() {
+async fn file_dump_receiver_naks_on_bad_checksum() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -530,7 +530,7 @@ async fn receiver_naks_on_bad_checksum() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_packets_with_wrong_device_id() {
+async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -591,7 +591,7 @@ async fn receiver_ignores_packets_with_wrong_device_id() {
 }
 
 #[tokio::test]
-async fn receiver_cancels_on_out_of_order_packet() {
+async fn file_dump_receiver_cancels_on_out_of_order_packet() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -664,7 +664,7 @@ async fn receiver_cancels_on_out_of_order_packet() {
 }
 
 #[tokio::test]
-async fn receiver_accepts_all_call_header() {
+async fn file_dump_receiver_accepts_all_call_header() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -687,7 +687,7 @@ async fn receiver_accepts_all_call_header() {
 }
 
 #[tokio::test]
-async fn receiver_accepts_all_call_packet() {
+async fn file_dump_receiver_accepts_all_call_packet() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -716,7 +716,7 @@ async fn receiver_accepts_all_call_packet() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_packets_after_header_with_wrong_file_type() {
+async fn file_dump_receiver_ignores_packets_after_header_with_wrong_file_type() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -738,7 +738,7 @@ async fn receiver_ignores_packets_after_header_with_wrong_file_type() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_packets_after_open_error() {
+async fn file_dump_receiver_ignores_packets_after_open_error() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -760,7 +760,7 @@ async fn receiver_ignores_packets_after_open_error() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_packets_after_write_error() {
+async fn file_dump_receiver_ignores_packets_after_write_error() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -818,7 +818,7 @@ async fn receiver_ignores_packets_after_write_error() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_packets_after_out_of_order_packet() {
+async fn file_dump_receiver_ignores_packets_after_out_of_order_packet() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -866,7 +866,7 @@ async fn receiver_ignores_packets_after_out_of_order_packet() {
 }
 
 #[tokio::test]
-async fn receiver_ignores_packets_after_eof() {
+async fn file_dump_receiver_ignores_packets_after_eof() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -895,7 +895,7 @@ async fn receiver_ignores_packets_after_eof() {
 }
 
 #[tokio::test]
-async fn receiver_eof_after_eof() {
+async fn file_dump_receiver_eof_after_eof() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -916,7 +916,7 @@ async fn receiver_eof_after_eof() {
 }
 
 #[tokio::test]
-async fn receiver_accepts_packets_after_bad_checksum() {
+async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
@@ -981,7 +981,7 @@ async fn receiver_accepts_packets_after_bad_checksum() {
 }
 
 #[tokio::test]
-async fn receiver_reopens_file_on_new_header() {
+async fn file_dump_receiver_reopens_file_on_new_header() {
     const SOURCE_ID: u8 = 0;
     const DEVICE_ID: u8 = 1;
     const FILE_TYPE: &str = "BIN ";
