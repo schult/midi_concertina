@@ -10,7 +10,7 @@ pub trait FileWriter {
     async fn close(&mut self) -> Result<(), Self::ErrorType>;
 }
 
-pub trait SysExOutput {
+pub trait MessageSender {
     async fn send(&mut self, sysex: SystemExclusiveMessage);
 }
 
@@ -25,7 +25,7 @@ impl FileDumpProgress {
     }
 }
 
-pub struct FileDumpReceiver<'a, T: FileWriter, U: SysExOutput> {
+pub struct FileDumpReceiver<'a, T: FileWriter, U: MessageSender> {
     file: &'a mut T,
     sysex: &'a mut U,
     device_id: u8,
@@ -33,7 +33,7 @@ pub struct FileDumpReceiver<'a, T: FileWriter, U: SysExOutput> {
     progress: Option<FileDumpProgress>,
 }
 
-impl<'a, T: FileWriter, U: SysExOutput> FileDumpReceiver<'a, T, U> {
+impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
     pub fn new(file: &'a mut T, sysex: &'a mut U, device_id: u8, file_type: &str) -> Self {
         assert!(device_id < 0x80);
 

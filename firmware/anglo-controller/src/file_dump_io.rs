@@ -20,7 +20,7 @@ impl SysExChannelAdapter {
     }
 }
 
-impl midi::util::SysExOutput for SysExChannelAdapter {
+impl midi::util::MessageSender for SysExChannelAdapter {
     async fn send(&mut self, sysex: SystemExclusiveMessage) {
         for event_packet in midi::usb::EventPacket::encode_sysex(self.cable, &sysex) {
             self.channel.send(event_packet).await;

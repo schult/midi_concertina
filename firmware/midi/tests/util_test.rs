@@ -16,8 +16,8 @@ mock! {
 }
 
 mock! {
-    SysExOutput {}
-    impl SysExOutput for SysExOutput {
+    MessageSender {}
+    impl MessageSender for MessageSender {
         async fn send(&mut self, sysex: SystemExclusiveMessage);
     }
 }
@@ -29,7 +29,7 @@ async fn file_dump_receiver_ignores_header_with_wrong_device_ids() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().times(0);
     sysex.expect_send().times(0);
@@ -59,7 +59,7 @@ async fn file_dump_receiver_cancels_header_with_wrong_file_type() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().times(0);
     sysex
@@ -93,7 +93,7 @@ async fn file_dump_receiver_opens_file_on_accepted_header() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(())).times(1);
     sysex.expect_send().return_const(());
@@ -113,7 +113,7 @@ async fn file_dump_receiver_requests_wait_before_open() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -143,7 +143,7 @@ async fn file_dump_receiver_cancels_on_open_error() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -178,7 +178,7 @@ async fn file_dump_receiver_acks_on_open_ok() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -212,7 +212,7 @@ async fn file_dump_receiver_ignores_eof_before_header() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().times(0);
     sysex.expect_send().times(0);
@@ -230,7 +230,7 @@ async fn file_dump_receiver_ignores_eof_with_wrong_device_id() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(())).times(1);
     sysex.expect_send().return_const(());
@@ -254,7 +254,7 @@ async fn file_dump_receiver_closes_file_on_eof() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(())).times(1);
     sysex.expect_send().return_const(());
@@ -278,7 +278,7 @@ async fn file_dump_receiver_accepts_any_eof_packet_num() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(())).times(1);
     sysex.expect_send().return_const(());
@@ -301,7 +301,7 @@ async fn file_dump_receiver_ignores_packets_before_header() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().times(0);
     sysex.expect_send().times(0);
@@ -323,7 +323,7 @@ async fn file_dump_receiver_writes_file_on_accepted_packet() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(()));
     file.expect_write()
@@ -354,7 +354,7 @@ async fn file_dump_receiver_requests_wait_before_write() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -407,7 +407,7 @@ async fn file_dump_receiver_cancels_on_write_error() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -465,7 +465,7 @@ async fn file_dump_receiver_acks_on_valid_packet() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -558,7 +558,7 @@ async fn file_dump_receiver_naks_on_bad_checksum() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -606,7 +606,7 @@ async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -685,7 +685,7 @@ async fn file_dump_receiver_cancels_on_out_of_order_packet() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -772,7 +772,7 @@ async fn file_dump_receiver_accepts_all_call_header() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(())).times(1);
     sysex.expect_send().return_const(());
@@ -795,7 +795,7 @@ async fn file_dump_receiver_accepts_all_call_packet() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(()));
     file.expect_write()
@@ -826,7 +826,7 @@ async fn file_dump_receiver_ignores_packets_after_header_with_wrong_file_type() 
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().times(0);
     file.expect_write().times(0);
@@ -854,7 +854,7 @@ async fn file_dump_receiver_ignores_packets_after_open_error() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Err(0));
     file.expect_write().times(0);
@@ -882,7 +882,7 @@ async fn file_dump_receiver_ignores_packets_after_write_error() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -954,7 +954,7 @@ async fn file_dump_receiver_ignores_packets_after_out_of_order_packet() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -1016,7 +1016,7 @@ async fn file_dump_receiver_ignores_packets_after_eof() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(())).times(1);
     sysex.expect_send().return_const(());
@@ -1061,7 +1061,7 @@ async fn file_dump_receiver_eof_after_eof() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(())).times(1);
     sysex.expect_send().return_const(());
@@ -1088,7 +1088,7 @@ async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     let mut seq = Sequence::new();
     sysex
@@ -1160,7 +1160,7 @@ async fn file_dump_receiver_reopens_file_on_new_header() {
     const FILE_TYPE: &str = "BIN ";
 
     let mut file = MockFileWriter::new();
-    let mut sysex = MockSysExOutput::new();
+    let mut sysex = MockMessageSender::new();
 
     file.expect_open().return_const(Ok(())).times(2);
     sysex.expect_send().return_const(());
