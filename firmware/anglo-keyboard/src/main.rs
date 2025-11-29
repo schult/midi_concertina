@@ -139,15 +139,11 @@ async fn main(spawner: embassy_executor::Spawner) {
     // TODO: Increase frequency after fixing controller hardware.
     i2c_config.frequency = khz(10);
 
-    let i2c_master = i2c::I2c::new(
-        p.I2C1,
-        p.PB8, // SCL
-        p.PB9, // SDA
-        Irqs,
-        p.DMA1_CH2, // TX DMA
-        p.DMA1_CH3, // RX DMA
-        i2c_config,
-    );
+    let scl_pin = p.PB8;
+    let sda_pin = p.PB9;
+    let tx_dma = p.DMA1_CH2;
+    let rx_dma = p.DMA1_CH3;
+    let i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, Irqs, tx_dma, rx_dma, i2c_config);
 
     let i2c_addr = match chirality {
         Chirality::Left => 0x22,
