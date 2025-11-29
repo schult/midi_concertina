@@ -4,7 +4,7 @@ use embassy_boot_stm32::FirmwareUpdater;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::Sender;
 use embedded_storage_async::nor_flash::NorFlash;
-use midi::SysEx;
+use midi::SystemExclusiveMessage;
 
 type EventPacketSender = Sender<'static, NoopRawMutex, midi::usb::EventPacket, 32>;
 
@@ -21,7 +21,7 @@ impl SysExChannelAdapter {
 }
 
 impl midi::util::SysExOutput for SysExChannelAdapter {
-    async fn send(&mut self, sysex: SysEx) {
+    async fn send(&mut self, sysex: SystemExclusiveMessage) {
         for event_packet in midi::usb::EventPacket::encode_sysex(self.cable, &sysex) {
             self.channel.send(event_packet).await;
         }

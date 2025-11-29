@@ -1,5 +1,5 @@
 use crate::ChannelVoiceMessage;
-use crate::SysEx;
+use crate::SystemExclusiveMessage;
 use circular_buffer::CircularBuffer;
 
 #[derive(Debug, PartialEq)]
@@ -78,11 +78,11 @@ impl EventPacket {
         packet
     }
 
-    pub fn encode_sysex(cable: u8, message: &SysEx) -> EncodeSysEx {
+    pub fn encode_sysex(cable: u8, message: &SystemExclusiveMessage) -> EncodeSysEx {
         assert!(cable <= 0x0F);
         let mut it = EncodeSysEx {
             cable,
-            midi_data: CircularBuffer::<{ SysEx::MAX_LENGTH }, u8>::new(),
+            midi_data: CircularBuffer::<{ SystemExclusiveMessage::MAX_LENGTH }, u8>::new(),
         };
         message.write(&mut it.midi_data).unwrap();
         it
@@ -112,7 +112,7 @@ impl EventPacket {
 
 pub struct EncodeSysEx {
     cable: u8,
-    midi_data: CircularBuffer<{ SysEx::MAX_LENGTH }, u8>,
+    midi_data: CircularBuffer<{ SystemExclusiveMessage::MAX_LENGTH }, u8>,
 }
 
 impl Iterator for EncodeSysEx {

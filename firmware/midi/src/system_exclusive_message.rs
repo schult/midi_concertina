@@ -57,7 +57,7 @@ impl FileDumpPacketData {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum SysEx {
+pub enum SystemExclusiveMessage {
     Ack(HandshakeData),
     Nak(HandshakeData),
     Wait(HandshakeData),
@@ -93,27 +93,29 @@ fn parse_handshake<'a>(
     })
 }
 
-fn parse_ack<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
-    Some(SysEx::Ack(parse_handshake(it, 0x7F)?))
+fn parse_ack<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SystemExclusiveMessage> {
+    Some(SystemExclusiveMessage::Ack(parse_handshake(it, 0x7F)?))
 }
 
-fn parse_nak<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
-    Some(SysEx::Nak(parse_handshake(it, 0x7E)?))
+fn parse_nak<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SystemExclusiveMessage> {
+    Some(SystemExclusiveMessage::Nak(parse_handshake(it, 0x7E)?))
 }
 
-fn parse_wait<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
-    Some(SysEx::Wait(parse_handshake(it, 0x7C)?))
+fn parse_wait<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SystemExclusiveMessage> {
+    Some(SystemExclusiveMessage::Wait(parse_handshake(it, 0x7C)?))
 }
 
-fn parse_cancel<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
-    Some(SysEx::Cancel(parse_handshake(it, 0x7D)?))
+fn parse_cancel<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SystemExclusiveMessage> {
+    Some(SystemExclusiveMessage::Cancel(parse_handshake(it, 0x7D)?))
 }
 
-fn parse_eof<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
-    Some(SysEx::Eof(parse_handshake(it, 0x7B)?))
+fn parse_eof<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SystemExclusiveMessage> {
+    Some(SystemExclusiveMessage::Eof(parse_handshake(it, 0x7B)?))
 }
 
-fn parse_file_dump_header<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+fn parse_file_dump_header<'a>(
+    it: &mut impl Iterator<Item = &'a u8>,
+) -> Option<SystemExclusiveMessage> {
     if *it.next()? != 0xF0 {
         return None;
     }
@@ -142,7 +144,7 @@ fn parse_file_dump_header<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<S
 
     while *it.next()? != 0xF7 {}
 
-    Some(SysEx::FileDumpHeader(FileDumpHeaderData {
+    Some(SystemExclusiveMessage::FileDumpHeader(FileDumpHeaderData {
         device_id,
         source_id,
         length,
@@ -150,7 +152,9 @@ fn parse_file_dump_header<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<S
     }))
 }
 
-fn parse_file_dump_packet<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<SysEx> {
+fn parse_file_dump_packet<'a>(
+    it: &mut impl Iterator<Item = &'a u8>,
+) -> Option<SystemExclusiveMessage> {
     if *it.next()? != 0xF0 {
         return None;
     }
@@ -190,7 +194,7 @@ fn parse_file_dump_packet<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<S
         return None;
     }
 
-    Some(SysEx::FileDumpPacket(FileDumpPacketData {
+    Some(SystemExclusiveMessage::FileDumpPacket(FileDumpPacketData {
         device_id,
         packet_num,
         checksum_ok,
@@ -305,13 +309,13 @@ fn is_sys_rt(x: &u8) -> bool {
     return (*x & 0xF8) == 0xF8;
 }
 
-impl SysEx {
+impl SystemExclusiveMessage {
     pub const MAX_LENGTH: usize = 137;
 
     pub fn ack(device_id: u8, packet_num: u8) -> Self {
         assert!(device_id <= 0x7F);
         assert!(packet_num <= 0x7F);
-        SysEx::Ack(HandshakeData {
+        SystemExclusiveMessage::Ack(HandshakeData {
             device_id,
             packet_num,
         })
@@ -320,7 +324,7 @@ impl SysEx {
     pub fn nak(device_id: u8, packet_num: u8) -> Self {
         assert!(device_id <= 0x7F);
         assert!(packet_num <= 0x7F);
-        SysEx::Nak(HandshakeData {
+        SystemExclusiveMessage::Nak(HandshakeData {
             device_id,
             packet_num,
         })
@@ -329,7 +333,7 @@ impl SysEx {
     pub fn wait(device_id: u8, packet_num: u8) -> Self {
         assert!(device_id <= 0x7F);
         assert!(packet_num <= 0x7F);
-        SysEx::Wait(HandshakeData {
+        SystemExclusiveMessage::Wait(HandshakeData {
             device_id,
             packet_num,
         })
@@ -338,7 +342,7 @@ impl SysEx {
     pub fn cancel(device_id: u8, packet_num: u8) -> Self {
         assert!(device_id <= 0x7F);
         assert!(packet_num <= 0x7F);
-        SysEx::Cancel(HandshakeData {
+        SystemExclusiveMessage::Cancel(HandshakeData {
             device_id,
             packet_num,
         })
@@ -347,7 +351,7 @@ impl SysEx {
     pub fn eof(device_id: u8, packet_num: u8) -> Self {
         assert!(device_id <= 0x7F);
         assert!(packet_num <= 0x7F);
-        SysEx::Eof(HandshakeData {
+        SystemExclusiveMessage::Eof(HandshakeData {
             device_id,
             packet_num,
         })
@@ -355,7 +359,7 @@ impl SysEx {
 
     pub fn identity_request(device_id: u8) -> Self {
         assert!(device_id <= 0x7F);
-        SysEx::IdentityRequest(IdentityRequestData { device_id })
+        SystemExclusiveMessage::IdentityRequest(IdentityRequestData { device_id })
     }
 
     pub fn identity_reply(
@@ -372,7 +376,7 @@ impl SysEx {
         assert!(software_rev.iter().all(|x| *x < 0x7F));
         let mut software_rev_array = [0; 4];
         software_rev_array.copy_from_slice(software_rev);
-        SysEx::IdentityReply(IdentityReplyData {
+        SystemExclusiveMessage::IdentityReply(IdentityReplyData {
             device_id,
             manufacturer_id,
             device_family_code,
@@ -388,7 +392,7 @@ impl SysEx {
         let mut raw_file_type = [b' '; 4];
         raw_file_type.copy_from_slice(file_type.as_bytes());
         assert!(raw_file_type.iter().all(|x| *x < 0x7F));
-        SysEx::FileDumpHeader(FileDumpHeaderData {
+        SystemExclusiveMessage::FileDumpHeader(FileDumpHeaderData {
             device_id,
             source_id,
             length,
@@ -401,7 +405,7 @@ impl SysEx {
         assert!(packet_num <= 0x7F);
         let mut data_array = [0; 112];
         data_array[..data.len()].copy_from_slice(data);
-        SysEx::FileDumpPacket(FileDumpPacketData {
+        SystemExclusiveMessage::FileDumpPacket(FileDumpPacketData {
             device_id,
             packet_num,
             checksum_ok: true,
@@ -475,15 +479,15 @@ impl SysEx {
 
     pub fn write<T: Write>(&self, writer: &mut T) -> Result<(), T::Error> {
         match self {
-            SysEx::Ack(data) => write_ack(data, writer),
-            SysEx::Nak(data) => write_nak(data, writer),
-            SysEx::Wait(data) => write_wait(data, writer),
-            SysEx::Cancel(data) => write_cancel(data, writer),
-            SysEx::Eof(data) => write_eof(data, writer),
-            SysEx::IdentityRequest(_) => Ok(()), // TODO
-            SysEx::IdentityReply(_) => Ok(()),   // TODO
-            SysEx::FileDumpHeader(data) => write_file_dump_header(data, writer),
-            SysEx::FileDumpPacket(data) => write_file_dump_packet(data, writer),
+            SystemExclusiveMessage::Ack(data) => write_ack(data, writer),
+            SystemExclusiveMessage::Nak(data) => write_nak(data, writer),
+            SystemExclusiveMessage::Wait(data) => write_wait(data, writer),
+            SystemExclusiveMessage::Cancel(data) => write_cancel(data, writer),
+            SystemExclusiveMessage::Eof(data) => write_eof(data, writer),
+            SystemExclusiveMessage::IdentityRequest(_) => Ok(()), // TODO
+            SystemExclusiveMessage::IdentityReply(_) => Ok(()),   // TODO
+            SystemExclusiveMessage::FileDumpHeader(data) => write_file_dump_header(data, writer),
+            SystemExclusiveMessage::FileDumpPacket(data) => write_file_dump_packet(data, writer),
         }
     }
 }

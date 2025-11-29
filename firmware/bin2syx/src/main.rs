@@ -1,5 +1,5 @@
 use embedded_io_adapters::std::FromStd;
-use midi::SysEx;
+use midi::SystemExclusiveMessage;
 use std::env;
 use std::fs::File;
 use std::io::{BufReader, BufWriter, Read};
@@ -50,7 +50,7 @@ fn main() {
     const DEVICE_ID: u8 = 1;
     const SOURCE_ID: u8 = 0;
 
-    let header = SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, file_size, "BIN ");
+    let header = SystemExclusiveMessage::file_dump_header(DEVICE_ID, SOURCE_ID, file_size, "BIN ");
     if let Err(e) = header.write(&mut writer) {
         println!("Write error: {e}");
         return;
@@ -68,13 +68,14 @@ fn main() {
         };
 
         if n > 0 {
-            let packet = SysEx::file_dump_packet(DEVICE_ID, packet_num, &data[..n]);
+            let packet =
+                SystemExclusiveMessage::file_dump_packet(DEVICE_ID, packet_num, &data[..n]);
             if let Err(e) = packet.write(&mut writer) {
                 println!("Write error: {e}");
                 return;
             }
         } else {
-            let eof = SysEx::eof(DEVICE_ID, packet_num);
+            let eof = SystemExclusiveMessage::eof(DEVICE_ID, packet_num);
             if let Err(e) = eof.write(&mut writer) {
                 println!("Write error: {e}");
                 return;

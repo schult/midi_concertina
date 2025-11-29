@@ -1,5 +1,5 @@
 use hex_literal::hex;
-use midi::SysEx;
+use midi::SystemExclusiveMessage;
 use midi::usb::*;
 use midi::{Channel, ChannelVoiceMessage, Note};
 
@@ -159,7 +159,7 @@ fn encode_sysex_panics_if_cable_over_4_bits() {
     let cable = 1 << 4;
     let device_id = 0x01;
     let packet_num = 0x4B;
-    let message = SysEx::ack(device_id, packet_num);
+    let message = SystemExclusiveMessage::ack(device_id, packet_num);
     let _ = EventPacket::encode_sysex(cable, &message);
 }
 
@@ -168,7 +168,7 @@ fn encode_sysex_ack() {
     let cable = 0x0C;
     let device_id = 0x01;
     let packet_num = 0x4B;
-    let message = SysEx::ack(device_id, packet_num);
+    let message = SystemExclusiveMessage::ack(device_id, packet_num);
     let mut it = EventPacket::encode_sysex(cable, &message);
     assert_eq!(
         it.next(),

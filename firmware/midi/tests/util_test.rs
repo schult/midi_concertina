@@ -1,6 +1,6 @@
 use hex_literal::hex;
 use midi::util::*;
-use midi::{ALL_CALL_DEVICE_ID, SysEx};
+use midi::{ALL_CALL_DEVICE_ID, SystemExclusiveMessage};
 use mockall::Sequence;
 use mockall::mock;
 use mockall::predicate::*;
@@ -18,7 +18,7 @@ mock! {
 mock! {
     SysExOutput {}
     impl SysExOutput for SysExOutput {
-        async fn send(&mut self, sysex: SysEx);
+        async fn send(&mut self, sysex: SystemExclusiveMessage);
     }
 }
 
@@ -36,13 +36,19 @@ async fn file_dump_receiver_ignores_header_with_wrong_device_ids() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(0x00, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            0x00, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_header(0x33, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            0x33, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_header(0x7E, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            0x7E, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
 }
 
@@ -58,19 +64,25 @@ async fn file_dump_receiver_cancels_header_with_wrong_file_type() {
     file.expect_open().times(0);
     sysex
         .expect_send()
-        .with(eq(SysEx::cancel(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(3);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, "TEXT"))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, "TEXT",
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, "MIDI"))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, "MIDI",
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, "BINN"))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, "BINN",
+        ))
         .await;
 }
 
@@ -88,7 +100,9 @@ async fn file_dump_receiver_opens_file_on_accepted_header() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
 }
 
@@ -104,7 +118,7 @@ async fn file_dump_receiver_requests_wait_before_open() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -116,7 +130,9 @@ async fn file_dump_receiver_requests_wait_before_open() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
 }
 
@@ -132,7 +148,7 @@ async fn file_dump_receiver_cancels_on_open_error() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -142,14 +158,16 @@ async fn file_dump_receiver_cancels_on_open_error() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::cancel(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
 }
 
@@ -165,7 +183,7 @@ async fn file_dump_receiver_acks_on_open_ok() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -175,14 +193,16 @@ async fn file_dump_receiver_acks_on_open_ok() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
 }
 
@@ -198,7 +218,9 @@ async fn file_dump_receiver_ignores_eof_before_header() {
     sysex.expect_send().times(0);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
-    receiver.process(SysEx::eof(DEVICE_ID, 2)).await;
+    receiver
+        .process(SystemExclusiveMessage::eof(DEVICE_ID, 2))
+        .await;
 }
 
 #[tokio::test]
@@ -216,11 +238,13 @@ async fn file_dump_receiver_ignores_eof_with_wrong_device_id() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
-    receiver.process(SysEx::eof(0x00, 0)).await;
-    receiver.process(SysEx::eof(0x33, 0)).await;
-    receiver.process(SysEx::eof(0x7E, 0)).await;
+    receiver.process(SystemExclusiveMessage::eof(0x00, 0)).await;
+    receiver.process(SystemExclusiveMessage::eof(0x33, 0)).await;
+    receiver.process(SystemExclusiveMessage::eof(0x7E, 0)).await;
 }
 
 #[tokio::test]
@@ -238,9 +262,13 @@ async fn file_dump_receiver_closes_file_on_eof() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
-    receiver.process(SysEx::eof(DEVICE_ID, 0)).await;
+    receiver
+        .process(SystemExclusiveMessage::eof(DEVICE_ID, 0))
+        .await;
 }
 
 #[tokio::test]
@@ -258,9 +286,13 @@ async fn file_dump_receiver_accepts_any_eof_packet_num() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
-    receiver.process(SysEx::eof(DEVICE_ID, 43)).await;
+    receiver
+        .process(SystemExclusiveMessage::eof(DEVICE_ID, 43))
+        .await;
 }
 
 #[tokio::test]
@@ -276,7 +308,11 @@ async fn file_dump_receiver_ignores_packets_before_header() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
 }
 
@@ -298,10 +334,16 @@ async fn file_dump_receiver_writes_file_on_accepted_packet() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
 }
 
@@ -317,7 +359,7 @@ async fn file_dump_receiver_requests_wait_before_write() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -327,13 +369,13 @@ async fn file_dump_receiver_requests_wait_before_write() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -345,10 +387,16 @@ async fn file_dump_receiver_requests_wait_before_write() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
 }
 
@@ -364,7 +412,7 @@ async fn file_dump_receiver_cancels_on_write_error() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -374,13 +422,13 @@ async fn file_dump_receiver_cancels_on_write_error() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -390,17 +438,23 @@ async fn file_dump_receiver_cancels_on_write_error() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::cancel(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
 }
 
@@ -416,7 +470,7 @@ async fn file_dump_receiver_acks_on_valid_packet() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -426,43 +480,43 @@ async fn file_dump_receiver_acks_on_valid_packet() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 1)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 1)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 1)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 1)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 2)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 2)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 2)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 2)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -470,16 +524,30 @@ async fn file_dump_receiver_acks_on_valid_packet() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 1, &hex!("F0 E0 D0 C0")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            1,
+            &hex!("F0 E0 D0 C0"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 2, &hex!("55 66 77 88")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            2,
+            &hex!("55 66 77 88"),
+        ))
         .await;
 }
 
@@ -495,7 +563,7 @@ async fn file_dump_receiver_naks_on_bad_checksum() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -505,24 +573,27 @@ async fn file_dump_receiver_naks_on_bad_checksum() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::nak(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::nak(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
 
-    let mut corrupt_packet = SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04"));
-    if let SysEx::FileDumpPacket(data) = &mut corrupt_packet {
+    let mut corrupt_packet =
+        SystemExclusiveMessage::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04"));
+    if let SystemExclusiveMessage::FileDumpPacket(data) = &mut corrupt_packet {
         data.checksum_ok = false;
     }
     receiver.process(corrupt_packet).await;
@@ -540,7 +611,7 @@ async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -550,13 +621,13 @@ async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -566,26 +637,44 @@ async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
         .times(1);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(0x00, 1, &hex!("F0 E0 D0 C0")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            0x00,
+            1,
+            &hex!("F0 E0 D0 C0"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(0x33, 1, &hex!("F0 E0 D0 C0")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            0x33,
+            1,
+            &hex!("F0 E0 D0 C0"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(0x7E, 1, &hex!("F0 E0 D0 C0")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            0x7E,
+            1,
+            &hex!("F0 E0 D0 C0"),
+        ))
         .await;
 }
 
@@ -601,7 +690,7 @@ async fn file_dump_receiver_cancels_on_out_of_order_packet() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -611,37 +700,37 @@ async fn file_dump_receiver_cancels_on_out_of_order_packet() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 1)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 1)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 1)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 1)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::cancel(SOURCE_ID, 2)))
+        .with(eq(SystemExclusiveMessage::cancel(SOURCE_ID, 2)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -649,16 +738,30 @@ async fn file_dump_receiver_cancels_on_out_of_order_packet() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 1, &hex!("F0 E0 D0 C0")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            1,
+            &hex!("F0 E0 D0 C0"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 3, &hex!("55 66 77 88")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            3,
+            &hex!("55 66 77 88"),
+        ))
         .await;
 }
 
@@ -676,7 +779,7 @@ async fn file_dump_receiver_accepts_all_call_header() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(
+        .process(SystemExclusiveMessage::file_dump_header(
             ALL_CALL_DEVICE_ID,
             SOURCE_ID,
             0,
@@ -703,10 +806,12 @@ async fn file_dump_receiver_accepts_all_call_packet() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(
+        .process(SystemExclusiveMessage::file_dump_packet(
             ALL_CALL_DEVICE_ID,
             0,
             &hex!("01 02 03 04"),
@@ -729,10 +834,16 @@ async fn file_dump_receiver_ignores_packets_after_header_with_wrong_file_type() 
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, "TEXT"))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, "TEXT",
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
 }
 
@@ -751,10 +862,16 @@ async fn file_dump_receiver_ignores_packets_after_open_error() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
 }
 
@@ -770,7 +887,7 @@ async fn file_dump_receiver_ignores_packets_after_write_error() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -780,13 +897,13 @@ async fn file_dump_receiver_ignores_packets_after_write_error() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -796,23 +913,37 @@ async fn file_dump_receiver_ignores_packets_after_write_error() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::cancel(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 1, &hex!("F0 E0 D0 C0")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            1,
+            &hex!("F0 E0 D0 C0"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 2, &hex!("55 66 77 88")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            2,
+            &hex!("55 66 77 88"),
+        ))
         .await;
 }
 
@@ -828,7 +959,7 @@ async fn file_dump_receiver_ignores_packets_after_out_of_order_packet() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -838,29 +969,43 @@ async fn file_dump_receiver_ignores_packets_after_out_of_order_packet() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::cancel(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 5, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            5,
+            &hex!("01 02 03 04"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("F0 E0 D0 C0")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("F0 E0 D0 C0"),
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 1, &hex!("55 66 77 88")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            1,
+            &hex!("55 66 77 88"),
+        ))
         .await;
 }
 
@@ -879,17 +1024,33 @@ async fn file_dump_receiver_ignores_packets_after_eof() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
-        .await;
-    receiver.process(SysEx::eof(DEVICE_ID, 0)).await;
-    receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 1, &hex!("F0 E0 D0 C0")))
+        .process(SystemExclusiveMessage::eof(DEVICE_ID, 0))
         .await;
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 2, &hex!("55 66 77 88")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
+        .await;
+    receiver
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            1,
+            &hex!("F0 E0 D0 C0"),
+        ))
+        .await;
+    receiver
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            2,
+            &hex!("55 66 77 88"),
+        ))
         .await;
 }
 
@@ -908,10 +1069,16 @@ async fn file_dump_receiver_eof_after_eof() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
-    receiver.process(SysEx::eof(DEVICE_ID, 0)).await;
-    receiver.process(SysEx::eof(DEVICE_ID, 0)).await;
+    receiver
+        .process(SystemExclusiveMessage::eof(DEVICE_ID, 0))
+        .await;
+    receiver
+        .process(SystemExclusiveMessage::eof(DEVICE_ID, 0))
+        .await;
 }
 
 #[tokio::test]
@@ -926,7 +1093,7 @@ async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
     let mut seq = Sequence::new();
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -936,19 +1103,19 @@ async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::nak(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::nak(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
     sysex
         .expect_send()
-        .with(eq(SysEx::wait(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
@@ -958,24 +1125,31 @@ async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
         .times(1);
     sysex
         .expect_send()
-        .with(eq(SysEx::ack(SOURCE_ID, 0)))
+        .with(eq(SystemExclusiveMessage::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
 
-    let mut corrupt_packet = SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04"));
-    if let SysEx::FileDumpPacket(data) = &mut corrupt_packet {
+    let mut corrupt_packet =
+        SystemExclusiveMessage::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04"));
+    if let SystemExclusiveMessage::FileDumpPacket(data) = &mut corrupt_packet {
         data.checksum_ok = false;
     }
     receiver.process(corrupt_packet).await;
 
     receiver
-        .process(SysEx::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04")))
+        .process(SystemExclusiveMessage::file_dump_packet(
+            DEVICE_ID,
+            0,
+            &hex!("01 02 03 04"),
+        ))
         .await;
 }
 
@@ -993,9 +1167,13 @@ async fn file_dump_receiver_reopens_file_on_new_header() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut sysex, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
     receiver
-        .process(SysEx::file_dump_header(DEVICE_ID, SOURCE_ID, 0, FILE_TYPE))
+        .process(SystemExclusiveMessage::file_dump_header(
+            DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
+        ))
         .await;
 }

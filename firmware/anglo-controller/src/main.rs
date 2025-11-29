@@ -14,7 +14,7 @@ use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
-use midi::SysEx;
+use midi::SystemExclusiveMessage;
 use midi::util::FileDumpReceiver;
 use panic_probe as _;
 use static_cell::StaticCell;
@@ -134,7 +134,7 @@ async fn firmware_task(
         let event_packet = midi_in_channel.receive().await;
         midi_buffer.extend_from_slice(&event_packet.payload());
 
-        let sysex = match SysEx::read(&mut midi_buffer) {
+        let sysex = match SystemExclusiveMessage::read(&mut midi_buffer) {
             Some(x) => x,
             None => continue,
         };

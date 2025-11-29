@@ -1,6 +1,6 @@
 #![allow(async_fn_in_trait)]
 
-use crate::{ALL_CALL_DEVICE_ID, SysEx};
+use crate::{ALL_CALL_DEVICE_ID, SystemExclusiveMessage};
 
 pub trait FileWriter {
     type ErrorType;
@@ -11,7 +11,7 @@ pub trait FileWriter {
 }
 
 pub trait SysExOutput {
-    async fn send(&mut self, sysex: SysEx);
+    async fn send(&mut self, sysex: SystemExclusiveMessage);
 }
 
 struct FileDumpProgress {
@@ -53,37 +53,48 @@ impl<'a, T: FileWriter, U: SysExOutput> FileDumpReceiver<'a, T, U> {
     async fn cancel(&mut self) {
         if let Some(progress) = &mut self.progress {
             self.sysex
-                .send(SysEx::cancel(progress.source_id, progress.packet_num))
+                .send(SystemExclusiveMessage::cancel(
+                    progress.source_id,
+                    progress.packet_num,
+                ))
                 .await;
             self.progress = None;
         }
     }
 
-    pub async fn process(&mut self, sysex: SysEx) {
-        if let SysEx::FileDumpHeader(header) = sysex {
+    pub async fn process(&mut self, sysex: SystemExclusiveMessage) {
+        if let SystemExclusiveMessage::FileDumpHeader(header) = sysex {
             if ![self.device_id, ALL_CALL_DEVICE_ID].contains(&header.device_id) {
                 return;
             }
 
             if header.raw_file_type != self.raw_file_type {
-                self.sysex.send(SysEx::cancel(header.source_id, 0)).await;
+                self.sysex
+                    .send(SystemExclusiveMessage::cancel(header.source_id, 0))
+                    .await;
                 return;
             }
 
-            self.sysex.send(SysEx::wait(header.source_id, 0)).await;
+            self.sysex
+                .send(SystemExclusiveMessage::wait(header.source_id, 0))
+                .await;
             let result = self.file.open().await;
             if result.is_err() {
-                self.sysex.send(SysEx::cancel(header.source_id, 0)).await;
+                self.sysex
+                    .send(SystemExclusiveMessage::cancel(header.source_id, 0))
+                    .await;
                 return;
             }
-            self.sysex.send(SysEx::ack(header.source_id, 0)).await;
+            self.sysex
+                .send(SystemExclusiveMessage::ack(header.source_id, 0))
+                .await;
             self.progress = Some(FileDumpProgress {
                 source_id: header.source_id,
                 packet_num: 0,
             });
         } else if let Some(progress) = &mut self.progress {
             match sysex {
-                SysEx::FileDumpPacket(packet) => {
+                SystemExclusiveMessage::FileDumpPacket(packet) => {
                     if ![self.device_id, ALL_CALL_DEVICE_ID].contains(&packet.device_id) {
                         return;
                     }
@@ -95,13 +106,19 @@ impl<'a, T: FileWriter, U: SysExOutput> FileDumpReceiver<'a, T, U> {
 
                     if !packet.checksum_ok {
                         self.sysex
-                            .send(SysEx::nak(progress.source_id, progress.packet_num))
+                            .send(SystemExclusiveMessage::nak(
+                                progress.source_id,
+                                progress.packet_num,
+                            ))
                             .await;
                         return;
                     }
 
                     self.sysex
-                        .send(SysEx::wait(progress.source_id, progress.packet_num))
+                        .send(SystemExclusiveMessage::wait(
+                            progress.source_id,
+                            progress.packet_num,
+                        ))
                         .await;
                     let result = self.file.write(packet.data()).await;
                     if result.is_err() {
@@ -109,11 +126,14 @@ impl<'a, T: FileWriter, U: SysExOutput> FileDumpReceiver<'a, T, U> {
                         return;
                     }
                     self.sysex
-                        .send(SysEx::ack(progress.source_id, progress.packet_num))
+                        .send(SystemExclusiveMessage::ack(
+                            progress.source_id,
+                            progress.packet_num,
+                        ))
                         .await;
                     progress.packet_num = progress.next_packet();
                 }
-                SysEx::Eof(handshake) => {
+                SystemExclusiveMessage::Eof(handshake) => {
                     if ![self.device_id, ALL_CALL_DEVICE_ID].contains(&handshake.device_id) {
                         return;
                     }
