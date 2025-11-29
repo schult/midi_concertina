@@ -1,6 +1,6 @@
 use circular_buffer::CircularBuffer;
 use hex_literal::hex;
-use midi::messages::midi::*;
+use midi::channel_voice_message::*;
 
 #[test]
 fn midi_note_on_constructor() {

@@ -1,4 +1,4 @@
-use crate::messages::midi::Midi;
+use crate::Midi;
 use crate::messages::sysex::SysEx;
 use circular_buffer::CircularBuffer;
 
