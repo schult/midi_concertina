@@ -1,0 +1,34 @@
+# MIDI Anglo Firmware
+
+- [anglo-bootloader](anglo-bootloader/): Bootloader for both controller and
+  keyboard that handles power-fail-safe firmware updates.
+- [anglo-controller](anglo-controller/): Application firmware for the
+  controller. Handles most of the instrument logic.
+- [anglo-keyboard](anglo-keyboard/): Application firmware for the keyboards.
+  Primarily responsible for reading button states.
+- [bin2syx](bin2syx/): Utility for converting firmware (.bin) files to SysEx
+  (.syx) files that can be used to update the controller firmware over MIDI with
+  software such as [SysEx Librarian](https://www.snoize.com/SysExLibrarian/) or
+  [MIDI-OX](http://www.midiox.com/).
+- [midi-tools](midi-tools/): Library that provides the MIDI features required by
+  `anglo-controller`.
+
+## Environment Setup
+
+    rustup update
+    rustup target add thumbv6m-none-eabi
+    rustup component add llvm-tools
+    cargo install cargo-binutils
+    cargo install --locked probe-rs-tools
+
+## Build SYX Firmware Package
+
+    cd bin2syx
+    cargo build
+    cd ..
+
+    cd anglo-controller
+    cargo objcopy --release -- -O binary ../anglo-firmware.bin
+    cd ..
+
+    ./bin2syx/target/debug/bin2syx anglo-firmware.bin
