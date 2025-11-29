@@ -1,7 +1,7 @@
 use hex_literal::hex;
 use midi::messages::sysex::SysEx;
 use midi::usb::*;
-use midi::{Channel, Midi, Note};
+use midi::{Channel, ChannelVoiceMessage, Note};
 
 #[test]
 fn cin_u8_conversions_are_consistent() {
@@ -189,14 +189,14 @@ fn encode_sysex_ack() {
 #[should_panic]
 fn encode_midi_panics_if_cable_over_4_bits() {
     let cable = 1 << 4;
-    let message = Midi::note_on(Channel::Ch1, Note::C4, 96);
+    let message = ChannelVoiceMessage::note_on(Channel::Ch1, Note::C4, 96);
     let _ = EventPacket::encode_midi(cable, &message);
 }
 
 #[test]
 fn encode_midi_note_on() {
     let cable = 0x0C;
-    let message = Midi::note_on(Channel::Ch4, Note::C4, 96);
+    let message = ChannelVoiceMessage::note_on(Channel::Ch4, Note::C4, 96);
     let packet = EventPacket::encode_midi(cable, &message);
     assert_eq!(packet.raw, hex!("c9 93 3c 60"));
 }
@@ -204,7 +204,7 @@ fn encode_midi_note_on() {
 #[test]
 fn encode_midi_note_off() {
     let cable = 0x0C;
-    let message = Midi::note_off(Channel::Ch4, Note::C4, 96);
+    let message = ChannelVoiceMessage::note_off(Channel::Ch4, Note::C4, 96);
     let packet = EventPacket::encode_midi(cable, &message);
     assert_eq!(packet.raw, hex!("c8 83 3c 60"));
 }
@@ -212,7 +212,7 @@ fn encode_midi_note_off() {
 #[test]
 fn encode_midi_control_change() {
     let cable = 0x0C;
-    let message = Midi::control_change(Channel::Ch4, 39, 32);
+    let message = ChannelVoiceMessage::control_change(Channel::Ch4, 39, 32);
     let packet = EventPacket::encode_midi(cable, &message);
     assert_eq!(packet.raw, hex!("cb b3 27 20"));
 }

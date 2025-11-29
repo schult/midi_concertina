@@ -61,13 +61,13 @@ pub struct ControlData {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Midi {
+pub enum ChannelVoiceMessage {
     NoteOn(NoteData),
     NoteOff(NoteData),
     ControlChange(ControlData),
 }
 
-impl Midi {
+impl ChannelVoiceMessage {
     pub const MAX_LENGTH: usize = 3;
 
     pub fn note_on(channel: Channel, note: Note, velocity: u8) -> Self {
@@ -100,13 +100,13 @@ impl Midi {
 
     pub fn write<T: Write>(&self, writer: &mut T) -> Result<(), T::Error> {
         match self {
-            Midi::NoteOn(d) => {
+            ChannelVoiceMessage::NoteOn(d) => {
                 writer.write_all(&[0x90 | d.channel as u8, d.note as u8, d.velocity])
             }
-            Midi::NoteOff(d) => {
+            ChannelVoiceMessage::NoteOff(d) => {
                 writer.write_all(&[0x80 | d.channel as u8, d.note as u8, d.velocity])
             }
-            Midi::ControlChange(d) => {
+            ChannelVoiceMessage::ControlChange(d) => {
                 writer.write_all(&[0xB0 | d.channel as u8, d.control, d.value])
             }
         }
