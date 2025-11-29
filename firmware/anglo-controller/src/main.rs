@@ -86,13 +86,17 @@ async fn main(spawner: embassy_executor::Spawner) {
     i2c_config.scl_pullup = true;
     i2c_config.frequency = khz(10);
 
+    let scl_pin = p.PB8;
+    let sda_pin = p.PB9;
+    let tx_dma = p.DMA1_CH2;
+    let rx_dma = p.DMA1_CH3;
     let mut i2c_master = i2c::I2c::new(
         p.I2C1,
-        p.PB8, // SCL
-        p.PB9, // SDA
+        scl_pin,
+        sda_pin,
         Irqs,
-        p.DMA1_CH2, // TX DMA
-        p.DMA1_CH3, // RX DMA
+        tx_dma,
+        rx_dma,
         i2c_config,
     );
 
