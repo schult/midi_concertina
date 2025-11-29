@@ -1,7 +1,7 @@
 use hex_literal::hex;
 use midi::messages::midi::{Channel, Midi, Note};
 use midi::messages::sysex::SysEx;
-use midi::usb_midi::*;
+use midi::usb::*;
 
 #[test]
 fn cin_u8_conversions_are_consistent() {

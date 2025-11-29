@@ -15,7 +15,6 @@ use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
 use midi::messages::sysex::SysEx;
-use midi::usb_midi;
 use midi::util::FileDumpReceiver;
 use panic_probe as _;
 use static_cell::StaticCell;
@@ -30,9 +29,9 @@ bind_interrupts!(struct Irqs {
 const USB_MIDI_CABLE: u8 = 0;
 const SYSEX_DEVICE_ID: u8 = 0x01;
 
-type EventPacketChannel = Channel<NoopRawMutex, usb_midi::EventPacket, 32>;
-type EventPacketSender = Sender<'static, NoopRawMutex, usb_midi::EventPacket, 32>;
-type EventPacketReceiver = Receiver<'static, NoopRawMutex, usb_midi::EventPacket, 32>;
+type EventPacketChannel = Channel<NoopRawMutex, midi::usb::EventPacket, 32>;
+type EventPacketSender = Sender<'static, NoopRawMutex, midi::usb::EventPacket, 32>;
+type EventPacketReceiver = Receiver<'static, NoopRawMutex, midi::usb::EventPacket, 32>;
 
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
@@ -158,10 +157,10 @@ async fn control_panel_task(
 
         // TODO: This is disabled so it doesn't interfere with sending sysex messages
         // let packet = match playing {
-        //     false => usb_midi::EventPacket {
+        //     false => midi::usb::EventPacket {
         //         raw: [0x08, 0x80, 69, 127],
         //     },
-        //     true => usb_midi::EventPacket {
+        //     true => midi::usb::EventPacket {
         //         raw: [0x09, 0x90, 69, 127],
         //     },
         // };
@@ -229,10 +228,10 @@ async fn usb_task(
         let mut usb_packet = [0; MAX_MIDI_PACKET_SIZE];
 
         let accept_cins = [
-            usb_midi::Cin::SysEx,
-            usb_midi::Cin::Sys1Byte,
-            usb_midi::Cin::SysExEnd2Byte,
-            usb_midi::Cin::SysExEnd3Byte,
+            midi::usb::Cin::SysEx,
+            midi::usb::Cin::Sys1Byte,
+            midi::usb::Cin::SysExEnd2Byte,
+            midi::usb::Cin::SysExEnd3Byte,
         ];
 
         loop {
@@ -243,7 +242,7 @@ async fn usb_task(
                     Err(EndpointError::BufferOverflow) => panic!("Buffer overflow"),
                     Err(EndpointError::Disabled) => break,
                     Ok(len) => {
-                        let packets = usb_midi::EventPacket::parse(&usb_packet[..len])
+                        let packets = midi::usb::EventPacket::parse(&usb_packet[..len])
                             .filter(|x| x.cable() == USB_MIDI_CABLE)
                             .filter(|x| accept_cins.contains(&x.cin()));
                         for packet in packets {

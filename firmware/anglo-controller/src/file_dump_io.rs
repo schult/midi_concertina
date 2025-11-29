@@ -5,9 +5,8 @@ use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::Sender;
 use embedded_storage_async::nor_flash::NorFlash;
 use midi::messages::sysex::SysEx;
-use midi::usb_midi;
 
-type EventPacketSender = Sender<'static, NoopRawMutex, usb_midi::EventPacket, 32>;
+type EventPacketSender = Sender<'static, NoopRawMutex, midi::usb::EventPacket, 32>;
 
 pub struct SysExChannelAdapter {
     channel: EventPacketSender,
@@ -23,7 +22,7 @@ impl SysExChannelAdapter {
 
 impl midi::util::SysExOutput for SysExChannelAdapter {
     async fn send(&mut self, sysex: SysEx) {
-        for event_packet in usb_midi::EventPacket::encode_sysex(self.cable, &sysex) {
+        for event_packet in midi::usb::EventPacket::encode_sysex(self.cable, &sysex) {
             self.channel.send(event_packet).await;
         }
     }
