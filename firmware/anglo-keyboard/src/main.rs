@@ -3,7 +3,7 @@
 
 use defmt_rtt as _;
 use embassy_stm32::adc::AdcChannel;
-use embassy_stm32::{adc, bind_interrupts, gpio, i2c, peripherals, rcc, time::khz, Peri};
+use embassy_stm32::{Peri, adc, bind_interrupts, gpio, i2c, peripherals, rcc, time::khz};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
@@ -85,7 +85,6 @@ async fn main(spawner: embassy_executor::Spawner) {
         Chirality::Right
     };
 
-
     // Right hand mapping
     let buttons = match chirality {
         Chirality::Left => [
@@ -130,8 +129,9 @@ async fn main(spawner: embassy_executor::Spawner) {
     adc1.set_sample_time(adc::SampleTime::CYCLES160_5);
     let adc_pin = p.PA2;
 
-    spawner.spawn(button_scan_task(buttons, mux, adc1, adc_pin.degrade_adc())).unwrap();
-
+    spawner
+        .spawn(button_scan_task(buttons, mux, adc1, adc_pin.degrade_adc()))
+        .unwrap();
 
     let mut i2c_config = i2c::Config::default();
     i2c_config.sda_pullup = false;
@@ -164,7 +164,7 @@ async fn main(spawner: embassy_executor::Spawner) {
                     response_buffer = state.to_be_bytes();
                 }
                 let _ = i2c_slave.respond_to_read(&response_buffer).await;
-            },
+            }
             _ => (),
         }
     }
@@ -175,7 +175,7 @@ async fn button_scan_task(
     mut buttons: [ButtonConfig<'static>; BUTTON_COUNT],
     mut mux: Mux<'static, MUX_PINS>,
     mut adc: adc::Adc<'static, peripherals::ADC1>,
-    mut adc_pin: adc::AnyAdcChannel<peripherals::ADC1>
+    mut adc_pin: adc::AnyAdcChannel<peripherals::ADC1>,
 ) {
     // Allow for DRV5053 power-up. Duration is max turn-on time divided by number of simultaneously
     // powered sensors.
@@ -196,9 +196,9 @@ async fn button_scan_task(
 
         let raw = adc.read(&mut adc_pin).await;
         if raw < 600 {
-            state |= 1<<i;
+            state |= 1 << i;
         } else {
-            state &= !(1<<i);
+            state &= !(1 << i);
         }
         BUTTON_STATE_SIGNAL.signal(state);
 

@@ -55,7 +55,12 @@ impl<'a, DFU: NorFlash, STATE: NorFlash> DfuWriter<'a, DFU, STATE> {
         while self.buffer.len() < Self::PAGE_SIZE {
             self.buffer.push_back(0);
         }
-        self.updater.write_firmware(self.offset, &self.buffer.make_contiguous()[..Self::PAGE_SIZE]).await?;
+        self.updater
+            .write_firmware(
+                self.offset,
+                &self.buffer.make_contiguous()[..Self::PAGE_SIZE],
+            )
+            .await?;
         let _ = self.buffer.drain(..Self::PAGE_SIZE);
         self.offset += len;
         Ok(())

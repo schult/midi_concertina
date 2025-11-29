@@ -64,15 +64,16 @@ impl EventPacket {
         assert!(cable <= 0x0F);
 
         let mut packet = EventPacket { raw: [0; 4] };
-        packet.raw[0] = (cable << 4) | match message {
-            Midi::NoteOn(_) => 0x09,
-            Midi::NoteOff(_) => 0x08,
-            Midi::ControlChange(_) => 0x0B,
-        };
+        packet.raw[0] = (cable << 4)
+            | match message {
+                Midi::NoteOn(_) => 0x09,
+                Midi::NoteOff(_) => 0x08,
+                Midi::ControlChange(_) => 0x0B,
+            };
 
         let mut buffer = CircularBuffer::<{ Midi::MAX_LENGTH }, u8>::new();
         message.write(&mut buffer).unwrap();
-        packet.raw[1..(1+buffer.len())].copy_from_slice(buffer.make_contiguous());
+        packet.raw[1..(1 + buffer.len())].copy_from_slice(buffer.make_contiguous());
 
         packet
     }

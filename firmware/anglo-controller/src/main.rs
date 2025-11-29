@@ -69,7 +69,6 @@ async fn main(spawner: embassy_executor::Spawner) {
         .spawn(control_panel_task(led, button, midi_out_channel.sender()))
         .unwrap();
 
-
     let usb_driver = usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
     spawner
         .spawn(usb_task(
@@ -78,7 +77,6 @@ async fn main(spawner: embassy_executor::Spawner) {
             midi_out_channel.receiver(),
         ))
         .unwrap();
-
 
     let mut i2c_config = i2c::Config::default();
     // TODO: Disable pull-ups and increase frequency after fixing hardware.
@@ -90,15 +88,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     let sda_pin = p.PB9;
     let tx_dma = p.DMA1_CH2;
     let rx_dma = p.DMA1_CH3;
-    let mut i2c_master = i2c::I2c::new(
-        p.I2C1,
-        scl_pin,
-        sda_pin,
-        Irqs,
-        tx_dma,
-        rx_dma,
-        i2c_config,
-    );
+    let mut i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, Irqs, tx_dma, rx_dma, i2c_config);
 
     const LEFT_ADDR: u8 = 0x22;
     const RIGHT_ADDR: u8 = 0x23;
@@ -122,7 +112,7 @@ async fn main(spawner: embassy_executor::Spawner) {
 
 #[embassy_executor::task]
 async fn firmware_task(
-    flash: Flash::<'static, flash::Blocking>,
+    flash: Flash<'static, flash::Blocking>,
     midi_in_channel: EventPacketReceiver,
     midi_out_channel: EventPacketSender,
 ) {
@@ -134,8 +124,10 @@ async fn firmware_task(
     updater.mark_booted().await.unwrap();
 
     let mut dfu_writer = file_dump_io::DfuWriter::new(updater);
-    let mut sysex_adapter = file_dump_io::SysExChannelAdapter::new(midi_out_channel, USB_MIDI_CABLE);
-    let mut receiver = FileDumpReceiver::new(&mut dfu_writer, &mut sysex_adapter, SYSEX_DEVICE_ID, "BIN ");
+    let mut sysex_adapter =
+        file_dump_io::SysExChannelAdapter::new(midi_out_channel, USB_MIDI_CABLE);
+    let mut receiver =
+        FileDumpReceiver::new(&mut dfu_writer, &mut sysex_adapter, SYSEX_DEVICE_ID, "BIN ");
 
     let mut midi_buffer = CircularBuffer::<512, u8>::new();
 

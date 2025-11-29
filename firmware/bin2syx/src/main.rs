@@ -18,7 +18,7 @@ fn main() {
         Err(e) => {
             println!("Couldn't open {}: {}", input_path.display(), e);
             return;
-        },
+        }
     };
     let file_size = match input_file.metadata() {
         Ok(metadata) => metadata.len(),
@@ -41,7 +41,7 @@ fn main() {
         Err(e) => {
             println!("Couldn't open {}: {}", output_path.display(), e);
             return;
-        },
+        }
     };
 
     let mut reader = BufReader::new(input_file);
@@ -64,7 +64,7 @@ fn main() {
             Err(e) => {
                 println!("Read error: {e}");
                 return;
-            },
+            }
         };
 
         if n > 0 {

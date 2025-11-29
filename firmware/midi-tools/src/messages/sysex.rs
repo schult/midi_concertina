@@ -381,12 +381,7 @@ impl SysEx {
         })
     }
 
-    pub fn file_dump_header(
-        device_id: u8,
-        source_id: u8,
-        length: u32,
-        file_type: &str,
-    ) -> Self {
+    pub fn file_dump_header(device_id: u8, source_id: u8, length: u32, file_type: &str) -> Self {
         assert!(device_id <= 0x7F);
         assert!(source_id <= 0x7F);
         assert!(length <= 0x0FFFFFFF);

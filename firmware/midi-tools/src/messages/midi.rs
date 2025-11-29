@@ -72,25 +72,43 @@ impl Midi {
 
     pub fn note_on(channel: Channel, note: Note, velocity: u8) -> Self {
         assert!(velocity <= 0x7F);
-        Self::NoteOn(NoteData { channel, note, velocity })
+        Self::NoteOn(NoteData {
+            channel,
+            note,
+            velocity,
+        })
     }
 
     pub fn note_off(channel: Channel, note: Note, velocity: u8) -> Self {
         assert!(velocity <= 0x7F);
-        Self::NoteOff(NoteData { channel, note, velocity })
+        Self::NoteOff(NoteData {
+            channel,
+            note,
+            velocity,
+        })
     }
 
     pub fn control_change(channel: Channel, control: u8, value: u8) -> Self {
         assert!(control <= 0x7F);
         assert!(value <= 0x7F);
-        Self::ControlChange(ControlData { channel, control, value })
+        Self::ControlChange(ControlData {
+            channel,
+            control,
+            value,
+        })
     }
 
     pub fn write<T: Write>(&self, writer: &mut T) -> Result<(), T::Error> {
         match self {
-            Midi::NoteOn(d) => writer.write_all(&[0x90 | d.channel as u8, d.note as u8, d.velocity]),
-            Midi::NoteOff(d) => writer.write_all(&[0x80 | d.channel as u8, d.note as u8, d.velocity]),
-            Midi::ControlChange(d) => writer.write_all(&[0xB0 | d.channel as u8, d.control, d.value]),
+            Midi::NoteOn(d) => {
+                writer.write_all(&[0x90 | d.channel as u8, d.note as u8, d.velocity])
+            }
+            Midi::NoteOff(d) => {
+                writer.write_all(&[0x80 | d.channel as u8, d.note as u8, d.velocity])
+            }
+            Midi::ControlChange(d) => {
+                writer.write_all(&[0xB0 | d.channel as u8, d.control, d.value])
+            }
         }
     }
 }
