@@ -10,6 +10,7 @@ pub mod util;
 pub use channel_voice_message::{ChannelVoiceMessage, Note, cc};
 pub use system_exclusive_message::{ALL_CALL_DEVICE_ID, SystemExclusiveMessage};
 
+// TODO: Merge ChannelVoiceMessage and SystemExclusiveMessage into Message struct?
 pub enum Message {
     ChannelVoice(ChannelVoiceMessage),
     SystemExclusive(SystemExclusiveMessage),
