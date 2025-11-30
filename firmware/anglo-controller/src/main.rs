@@ -2,7 +2,7 @@
 #![no_main]
 
 use circular_buffer::CircularBuffer;
-use defmt::{info, panic};
+use defmt::panic;
 use defmt_rtt as _;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
@@ -19,6 +19,7 @@ use panic_probe as _;
 use static_cell::StaticCell;
 
 mod file_dump_io;
+mod keymap;
 
 bind_interrupts!(struct Irqs {
     USB => usb::InterruptHandler<peripherals::USB>;
@@ -62,9 +63,7 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     let led = gpio::Output::new(p.PB4, gpio::Level::High, gpio::Speed::Low);
     let button = gpio::Input::new(p.PB5, gpio::Pull::Up);
-    spawner
-        .spawn(control_panel_task(led, button, midi_out_channel.sender()))
-        .unwrap();
+    spawner.spawn(control_panel_task(led, button)).unwrap();
 
     let usb_driver = usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
     spawner
@@ -92,18 +91,51 @@ async fn main(spawner: embassy_executor::Spawner) {
     let mut buffer = [0; 2];
     let mut left_buttons: u16 = 0;
     let mut right_buttons: u16 = 0;
+
+    const MIDI_CHANNEL: u8 = 0;
+
     loop {
+        // TODO: Read bellows state
+
         if i2c_master.read(LEFT_ADDR, &mut buffer).await.is_ok() {
-            left_buttons = u16::from_be_bytes(buffer);
+            let new_state = u16::from_be_bytes(buffer);
+            let changes = left_buttons ^ new_state;
+
+            for i in 0..keymap::NUM_LEFT {
+                if (changes >> i) & 1 == 1 {
+                    let note = keymap::LEFT_PUSH[i]; // TODO: Check bellows direction
+                    if (new_state >> i) & 1 == 1 {
+                        let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, note, 127);
+                        midi_out_channel.send(message.into()).await;
+                    } else {
+                        let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                        midi_out_channel.send(message.into()).await;
+                    }
+                }
+            }
+
+            left_buttons = new_state;
         }
-        match i2c_master.read(RIGHT_ADDR, &mut buffer).await {
-            Ok(_) => right_buttons = u16::from_be_bytes(buffer),
-            Err(e) => info!("{}", e),
+
+        if i2c_master.read(RIGHT_ADDR, &mut buffer).await.is_ok() {
+            let new_state = u16::from_be_bytes(buffer);
+            let changes = right_buttons ^ new_state;
+
+            for i in 0..keymap::NUM_RIGHT {
+                if (changes >> i) & 1 == 1 {
+                    let note = keymap::RIGHT_PUSH[i]; // TODO: Check bellows direction
+                    if (new_state >> i) & 1 == 1 {
+                        let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, note, 127);
+                        midi_out_channel.send(message.into()).await;
+                    } else {
+                        let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                        midi_out_channel.send(message.into()).await;
+                    }
+                }
+            }
+
+            right_buttons = new_state;
         }
-        info!(" ---- ---- ----");
-        info!("{:015b}", left_buttons);
-        info!("{:015b}", right_buttons);
-        // Timer::after_millis(100).await;
     }
 }
 
@@ -121,8 +153,7 @@ async fn firmware_task(
     updater.mark_booted().await.unwrap();
 
     let mut dfu_writer = file_dump_io::DfuWriter::new(updater);
-    let mut sysex_adapter =
-        file_dump_io::SysExChannelAdapter::new(midi_out_channel);
+    let mut sysex_adapter = file_dump_io::SysExChannelAdapter::new(midi_out_channel);
     let mut receiver =
         FileDumpReceiver::new(&mut dfu_writer, &mut sysex_adapter, SYSEX_DEVICE_ID, "BIN ");
 
@@ -135,29 +166,12 @@ async fn firmware_task(
 }
 
 #[embassy_executor::task]
-async fn control_panel_task(
-    mut led: gpio::Output<'static>,
-    button: gpio::Input<'static>,
-    midi_out_channel: MessageSender,
-) {
-    let mut playing = false;
-
+async fn control_panel_task(mut led: gpio::Output<'static>, button: gpio::Input<'static>) {
     loop {
-        playing = !playing;
-        // playing = button.is_high();
-
-        let message = match playing {
-            false => midi::ChannelVoiceMessage::note_off(0, midi::Note::A4, 127),
-            true => midi::ChannelVoiceMessage::note_on(0, midi::Note::A4, 127),
-        };
-        midi_out_channel.send(message.into()).await;
-
-        led.set_level(if playing {
-            gpio::Level::High
-        } else {
-            gpio::Level::Low
-        });
-        Timer::after_millis(500).await;
+        // TODO: Hold button to enter wait for firmware update
+        // TODO: Indicate system state with LED
+        led.set_level(button.get_level());
+        Timer::after_millis(20).await;
     }
 }
 
