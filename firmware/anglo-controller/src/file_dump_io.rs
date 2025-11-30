@@ -6,25 +6,21 @@ use embassy_sync::channel::Sender;
 use embedded_storage_async::nor_flash::NorFlash;
 use midi::SystemExclusiveMessage;
 
-type EventPacketSender = Sender<'static, NoopRawMutex, midi::usb::EventPacket, 32>;
+type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
 
 pub struct SysExChannelAdapter {
-    channel: EventPacketSender,
-    cable: u8,
+    sender: MessageSender,
 }
 
 impl SysExChannelAdapter {
-    pub fn new(channel: EventPacketSender, cable: u8) -> Self {
-        assert!(cable <= 0x0F);
-        SysExChannelAdapter { channel, cable }
+    pub fn new(sender: MessageSender) -> Self {
+        SysExChannelAdapter { sender }
     }
 }
 
 impl midi::util::MessageSender for SysExChannelAdapter {
     async fn send(&mut self, sysex: SystemExclusiveMessage) {
-        for event_packet in midi::usb::EventPacket::encode_sysex(self.cable, &sysex) {
-            self.channel.send(event_packet).await;
-        }
+        self.sender.send(sysex.into()).await;
     }
 }
 

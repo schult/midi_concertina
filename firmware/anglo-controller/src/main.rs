@@ -14,7 +14,6 @@ use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
-use midi::SystemExclusiveMessage;
 use midi::util::FileDumpReceiver;
 use panic_probe as _;
 use static_cell::StaticCell;
@@ -26,12 +25,11 @@ bind_interrupts!(struct Irqs {
     I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
 });
 
-const USB_MIDI_CABLE: u8 = 0;
 const SYSEX_DEVICE_ID: u8 = 0x01;
 
-type EventPacketChannel = Channel<NoopRawMutex, midi::usb::EventPacket, 32>;
-type EventPacketSender = Sender<'static, NoopRawMutex, midi::usb::EventPacket, 32>;
-type EventPacketReceiver = Receiver<'static, NoopRawMutex, midi::usb::EventPacket, 32>;
+type MessageChannel = Channel<NoopRawMutex, midi::Message, 8>;
+type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
+type MessageReceiver = Receiver<'static, NoopRawMutex, midi::Message, 8>;
 
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
@@ -44,13 +42,13 @@ async fn main(spawner: embassy_executor::Spawner) {
     config.rcc.mux.clk48sel = rcc::mux::Clk48sel::HSI48;
     let p = embassy_stm32::init(config);
 
-    let midi_out_channel: &'static mut EventPacketChannel = {
-        static CHANNEL: StaticCell<EventPacketChannel> = StaticCell::new();
-        CHANNEL.init_with(|| EventPacketChannel::new())
+    let midi_out_channel: &'static mut MessageChannel = {
+        static CHANNEL: StaticCell<MessageChannel> = StaticCell::new();
+        CHANNEL.init_with(|| MessageChannel::new())
     };
-    let midi_in_channel: &'static mut EventPacketChannel = {
-        static CHANNEL: StaticCell<EventPacketChannel> = StaticCell::new();
-        CHANNEL.init_with(|| EventPacketChannel::new())
+    let midi_in_channel: &'static mut MessageChannel = {
+        static CHANNEL: StaticCell<MessageChannel> = StaticCell::new();
+        CHANNEL.init_with(|| MessageChannel::new())
     };
 
     let flash = Flash::new_blocking(p.FLASH);
@@ -112,8 +110,8 @@ async fn main(spawner: embassy_executor::Spawner) {
 #[embassy_executor::task]
 async fn firmware_task(
     flash: Flash<'static, flash::Blocking>,
-    midi_in_channel: EventPacketReceiver,
-    midi_out_channel: EventPacketSender,
+    midi_in_channel: MessageReceiver,
+    midi_out_channel: MessageSender,
 ) {
     let flash = Mutex::new(BlockingAsync::new(flash));
     let updater_config = FirmwareUpdaterConfig::from_linkerfile(&flash, &flash);
@@ -124,22 +122,15 @@ async fn firmware_task(
 
     let mut dfu_writer = file_dump_io::DfuWriter::new(updater);
     let mut sysex_adapter =
-        file_dump_io::SysExChannelAdapter::new(midi_out_channel, USB_MIDI_CABLE);
+        file_dump_io::SysExChannelAdapter::new(midi_out_channel);
     let mut receiver =
         FileDumpReceiver::new(&mut dfu_writer, &mut sysex_adapter, SYSEX_DEVICE_ID, "BIN ");
 
-    let mut midi_buffer = CircularBuffer::<512, u8>::new();
-
     loop {
-        let event_packet = midi_in_channel.receive().await;
-        midi_buffer.extend_from_slice(&event_packet.payload());
-
-        let sysex = match SystemExclusiveMessage::read(&mut midi_buffer) {
-            Some(x) => x,
-            None => continue,
-        };
-
-        receiver.process(sysex).await;
+        let message = midi_in_channel.receive().await;
+        if let midi::Message::SystemExclusive(sysex) = message {
+            receiver.process(sysex).await;
+        }
     }
 }
 
@@ -147,7 +138,7 @@ async fn firmware_task(
 async fn control_panel_task(
     mut led: gpio::Output<'static>,
     button: gpio::Input<'static>,
-    midi_out_channel: EventPacketSender,
+    midi_out_channel: MessageSender,
 ) {
     let mut playing = false;
 
@@ -155,16 +146,11 @@ async fn control_panel_task(
         playing = !playing;
         // playing = button.is_high();
 
-        // TODO: This is disabled so it doesn't interfere with sending sysex messages
-        // let packet = match playing {
-        //     false => midi::usb::EventPacket {
-        //         raw: [0x08, 0x80, 69, 127],
-        //     },
-        //     true => midi::usb::EventPacket {
-        //         raw: [0x09, 0x90, 69, 127],
-        //     },
-        // };
-        // midi_out_channel.send(packet).await;
+        let message = match playing {
+            false => midi::ChannelVoiceMessage::note_off(0, midi::Note::A4, 127),
+            true => midi::ChannelVoiceMessage::note_on(0, midi::Note::A4, 127),
+        };
+        midi_out_channel.send(message.into()).await;
 
         led.set_level(if playing {
             gpio::Level::High
@@ -178,8 +164,8 @@ async fn control_panel_task(
 #[embassy_executor::task]
 async fn usb_task(
     usb_driver: usb::Driver<'static, peripherals::USB>,
-    midi_in_channel: EventPacketSender,
-    midi_out_channel: EventPacketReceiver,
+    midi_in_channel: MessageSender,
+    midi_out_channel: MessageReceiver,
 ) {
     // TODO: Get IDs from https://pid.codes/howto/
     const USB_VID: u16 = 0xCAFE; // Default VID in TinyUSB
@@ -207,18 +193,28 @@ async fn usb_task(
     let mut usb_device = usb_builder.build();
     let usb_fut = usb_device.run();
 
+    const USB_MIDI_CABLE: u8 = 0;
+
     let sender_fut = async {
         let mut usb_packet = [0; MAX_MIDI_PACKET_SIZE];
         loop {
             midi_sender.wait_connection().await;
 
             loop {
-                // TODO: Accumulate multiple packets if available
-                usb_packet[..4].copy_from_slice(&midi_out_channel.receive().await.raw);
-                match midi_sender.write_packet(&usb_packet).await {
-                    Ok(_) => (),
-                    Err(EndpointError::BufferOverflow) => panic!("Buffer overflow"),
-                    Err(EndpointError::Disabled) => break,
+                let message = &midi_out_channel.receive().await;
+                match message {
+                    midi::Message::ChannelVoice(m) => {
+                        let event_packet = midi::usb::EventPacket::encode_midi(USB_MIDI_CABLE, m);
+                        usb_packet[..4].copy_from_slice(&event_packet.raw);
+                        midi_sender.write_packet(&usb_packet).await.unwrap();
+                    }
+                    midi::Message::SystemExclusive(m) => {
+                        let event_packets = midi::usb::EventPacket::encode_sysex(USB_MIDI_CABLE, m);
+                        for event_packet in event_packets {
+                            usb_packet[..4].copy_from_slice(&event_packet.raw);
+                            midi_sender.write_packet(&usb_packet).await.unwrap();
+                        }
+                    }
                 }
             }
         }
@@ -234,6 +230,8 @@ async fn usb_task(
             midi::usb::Cin::SysExEnd3Byte,
         ];
 
+        let mut midi_buffer = CircularBuffer::<512, u8>::new();
+
         loop {
             midi_reciever.wait_connection().await;
 
@@ -246,7 +244,12 @@ async fn usb_task(
                             .filter(|x| x.cable() == USB_MIDI_CABLE)
                             .filter(|x| accept_cins.contains(&x.cin()));
                         for packet in packets {
-                            midi_in_channel.send(packet).await;
+                            midi_buffer.extend_from_slice(&packet.payload());
+                            let sysex = match midi::SystemExclusiveMessage::read(&mut midi_buffer) {
+                                Some(x) => x,
+                                None => continue,
+                            };
+                            midi_in_channel.send(sysex.into()).await;
                         }
                     }
                 }
