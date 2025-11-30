@@ -2,7 +2,7 @@
 #![no_main]
 
 use circular_buffer::CircularBuffer;
-use defmt::panic;
+use defmt::{info, panic};
 use defmt_rtt as _;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
@@ -86,6 +86,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     let rx_dma = p.DMA1_CH3;
     let mut i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, Irqs, tx_dma, rx_dma, i2c_config);
 
+    const BELLOWS_ADDR: u8 = 0x28;
     const LEFT_ADDR: u8 = 0x22;
     const RIGHT_ADDR: u8 = 0x23;
     let mut buffer = [0; 2];
@@ -95,7 +96,13 @@ async fn main(spawner: embassy_executor::Spawner) {
     const MIDI_CHANNEL: u8 = 0;
 
     loop {
-        // TODO: Read bellows state
+        if i2c_master.read(BELLOWS_ADDR, &mut buffer).await.is_ok() {
+            let new_state = u16::from_be_bytes(buffer);
+            let fresh = (new_state & 0xA0) == 0;
+            if fresh {
+                info!("{}", new_state);
+            }
+        }
 
         if i2c_master.read(LEFT_ADDR, &mut buffer).await.is_ok() {
             let new_state = u16::from_be_bytes(buffer);
