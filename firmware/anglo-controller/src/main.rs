@@ -2,7 +2,7 @@
 #![no_main]
 
 use circular_buffer::CircularBuffer;
-use defmt::{info, panic};
+use defmt::panic;
 use defmt_rtt as _;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
@@ -18,6 +18,7 @@ use midi::util::FileDumpReceiver;
 use panic_probe as _;
 use static_cell::StaticCell;
 
+mod bellows;
 mod file_dump_io;
 mod keymap;
 
@@ -25,8 +26,6 @@ bind_interrupts!(struct Irqs {
     USB => usb::InterruptHandler<peripherals::USB>;
     I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
 });
-
-const SYSEX_DEVICE_ID: u8 = 0x01;
 
 type MessageChannel = Channel<NoopRawMutex, midi::Message, 8>;
 type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
@@ -93,24 +92,29 @@ async fn main(spawner: embassy_executor::Spawner) {
     let mut left_buttons: u16 = 0;
     let mut right_buttons: u16 = 0;
 
+    let mut bellows_state = bellows::BellowsState::default();
+
     const MIDI_CHANNEL: u8 = 0;
 
     loop {
-        if i2c_master.read(BELLOWS_ADDR, &mut buffer).await.is_ok() {
-            let new_state = u16::from_be_bytes(buffer);
-            let fresh = (new_state & 0xA0) == 0;
-            if fresh {
-                info!("{}", new_state);
-            }
-        }
+        let left_notes = match bellows_state.direction {
+            bellows::BellowsDirection::Push => &keymap::LEFT_PUSH[..],
+            bellows::BellowsDirection::Pull => &keymap::LEFT_PULL[..],
+            bellows::BellowsDirection::None => &[],
+        };
+
+        let right_notes = match bellows_state.direction {
+            bellows::BellowsDirection::Push => &keymap::RIGHT_PUSH[..],
+            bellows::BellowsDirection::Pull => &keymap::RIGHT_PULL[..],
+            bellows::BellowsDirection::None => &[],
+        };
 
         if i2c_master.read(LEFT_ADDR, &mut buffer).await.is_ok() {
             let new_state = u16::from_be_bytes(buffer);
             let changes = left_buttons ^ new_state;
-
-            for i in 0..keymap::NUM_LEFT {
+            for i in 0..left_notes.len() {
                 if (changes >> i) & 1 == 1 {
-                    let note = keymap::LEFT_PUSH[i]; // TODO: Check bellows direction
+                    let note = left_notes[i];
                     if (new_state >> i) & 1 == 1 {
                         let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, note, 127);
                         midi_out_channel.send(message.into()).await;
@@ -127,10 +131,9 @@ async fn main(spawner: embassy_executor::Spawner) {
         if i2c_master.read(RIGHT_ADDR, &mut buffer).await.is_ok() {
             let new_state = u16::from_be_bytes(buffer);
             let changes = right_buttons ^ new_state;
-
-            for i in 0..keymap::NUM_RIGHT {
+            for i in 0..right_notes.len() {
                 if (changes >> i) & 1 == 1 {
-                    let note = keymap::RIGHT_PUSH[i]; // TODO: Check bellows direction
+                    let note = right_notes[i];
                     if (new_state >> i) & 1 == 1 {
                         let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, note, 127);
                         midi_out_channel.send(message.into()).await;
@@ -142,6 +145,36 @@ async fn main(spawner: embassy_executor::Spawner) {
             }
 
             right_buttons = new_state;
+        }
+
+        if i2c_master.read(BELLOWS_ADDR, &mut buffer).await.is_ok() {
+            let new_state = u16::from_be_bytes(buffer);
+            let fresh = (new_state & 0xA0) == 0;
+            if fresh {
+                let new_bellows_state = bellows::BellowsState::new(new_state);
+                if new_bellows_state.direction != bellows_state.direction {
+                    for i in 0..left_notes.len() {
+                        if (left_buttons >> i) & 1 == 1 {
+                            let note = left_notes[i];
+                            let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                            midi_out_channel.send(message.into()).await;
+                        }
+                    }
+
+                    for i in 0..right_notes.len() {
+                        if (right_buttons >> i) & 1 == 1 {
+                            let note = right_notes[i];
+                            let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                            midi_out_channel.send(message.into()).await;
+                        }
+                    }
+
+                    left_buttons = 0;
+                    right_buttons = 0;
+                }
+
+                bellows_state = new_bellows_state;
+            }
         }
     }
 }
@@ -159,6 +192,7 @@ async fn firmware_task(
     let mut updater = FirmwareUpdater::new(updater_config, aligned_buffer.as_mut());
     updater.mark_booted().await.unwrap();
 
+    const SYSEX_DEVICE_ID: u8 = 0x01;
     let mut dfu_writer = file_dump_io::DfuWriter::new(updater);
     let mut sysex_adapter = file_dump_io::SysExChannelAdapter::new(midi_out_channel);
     let mut receiver =
