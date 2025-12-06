@@ -162,7 +162,8 @@ async fn main(spawner: embassy_executor::Spawner) {
                     for i in 0..left_notes.len() {
                         if (left_buttons >> i) & 1 == 1 {
                             let note = left_notes[i];
-                            let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                            let message =
+                                midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
                             midi_out_channel.send(message.into()).await;
                         }
                     }
@@ -170,7 +171,8 @@ async fn main(spawner: embassy_executor::Spawner) {
                     for i in 0..right_notes.len() {
                         if (right_buttons >> i) & 1 == 1 {
                             let note = right_notes[i];
-                            let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                            let message =
+                                midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
                             midi_out_channel.send(message.into()).await;
                         }
                     }
