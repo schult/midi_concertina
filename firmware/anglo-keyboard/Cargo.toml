@@ -4,19 +4,31 @@ license = "GPL-3.0-only"
 edition = "2024"
 
 [dependencies]
-defmt = "1.0.1"
-defmt-rtt = "1.0.0"
-panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+defmt = { version = "1.0.1", optional = true }
+defmt-rtt = { version = "1.0.0", optional = true }
+panic-probe = { version = "1.0.0", optional = true }
+panic-reset = "0.1.1"
 
 cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
 cortex-m-rt = "0.7.5"
-embassy-executor = { version = "0.9.1", features = ["defmt", "arch-cortex-m", "executor-thread"] }
+embassy-executor = { version = "0.9.1", features = ["arch-cortex-m", "executor-thread"] }
 embassy-futures = "0.1.2"
-embassy-stm32 = { version = "0.4.0", features = ["defmt", "stm32l072cb", "time-driver-any"] }
+embassy-stm32 = { version = "0.4.0", features = ["stm32l072cb", "time-driver-any"] }
 embassy-sync = "0.7.2"
-embassy-time = { version = "0.5.0", features = ["defmt", "defmt-timestamp-uptime", "tick-hz-32_768"] }
+embassy-time = { version = "0.5.0", features = ["tick-hz-32_768"] }
 portable-atomic = { version = "1.11.1", features = ["unsafe-assume-single-core"] }
 
+[features]
+defmt = [
+    "dep:defmt",
+    "dep:defmt-rtt",
+    "panic-probe/print-defmt",
+    "embassy-executor/defmt",
+    "embassy-stm32/defmt",
+    "embassy-time/defmt",
+    "embassy-time/defmt-timestamp-uptime",
+]
+
 [profile.release]
-debug = 2
+opt-level = "z"
 lto = true

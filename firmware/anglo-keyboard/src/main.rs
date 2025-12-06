@@ -1,13 +1,20 @@
 #![no_std]
 #![no_main]
 
+#[cfg(feature = "defmt")]
+use defmt::panic;
+#[cfg(feature = "defmt")]
 use defmt_rtt as _;
+#[cfg(feature = "defmt")]
+use panic_probe as _;
+#[cfg(not(feature = "defmt"))]
+use panic_reset as _;
+
 use embassy_stm32::adc::AdcChannel;
 use embassy_stm32::{Peri, adc, bind_interrupts, gpio, i2c, peripherals, rcc, time::khz};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
-use panic_probe as _;
 
 bind_interrupts!(struct Irqs {
     ADC1_COMP => adc::InterruptHandler<peripherals::ADC1>;
