@@ -1,9 +1,16 @@
 #![no_std]
 #![no_main]
 
-use circular_buffer::CircularBuffer;
+#[cfg(feature = "defmt")]
 use defmt::panic;
+#[cfg(feature = "defmt")]
 use defmt_rtt as _;
+#[cfg(feature = "defmt")]
+use panic_probe as _;
+#[cfg(not(feature = "defmt"))]
+use panic_reset as _;
+
+use circular_buffer::CircularBuffer;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
@@ -15,7 +22,6 @@ use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
 use midi::util::FileDumpReceiver;
-use panic_probe as _;
 use static_cell::StaticCell;
 
 mod bellows;

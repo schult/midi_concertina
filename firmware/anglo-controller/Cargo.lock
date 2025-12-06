@@ -27,6 +27,7 @@ dependencies = [
 name = "anglo-controller"
 version = "0.0.0"
 dependencies = [
+ "cfg-if",
  "circular-buffer",
  "cortex-m",
  "cortex-m-rt",
@@ -44,6 +45,7 @@ dependencies = [
  "embedded-storage-async",
  "midi",
  "panic-probe",
+ "panic-reset",
  "portable-atomic",
  "static_cell",
 ]
@@ -775,6 +777,15 @@ checksum = "fd402d00b0fb94c5aee000029204a46884b1262e0c443f166d86d2c0747e1a1a"
 dependencies = [
  "cortex-m",
  "defmt 1.0.1",
+]
+
+[[package]]
+name = "panic-reset"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6cf1ff2a5b1a478dd94572aa43476b6630e72071cbd016985003ad3903a3a4f5"
+dependencies = [
+ "cortex-m",
 ]
 
 [[package]]
