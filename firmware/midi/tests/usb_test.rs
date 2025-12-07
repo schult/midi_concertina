@@ -1,5 +1,4 @@
 use hex_literal::hex;
-use midi::SystemExclusiveMessage;
 use midi::usb::*;
 use midi::{Message, Note};
 
@@ -159,8 +158,8 @@ fn encode_sysex_panics_if_cable_over_4_bits() {
     let cable = 1 << 4;
     let device_id = 0x01;
     let packet_num = 0x4B;
-    let message = SystemExclusiveMessage::ack(device_id, packet_num);
-    let _ = EventPacket::encode_sysex(cable, &message);
+    let message = Message::ack(device_id, packet_num);
+    let _ = EventPacket::encode(cable, &message);
 }
 
 #[test]
@@ -168,8 +167,8 @@ fn encode_sysex_ack() {
     let cable = 0x0C;
     let device_id = 0x01;
     let packet_num = 0x4B;
-    let message = SystemExclusiveMessage::ack(device_id, packet_num);
-    let mut it = EventPacket::encode_sysex(cable, &message);
+    let message = Message::ack(device_id, packet_num);
+    let mut it = EventPacket::encode(cable, &message);
     assert_eq!(
         it.next(),
         Some(EventPacket {
@@ -190,14 +189,14 @@ fn encode_sysex_ack() {
 fn encode_midi_panics_if_cable_over_4_bits() {
     let cable = 1 << 4;
     let message = Message::note_on(0, Note::C4, 96);
-    let _ = EventPacket::encode_midi(cable, &message);
+    let _ = EventPacket::encode(cable, &message);
 }
 
 #[test]
 fn encode_midi_note_on() {
     let cable = 0x0C;
     let message = Message::note_on(3, Note::C4, 96);
-    let mut it = EventPacket::encode_midi(cable, &message);
+    let mut it = EventPacket::encode(cable, &message);
     assert_eq!(it.next().unwrap().raw, hex!("c9 93 3c 60"));
     assert_eq!(it.next(), None);
 }
@@ -206,7 +205,7 @@ fn encode_midi_note_on() {
 fn encode_midi_note_off() {
     let cable = 0x0C;
     let message = Message::note_off(3, Note::C4, 96);
-    let mut it = EventPacket::encode_midi(cable, &message);
+    let mut it = EventPacket::encode(cable, &message);
     assert_eq!(it.next().unwrap().raw, hex!("c8 83 3c 60"));
     assert_eq!(it.next(), None);
 }
@@ -215,7 +214,7 @@ fn encode_midi_note_off() {
 fn encode_midi_control_change() {
     let cable = 0x0C;
     let message = Message::control_change(3, 39, 32);
-    let mut it = EventPacket::encode_midi(cable, &message);
+    let mut it = EventPacket::encode(cable, &message);
     assert_eq!(it.next().unwrap().raw, hex!("cb b3 27 20"));
     assert_eq!(it.next(), None);
 }

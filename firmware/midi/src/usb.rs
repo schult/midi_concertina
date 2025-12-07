@@ -1,5 +1,4 @@
 use crate::Message;
-use crate::SystemExclusiveMessage;
 use circular_buffer::CircularBuffer;
 
 #[derive(Debug, PartialEq)]
@@ -60,35 +59,27 @@ impl EventPacket {
         })
     }
 
-    pub fn encode_midi(cable: u8, message: &Message) -> EncodeMidi {
+    pub fn encode(cable: u8, message: &Message) -> Encode {
         assert!(cable <= 0x0F);
-
-        let mut packet = EventPacket { raw: [0; 4] };
-        packet.raw[0] = (cable << 4)
-            | match message {
-                Message::NoteOn(_) => 0x09,
-                Message::NoteOff(_) => 0x08,
-                Message::ControlChange(_) => 0x0B,
-                Message::SystemExclusive(_) => panic!(), // TODO
-            };
 
         let mut buffer = CircularBuffer::<{ Message::MAX_LENGTH }, u8>::new();
         message.write(&mut buffer).unwrap();
-        packet.raw[1..(1 + buffer.len())].copy_from_slice(buffer.make_contiguous());
+        let data = buffer.make_contiguous();
 
-        let mut iterator = EncodeMidi { packets: CircularBuffer::new() };
-        iterator.packets.push_back(packet);
-        iterator
-    }
-
-    pub fn encode_sysex(cable: u8, message: &SystemExclusiveMessage) -> EncodeSysEx {
-        assert!(cable <= 0x0F);
-        let mut it = EncodeSysEx {
-            cable,
-            midi_data: CircularBuffer::<{ SystemExclusiveMessage::MAX_LENGTH }, u8>::new(),
-        };
-        message.write(&mut it.midi_data).unwrap();
-        it
+        match message {
+            Message::NoteOn(_) => Encode::new(cable, Cin::NoteOn, data),
+            Message::NoteOff(_) => Encode::new(cable, Cin::NoteOff, data),
+            Message::ControlChange(_) => Encode::new(cable, Cin::ControlChange, data),
+            Message::Ack(_)
+            | Message::Nak(_)
+            | Message::Wait(_)
+            | Message::Cancel(_)
+            | Message::Eof(_)
+            | Message::IdentityRequest(_)
+            | Message::IdentityReply(_)
+            | Message::FileDumpHeader(_)
+            | Message::FileDumpPacket(_) => Encode::from_sysex(cable, data),
+        }
     }
 
     pub fn cable(&self) -> u8 {
@@ -113,11 +104,11 @@ impl EventPacket {
     }
 }
 
-pub struct EncodeMidi {
+pub struct Encode {
     packets: CircularBuffer<{ (Message::MAX_LENGTH + 2) / 3 }, EventPacket>,
 }
 
-impl Iterator for EncodeMidi {
+impl Iterator for Encode {
     type Item = EventPacket;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -125,37 +116,34 @@ impl Iterator for EncodeMidi {
     }
 }
 
-pub struct EncodeSysEx {
-    cable: u8,
-    midi_data: CircularBuffer<{ SystemExclusiveMessage::MAX_LENGTH }, u8>,
-}
+impl Encode {
+    fn new(cable: u8, cin: Cin, data: &[u8]) -> Self {
+        let mut packet = EventPacket{ raw: [0; 4] };
+        packet.raw[0] = (cable << 4) | cin as u8;
+        packet.raw[1..(1 + data.len())].copy_from_slice(data);
 
-impl Iterator for EncodeSysEx {
-    type Item = EventPacket;
+        let mut result = Self { packets: CircularBuffer::new() };
+        result.packets.push_back(packet);
+        result
+    }
 
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.midi_data.is_empty() {
-            return None;
-        }
+    fn from_sysex(cable: u8, data: &[u8]) -> Self {
+        let mut result = Self { packets: CircularBuffer::new() };
 
-        let mut raw = [0; 4];
-        raw[0] = 0x04;
-
-        for i in 1..4 {
-            match self.midi_data.pop_front() {
-                Some(byte) => {
-                    raw[0] += 1;
-                    raw[i] = byte;
-                }
-                None => break,
+        let mut iter = data.chunks(3).peekable();
+        while let Some(chunk) = iter.next() {
+            let mut raw = [0; 4];
+            if iter.peek().is_some() {
+                raw[0] = 0x04;
+                raw[1..].copy_from_slice(chunk);
+            } else {
+                raw[0] = 0x04 + chunk.len() as u8;
+                raw[1..(1 + chunk.len())].copy_from_slice(chunk);
             }
+            raw[0] |= cable << 4;
+            result.packets.push_back(EventPacket { raw });
         }
 
-        if !self.midi_data.is_empty() {
-            raw[0] = 0x04;
-        }
-
-        raw[0] |= self.cable << 4;
-        Some(EventPacket { raw })
+        result
     }
 }

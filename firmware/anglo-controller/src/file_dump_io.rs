@@ -4,23 +4,22 @@ use embassy_boot_stm32::FirmwareUpdater;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::Sender;
 use embedded_storage_async::nor_flash::NorFlash;
-use midi::SystemExclusiveMessage;
 
 type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
 
-pub struct SysExChannelAdapter {
+pub struct MessageChannelAdapter {
     sender: MessageSender,
 }
 
-impl SysExChannelAdapter {
+impl MessageChannelAdapter {
     pub fn new(sender: MessageSender) -> Self {
-        SysExChannelAdapter { sender }
+        MessageChannelAdapter { sender }
     }
 }
 
-impl midi::util::MessageSender for SysExChannelAdapter {
-    async fn send(&mut self, sysex: SystemExclusiveMessage) {
-        self.sender.send(sysex.into()).await;
+impl midi::util::MessageSender for MessageChannelAdapter {
+    async fn send(&mut self, message: midi::Message) {
+        self.sender.send(message).await;
     }
 }
 

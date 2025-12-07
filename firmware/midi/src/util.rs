@@ -1,6 +1,6 @@
 #![allow(async_fn_in_trait)]
 
-use crate::{ALL_CALL_DEVICE_ID, SystemExclusiveMessage};
+use crate::{ALL_CALL_DEVICE_ID, Message};
 
 pub trait FileWriter {
     type ErrorType;
@@ -11,7 +11,7 @@ pub trait FileWriter {
 }
 
 pub trait MessageSender {
-    async fn send(&mut self, sysex: SystemExclusiveMessage);
+    async fn send(&mut self, message: Message);
 }
 
 struct FileDumpProgress {
@@ -27,14 +27,14 @@ impl FileDumpProgress {
 
 pub struct FileDumpReceiver<'a, T: FileWriter, U: MessageSender> {
     file: &'a mut T,
-    sysex: &'a mut U,
+    message: &'a mut U,
     device_id: u8,
     raw_file_type: [u8; 4],
     progress: Option<FileDumpProgress>,
 }
 
 impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
-    pub fn new(file: &'a mut T, sysex: &'a mut U, device_id: u8, file_type: &str) -> Self {
+    pub fn new(file: &'a mut T, message: &'a mut U, device_id: u8, file_type: &str) -> Self {
         assert!(device_id < 0x80);
 
         let mut raw_file_type = [b' '; 4];
@@ -43,7 +43,7 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
 
         FileDumpReceiver {
             file,
-            sysex,
+            message,
             device_id,
             raw_file_type,
             progress: None,
@@ -52,8 +52,8 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
 
     async fn cancel(&mut self) {
         if let Some(progress) = &mut self.progress {
-            self.sysex
-                .send(SystemExclusiveMessage::cancel(
+            self.message
+                .send(Message::cancel(
                     progress.source_id,
                     progress.packet_num,
                 ))
@@ -62,39 +62,39 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
         }
     }
 
-    pub async fn process(&mut self, sysex: SystemExclusiveMessage) {
-        if let SystemExclusiveMessage::FileDumpHeader(header) = sysex {
+    pub async fn process(&mut self, message: Message) {
+        if let Message::FileDumpHeader(header) = message {
             if ![self.device_id, ALL_CALL_DEVICE_ID].contains(&header.device_id) {
                 return;
             }
 
             if header.raw_file_type != self.raw_file_type {
-                self.sysex
-                    .send(SystemExclusiveMessage::cancel(header.source_id, 0))
+                self.message
+                    .send(Message::cancel(header.source_id, 0))
                     .await;
                 return;
             }
 
-            self.sysex
-                .send(SystemExclusiveMessage::wait(header.source_id, 0))
+            self.message
+                .send(Message::wait(header.source_id, 0))
                 .await;
             let result = self.file.open().await;
             if result.is_err() {
-                self.sysex
-                    .send(SystemExclusiveMessage::cancel(header.source_id, 0))
+                self.message
+                    .send(Message::cancel(header.source_id, 0))
                     .await;
                 return;
             }
-            self.sysex
-                .send(SystemExclusiveMessage::ack(header.source_id, 0))
+            self.message
+                .send(Message::ack(header.source_id, 0))
                 .await;
             self.progress = Some(FileDumpProgress {
                 source_id: header.source_id,
                 packet_num: 0,
             });
         } else if let Some(progress) = &mut self.progress {
-            match sysex {
-                SystemExclusiveMessage::FileDumpPacket(packet) => {
+            match message {
+                Message::FileDumpPacket(packet) => {
                     if ![self.device_id, ALL_CALL_DEVICE_ID].contains(&packet.device_id) {
                         return;
                     }
@@ -105,8 +105,8 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
                     }
 
                     if !packet.checksum_ok {
-                        self.sysex
-                            .send(SystemExclusiveMessage::nak(
+                        self.message
+                            .send(Message::nak(
                                 progress.source_id,
                                 progress.packet_num,
                             ))
@@ -114,8 +114,8 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
                         return;
                     }
 
-                    self.sysex
-                        .send(SystemExclusiveMessage::wait(
+                    self.message
+                        .send(Message::wait(
                             progress.source_id,
                             progress.packet_num,
                         ))
@@ -125,15 +125,15 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
                         self.cancel().await;
                         return;
                     }
-                    self.sysex
-                        .send(SystemExclusiveMessage::ack(
+                    self.message
+                        .send(Message::ack(
                             progress.source_id,
                             progress.packet_num,
                         ))
                         .await;
                     progress.packet_num = progress.next_packet();
                 }
-                SystemExclusiveMessage::Eof(handshake) => {
+                Message::Eof(handshake) => {
                     if ![self.device_id, ALL_CALL_DEVICE_ID].contains(&handshake.device_id) {
                         return;
                     }

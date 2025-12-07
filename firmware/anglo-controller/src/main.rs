@@ -196,15 +196,13 @@ async fn firmware_task(
 
     const SYSEX_DEVICE_ID: u8 = 0x01;
     let mut dfu_writer = file_dump_io::DfuWriter::new(updater);
-    let mut sysex_adapter = file_dump_io::SysExChannelAdapter::new(midi_out_channel);
+    let mut message_adapter = file_dump_io::MessageChannelAdapter::new(midi_out_channel);
     let mut receiver =
-        FileDumpReceiver::new(&mut dfu_writer, &mut sysex_adapter, SYSEX_DEVICE_ID, "BIN ");
+        FileDumpReceiver::new(&mut dfu_writer, &mut message_adapter, SYSEX_DEVICE_ID, "BIN ");
 
     loop {
         let message = midi_in_channel.receive().await;
-        if let midi::Message::SystemExclusive(sysex) = message {
-            receiver.process(sysex).await;
-        }
+        receiver.process(message).await;
     }
 }
 
@@ -259,19 +257,11 @@ async fn usb_task(
 
             loop {
                 let message = &midi_out_channel.receive().await;
-                // TODO: Combine message types and handle write_packet errors similarly to read_packet.
-                if let midi::Message::SystemExclusive(m) = message {
-                    let event_packets = midi::usb::EventPacket::encode_sysex(USB_MIDI_CABLE, m);
-                    for event_packet in event_packets {
-                        usb_packet[..4].copy_from_slice(&event_packet.raw);
-                        midi_sender.write_packet(&usb_packet).await.unwrap();
-                    }
-                } else {
-                    let event_packets = midi::usb::EventPacket::encode_midi(USB_MIDI_CABLE, message);
-                    for event_packet in event_packets {
-                        usb_packet[..4].copy_from_slice(&event_packet.raw);
-                        midi_sender.write_packet(&usb_packet).await.unwrap();
-                    }
+                let event_packets = midi::usb::EventPacket::encode(USB_MIDI_CABLE, message);
+                for event_packet in event_packets {
+                    usb_packet[..4].copy_from_slice(&event_packet.raw);
+                    // TODO: Handle write_packet errors similarly to read_packet.
+                    midi_sender.write_packet(&usb_packet).await.unwrap();
                 }
             }
         }
@@ -302,11 +292,11 @@ async fn usb_task(
                             .filter(|x| accept_cins.contains(&x.cin()));
                         for packet in packets {
                             midi_buffer.extend_from_slice(packet.payload());
-                            let sysex = match midi::SystemExclusiveMessage::read(&mut midi_buffer) {
+                            let sysex = match midi::Message::read_sysex(&mut midi_buffer) {
                                 Some(x) => x,
                                 None => continue,
                             };
-                            midi_in_channel.send(sysex.into()).await;
+                            midi_in_channel.send(sysex).await;
                         }
                     }
                 }
