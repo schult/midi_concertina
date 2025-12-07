@@ -30,5 +30,6 @@ defmt = [
 ]
 
 [profile.release]
+debug = 2
 opt-level = "z"
 lto = true

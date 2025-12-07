@@ -37,9 +37,10 @@ defmt = [
     "embassy-stm32/defmt",
     "embassy-time/defmt",
     "embassy-time/defmt-timestamp-uptime",
-    "embassy-usb/defmt"
+    "embassy-usb/defmt",
 ]
 
 [profile.release]
+debug = 2
 opt-level = "z"
 lto = true

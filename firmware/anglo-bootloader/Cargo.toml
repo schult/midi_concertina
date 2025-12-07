@@ -14,4 +14,6 @@ embedded-storage = "0.3.1"
 panic-reset = "0.1.1"
 
 [profile.release]
+debug = 2
+opt-level = "z"
 lto = true

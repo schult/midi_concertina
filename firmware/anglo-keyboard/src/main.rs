@@ -2,8 +2,6 @@
 #![no_main]
 
 #[cfg(feature = "defmt")]
-use defmt::panic;
-#[cfg(feature = "defmt")]
 use defmt_rtt as _;
 #[cfg(feature = "defmt")]
 use panic_probe as _;
