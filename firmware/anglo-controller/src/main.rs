@@ -121,11 +121,11 @@ async fn main(spawner: embassy_executor::Spawner) {
             for (i, note) in left_notes.iter().enumerate() {
                 if (changes >> i) & 1 == 1 {
                     if (new_state >> i) & 1 == 1 {
-                        let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message.into()).await;
+                        let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
+                        midi_out_channel.send(message).await;
                     } else {
-                        let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message.into()).await;
+                        let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
+                        midi_out_channel.send(message).await;
                     }
                 }
             }
@@ -139,11 +139,11 @@ async fn main(spawner: embassy_executor::Spawner) {
             for (i, note) in right_notes.iter().enumerate() {
                 if (changes >> i) & 1 == 1 {
                     if (new_state >> i) & 1 == 1 {
-                        let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message.into()).await;
+                        let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
+                        midi_out_channel.send(message).await;
                     } else {
-                        let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message.into()).await;
+                        let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
+                        midi_out_channel.send(message).await;
                     }
                 }
             }
@@ -159,17 +159,15 @@ async fn main(spawner: embassy_executor::Spawner) {
                 if new_bellows_state.direction != bellows_state.direction {
                     for (i, note) in left_notes.iter().enumerate() {
                         if (left_buttons >> i) & 1 == 1 {
-                            let message =
-                                midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, *note, 127);
-                            midi_out_channel.send(message.into()).await;
+                            let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
+                            midi_out_channel.send(message).await;
                         }
                     }
 
                     for (i, note) in right_notes.iter().enumerate() {
                         if (right_buttons >> i) & 1 == 1 {
-                            let message =
-                                midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, *note, 127);
-                            midi_out_channel.send(message.into()).await;
+                            let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
+                            midi_out_channel.send(message).await;
                         }
                     }
 
@@ -262,19 +260,16 @@ async fn usb_task(
             loop {
                 let message = &midi_out_channel.receive().await;
                 // TODO: Combine message types and handle write_packet errors similarly to read_packet.
-                match message {
-                    midi::Message::ChannelVoice(m) => {
-                        let event_packet = midi::usb::EventPacket::encode_midi(USB_MIDI_CABLE, m);
+                if let midi::Message::SystemExclusive(m) = message {
+                    let event_packets = midi::usb::EventPacket::encode_sysex(USB_MIDI_CABLE, m);
+                    for event_packet in event_packets {
                         usb_packet[..4].copy_from_slice(&event_packet.raw);
                         midi_sender.write_packet(&usb_packet).await.unwrap();
                     }
-                    midi::Message::SystemExclusive(m) => {
-                        let event_packets = midi::usb::EventPacket::encode_sysex(USB_MIDI_CABLE, m);
-                        for event_packet in event_packets {
-                            usb_packet[..4].copy_from_slice(&event_packet.raw);
-                            midi_sender.write_packet(&usb_packet).await.unwrap();
-                        }
-                    }
+                } else {
+                    let event_packet = midi::usb::EventPacket::encode_midi(USB_MIDI_CABLE, message);
+                    usb_packet[..4].copy_from_slice(&event_packet.raw);
+                    midi_sender.write_packet(&usb_packet).await.unwrap();
                 }
             }
         }

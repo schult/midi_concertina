@@ -1,4 +1,4 @@
-use crate::ChannelVoiceMessage;
+use crate::Message;
 use crate::SystemExclusiveMessage;
 use circular_buffer::CircularBuffer;
 
@@ -60,18 +60,19 @@ impl EventPacket {
         })
     }
 
-    pub fn encode_midi(cable: u8, message: &ChannelVoiceMessage) -> Self {
+    pub fn encode_midi(cable: u8, message: &Message) -> Self {
         assert!(cable <= 0x0F);
 
         let mut packet = EventPacket { raw: [0; 4] };
         packet.raw[0] = (cable << 4)
             | match message {
-                ChannelVoiceMessage::NoteOn(_) => 0x09,
-                ChannelVoiceMessage::NoteOff(_) => 0x08,
-                ChannelVoiceMessage::ControlChange(_) => 0x0B,
+                Message::NoteOn(_) => 0x09,
+                Message::NoteOff(_) => 0x08,
+                Message::ControlChange(_) => 0x0B,
+                Message::SystemExclusive(_) => panic!(), // TODO
             };
 
-        let mut buffer = CircularBuffer::<{ ChannelVoiceMessage::MAX_LENGTH }, u8>::new();
+        let mut buffer = CircularBuffer::<{ Message::MAX_LENGTH }, u8>::new();
         message.write(&mut buffer).unwrap();
         packet.raw[1..(1 + buffer.len())].copy_from_slice(buffer.make_contiguous());
 
