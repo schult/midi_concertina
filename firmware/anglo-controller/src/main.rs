@@ -50,11 +50,11 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     let midi_out_channel: &'static mut MessageChannel = {
         static CHANNEL: StaticCell<MessageChannel> = StaticCell::new();
-        CHANNEL.init_with(|| MessageChannel::new())
+        CHANNEL.init_with(MessageChannel::new)
     };
     let midi_in_channel: &'static mut MessageChannel = {
         static CHANNEL: StaticCell<MessageChannel> = StaticCell::new();
-        CHANNEL.init_with(|| MessageChannel::new())
+        CHANNEL.init_with(MessageChannel::new)
     };
 
     let flash = Flash::new_blocking(p.FLASH);
@@ -118,14 +118,13 @@ async fn main(spawner: embassy_executor::Spawner) {
         if i2c_master.read(LEFT_ADDR, &mut buffer).await.is_ok() {
             let new_state = u16::from_be_bytes(buffer);
             let changes = left_buttons ^ new_state;
-            for i in 0..left_notes.len() {
+            for (i, note) in left_notes.iter().enumerate() {
                 if (changes >> i) & 1 == 1 {
-                    let note = left_notes[i];
                     if (new_state >> i) & 1 == 1 {
-                        let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, note, 127);
+                        let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, *note, 127);
                         midi_out_channel.send(message.into()).await;
                     } else {
-                        let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                        let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, *note, 127);
                         midi_out_channel.send(message.into()).await;
                     }
                 }
@@ -137,14 +136,13 @@ async fn main(spawner: embassy_executor::Spawner) {
         if i2c_master.read(RIGHT_ADDR, &mut buffer).await.is_ok() {
             let new_state = u16::from_be_bytes(buffer);
             let changes = right_buttons ^ new_state;
-            for i in 0..right_notes.len() {
+            for (i, note) in right_notes.iter().enumerate() {
                 if (changes >> i) & 1 == 1 {
-                    let note = right_notes[i];
                     if (new_state >> i) & 1 == 1 {
-                        let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, note, 127);
+                        let message = midi::ChannelVoiceMessage::note_on(MIDI_CHANNEL, *note, 127);
                         midi_out_channel.send(message.into()).await;
                     } else {
-                        let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                        let message = midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, *note, 127);
                         midi_out_channel.send(message.into()).await;
                     }
                 }
@@ -159,20 +157,18 @@ async fn main(spawner: embassy_executor::Spawner) {
             if fresh {
                 let new_bellows_state = bellows::BellowsState::new(new_state);
                 if new_bellows_state.direction != bellows_state.direction {
-                    for i in 0..left_notes.len() {
+                    for (i, note) in left_notes.iter().enumerate() {
                         if (left_buttons >> i) & 1 == 1 {
-                            let note = left_notes[i];
                             let message =
-                                midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                                midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, *note, 127);
                             midi_out_channel.send(message.into()).await;
                         }
                     }
 
-                    for i in 0..right_notes.len() {
+                    for (i, note) in right_notes.iter().enumerate() {
                         if (right_buttons >> i) & 1 == 1 {
-                            let note = right_notes[i];
                             let message =
-                                midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, note, 127);
+                                midi::ChannelVoiceMessage::note_off(MIDI_CHANNEL, *note, 127);
                             midi_out_channel.send(message.into()).await;
                         }
                     }
@@ -265,6 +261,7 @@ async fn usb_task(
 
             loop {
                 let message = &midi_out_channel.receive().await;
+                // TODO: Combine message types and handle write_packet errors similarly to read_packet.
                 match message {
                     midi::Message::ChannelVoice(m) => {
                         let event_packet = midi::usb::EventPacket::encode_midi(USB_MIDI_CABLE, m);
@@ -307,7 +304,7 @@ async fn usb_task(
                             .filter(|x| x.cable() == USB_MIDI_CABLE)
                             .filter(|x| accept_cins.contains(&x.cin()));
                         for packet in packets {
-                            midi_buffer.extend_from_slice(&packet.payload());
+                            midi_buffer.extend_from_slice(packet.payload());
                             let sysex = match midi::SystemExclusiveMessage::read(&mut midi_buffer) {
                                 Some(x) => x,
                                 None => continue,

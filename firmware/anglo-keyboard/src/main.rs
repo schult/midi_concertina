@@ -159,18 +159,16 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     let mut response_buffer = [0u8; 2];
     loop {
-        match i2c_slave.listen().await {
-            Ok(i2c::SlaveCommand {
-                kind: i2c::SlaveCommandKind::Read,
-                address: _,
-            }) => {
-                let update = BUTTON_STATE_SIGNAL.try_take();
-                if let Some(state) = update {
-                    response_buffer = state.to_be_bytes();
-                }
-                let _ = i2c_slave.respond_to_read(&response_buffer).await;
+        if let Ok(i2c::SlaveCommand {
+            kind: i2c::SlaveCommandKind::Read,
+            address: _,
+        }) = i2c_slave.listen().await
+        {
+            let update = BUTTON_STATE_SIGNAL.try_take();
+            if let Some(state) = update {
+                response_buffer = state.to_be_bytes();
             }
-            _ => (),
+            let _ = i2c_slave.respond_to_read(&response_buffer).await;
         }
     }
 }

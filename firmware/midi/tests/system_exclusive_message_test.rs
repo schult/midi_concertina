@@ -82,12 +82,12 @@ fn sysex_reads_message_after_incomplete_message() {
 fn sysex_ignores_non_universal_messages() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 55 03 7f 3b f7"));
     let result = SystemExclusiveMessage::read(&mut data);
-    assert!(matches!(result, None));
+    assert!(result.is_none());
     assert_eq!(data, []);
 
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 00 10 56 03 7f 3b f7"));
     let result = SystemExclusiveMessage::read(&mut data);
-    assert!(matches!(result, None));
+    assert!(result.is_none());
     assert_eq!(data, []);
 }
 
@@ -538,7 +538,7 @@ fn sysex_identity_reply_constructor_panics_if_version_too_long() {
 
 #[test]
 fn sysex_file_dump_header_constructor() {
-    let value = SystemExclusiveMessage::file_dump_header(2, 1, 1_382_550, &"TEXT");
+    let value = SystemExclusiveMessage::file_dump_header(2, 1, 1_382_550, "TEXT");
 
     assert!(matches!(value, SystemExclusiveMessage::FileDumpHeader(_)));
     if let SystemExclusiveMessage::FileDumpHeader(d) = value {
@@ -552,37 +552,37 @@ fn sysex_file_dump_header_constructor() {
 #[test]
 #[should_panic]
 fn sysex_file_dump_header_constructor_panics_if_device_id_over_7_bits() {
-    let _ = SystemExclusiveMessage::file_dump_header(1 << 7, 1, 1_382_550, &"TEXT");
+    let _ = SystemExclusiveMessage::file_dump_header(1 << 7, 1, 1_382_550, "TEXT");
 }
 
 #[test]
 #[should_panic]
 fn sysex_file_dump_header_constructor_panics_if_source_id_over_7_bits() {
-    let _ = SystemExclusiveMessage::file_dump_header(2, 1 << 7, 1_382_550, &"TEXT");
+    let _ = SystemExclusiveMessage::file_dump_header(2, 1 << 7, 1_382_550, "TEXT");
 }
 
 #[test]
 #[should_panic]
 fn sysex_file_dump_header_constructor_panics_if_length_over_28_bits() {
-    let _ = SystemExclusiveMessage::file_dump_header(2, 1, 1 << 28, &"TEXT");
+    let _ = SystemExclusiveMessage::file_dump_header(2, 1, 1 << 28, "TEXT");
 }
 
 #[test]
 #[should_panic]
 fn sysex_file_dump_header_constructor_panics_if_file_type_too_short() {
-    let _ = SystemExclusiveMessage::file_dump_header(2, 1, 1_382_550, &"BIN");
+    let _ = SystemExclusiveMessage::file_dump_header(2, 1, 1_382_550, "BIN");
 }
 
 #[test]
 #[should_panic]
 fn sysex_file_dump_header_constructor_panics_if_file_type_too_long() {
-    let _ = SystemExclusiveMessage::file_dump_header(2, 1, 1_382_550, &"MIDIEX");
+    let _ = SystemExclusiveMessage::file_dump_header(2, 1, 1_382_550, "MIDIEX");
 }
 
 #[test]
 #[should_panic]
 fn sysex_file_dump_header_constructor_panics_if_file_type_not_ascii() {
-    let _ = SystemExclusiveMessage::file_dump_header(2, 1, 1_382_550, &"ÀBI");
+    let _ = SystemExclusiveMessage::file_dump_header(2, 1, 1_382_550, "ÀBI");
 }
 
 #[test]
@@ -595,7 +595,7 @@ fn sysex_file_dump_packet_constructor() {
     if let SystemExclusiveMessage::FileDumpPacket(d) = value {
         assert_eq!(d.device_id, 2);
         assert_eq!(d.packet_num, 110);
-        assert_eq!(d.checksum_ok, true);
+        assert!(d.checksum_ok);
         assert_eq!(d.data, data);
         assert_eq!(d.data_size, 4);
     }

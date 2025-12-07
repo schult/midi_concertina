@@ -132,8 +132,8 @@ fn parse_file_dump_header<'a>(
     let source_id = *it.next()?;
 
     let mut raw_file_type = [0; 4];
-    for i in 0..raw_file_type.len() {
-        raw_file_type[i] = *it.next()?;
+    for byte in raw_file_type.iter_mut() {
+        *byte = *it.next()?;
     }
 
     let mut length = 0;
@@ -257,7 +257,7 @@ fn write_file_dump_packet<T: Write>(
     writer: &mut T,
 ) -> Result<(), T::Error> {
     let unencoded = data.data();
-    let byte_count = unencoded.len() + ((unencoded.len() + 6) / 7) - 1;
+    let byte_count = unencoded.len() + unencoded.len().div_ceil(7) - 1;
     let byte_count = byte_count as u8;
 
     let prelude = [
@@ -302,11 +302,11 @@ fn write_file_dump_packet<T: Write>(
 }
 
 fn is_data(x: &u8) -> bool {
-    return (*x & 0x80) == 0;
+    (*x & 0x80) == 0
 }
 
 fn is_sys_rt(x: &u8) -> bool {
-    return (*x & 0xF8) == 0xF8;
+    (*x & 0xF8) == 0xF8
 }
 
 impl SystemExclusiveMessage {

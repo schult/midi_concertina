@@ -83,13 +83,13 @@ impl ChannelVoiceMessage {
     pub fn write<T: Write>(&self, writer: &mut T) -> Result<(), T::Error> {
         match self {
             ChannelVoiceMessage::NoteOn(d) => {
-                writer.write_all(&[0x90 | d.channel as u8, d.note as u8, d.velocity])
+                writer.write_all(&[0x90 | d.channel, d.note as u8, d.velocity])
             }
             ChannelVoiceMessage::NoteOff(d) => {
-                writer.write_all(&[0x80 | d.channel as u8, d.note as u8, d.velocity])
+                writer.write_all(&[0x80 | d.channel, d.note as u8, d.velocity])
             }
             ChannelVoiceMessage::ControlChange(d) => {
-                writer.write_all(&[0xB0 | d.channel as u8, d.control, d.value])
+                writer.write_all(&[0xB0 | d.channel, d.control, d.value])
             }
         }
     }
