@@ -14,23 +14,17 @@
 
 ## Environment Setup
 
-    rustup update
-    rustup target add thumbv6m-none-eabi
-    rustup component add llvm-tools
-    cargo install cargo-binutils
-    cargo install --locked probe-rs-tools
+Install [rustup](https://rustup.rs/) and
+[just](https://github.com/casey/just?tab=readme-ov-file#packages). Then run:
+
+    just provision
 
 ## Build SYX Firmware Package
 
-    cd bin2syx
-    cargo build
-    cd ..
+    just build
 
-    cd anglo-controller
-    cargo objcopy --release -- -O binary ../anglo-firmware.bin
-    cd ..
-
-    ./bin2syx/target/debug/bin2syx anglo-firmware.bin
+This will place `anglo-firmware.bin` and `anglo-firmware.bin.syx` in the
+project's base directory.
 
 ## License
 

@@ -1,0 +1,50 @@
+build: bin2syx bootloader firmware
+
+provision:
+    rustup update
+    rustup target add thumbv6m-none-eabi
+    rustup component add clippy
+    rustup component add rustfmt
+    rustup component add llvm-tools
+    cargo install cargo-binutils
+    cargo install --locked probe-rs-tools
+
+bin2syx:
+    cd bin2syx && cargo build -r
+
+bootloader:
+    cd anglo-bootloader && cargo build -r
+
+keyboard:
+    cd anglo-keyboard && cargo build -r
+
+firmware: keyboard
+    mkdir -p build
+    cd anglo-controller && cargo objcopy --release -- -O binary ../build/anglo-firmware.bin
+    ./bin2syx/target/release/bin2syx build/anglo-firmware.bin
+
+test:
+    cd bin2syx && cargo test -r
+    cd midi && cargo test -r
+
+lint:
+    cd bin2syx && cargo clippy --all-targets --all-features -- -D warnings
+    cd anglo-bootloader && cargo clippy --all-features -- -D warnings
+    cd anglo-keyboard && cargo clippy --all-features -- -D warnings
+    cd anglo-controller && cargo clippy --all-features -- -D warnings
+    cd midi && cargo clippy --all-targets --all-features -- -D warnings
+
+format:
+    cd bin2syx && cargo fmt
+    cd anglo-bootloader && cargo fmt
+    cd anglo-keyboard && cargo fmt
+    cd anglo-controller && cargo fmt
+    cd midi && cargo fmt
+
+clean:
+    cd bin2syx && cargo clean
+    cd anglo-bootloader && cargo clean
+    cd anglo-keyboard && cargo clean
+    cd anglo-controller && cargo clean
+    cd midi && cargo clean
+    rm -rf build
