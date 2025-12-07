@@ -257,13 +257,16 @@ async fn usb_task(
         loop {
             midi_sender.wait_connection().await;
 
-            loop {
+            'receive: loop {
                 let message = &midi_out_channel.receive().await;
                 let event_packets = midi::usb::EventPacket::encode(USB_MIDI_CABLE, message);
                 for event_packet in event_packets {
                     usb_packet[..4].copy_from_slice(&event_packet.raw);
-                    // TODO: Handle write_packet errors similarly to read_packet.
-                    midi_sender.write_packet(&usb_packet).await.unwrap();
+                    match midi_sender.write_packet(&usb_packet).await {
+                        Err(EndpointError::BufferOverflow) => panic!("Buffer overflow"),
+                        Err(EndpointError::Disabled) => break 'receive,
+                        Ok(_) => (),
+                    }
                 }
             }
         }

@@ -105,7 +105,7 @@ impl EventPacket {
 }
 
 pub struct Encode {
-    packets: CircularBuffer<{ (Message::MAX_LENGTH + 2) / 3 }, EventPacket>,
+    packets: CircularBuffer<{ Message::MAX_LENGTH.div_ceil(3) }, EventPacket>,
 }
 
 impl Iterator for Encode {
