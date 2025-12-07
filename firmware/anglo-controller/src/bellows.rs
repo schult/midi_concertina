@@ -7,14 +7,14 @@ pub enum BellowsDirection {
 
 pub struct BellowsState {
     pub direction: BellowsDirection,
-    pub magnitude: u8,
+    // TODO: pub magnitude: u8,
 }
 
 impl BellowsState {
     pub fn default() -> Self {
         Self {
             direction: BellowsDirection::None,
-            magnitude: 0,
+            // magnitude: 0,
         }
     }
 
@@ -25,7 +25,7 @@ impl BellowsState {
         let diff = raw as f32 - CENTER as f32;
         let ratio = (diff / CENTER as f32).clamp(-1.0, 1.0);
         // TODO: Apply mapping function to ratio.
-        let magnitude = (127.0 * ratio.abs()) as u8;
+        // let magnitude = (127.0 * ratio.abs()) as u8;
 
         let direction = if ratio > DEAD_ZONE {
             BellowsDirection::Push
@@ -37,7 +37,7 @@ impl BellowsState {
 
         Self {
             direction,
-            magnitude,
+            // magnitude,
         }
     }
 }
