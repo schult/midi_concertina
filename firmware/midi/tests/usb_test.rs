@@ -197,22 +197,25 @@ fn encode_midi_panics_if_cable_over_4_bits() {
 fn encode_midi_note_on() {
     let cable = 0x0C;
     let message = Message::note_on(3, Note::C4, 96);
-    let packet = EventPacket::encode_midi(cable, &message);
-    assert_eq!(packet.raw, hex!("c9 93 3c 60"));
+    let mut it = EventPacket::encode_midi(cable, &message);
+    assert_eq!(it.next().unwrap().raw, hex!("c9 93 3c 60"));
+    assert_eq!(it.next(), None);
 }
 
 #[test]
 fn encode_midi_note_off() {
     let cable = 0x0C;
     let message = Message::note_off(3, Note::C4, 96);
-    let packet = EventPacket::encode_midi(cable, &message);
-    assert_eq!(packet.raw, hex!("c8 83 3c 60"));
+    let mut it = EventPacket::encode_midi(cable, &message);
+    assert_eq!(it.next().unwrap().raw, hex!("c8 83 3c 60"));
+    assert_eq!(it.next(), None);
 }
 
 #[test]
 fn encode_midi_control_change() {
     let cable = 0x0C;
     let message = Message::control_change(3, 39, 32);
-    let packet = EventPacket::encode_midi(cable, &message);
-    assert_eq!(packet.raw, hex!("cb b3 27 20"));
+    let mut it = EventPacket::encode_midi(cable, &message);
+    assert_eq!(it.next().unwrap().raw, hex!("cb b3 27 20"));
+    assert_eq!(it.next(), None);
 }

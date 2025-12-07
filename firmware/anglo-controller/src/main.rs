@@ -267,9 +267,11 @@ async fn usb_task(
                         midi_sender.write_packet(&usb_packet).await.unwrap();
                     }
                 } else {
-                    let event_packet = midi::usb::EventPacket::encode_midi(USB_MIDI_CABLE, message);
-                    usb_packet[..4].copy_from_slice(&event_packet.raw);
-                    midi_sender.write_packet(&usb_packet).await.unwrap();
+                    let event_packets = midi::usb::EventPacket::encode_midi(USB_MIDI_CABLE, message);
+                    for event_packet in event_packets {
+                        usb_packet[..4].copy_from_slice(&event_packet.raw);
+                        midi_sender.write_packet(&usb_packet).await.unwrap();
+                    }
                 }
             }
         }

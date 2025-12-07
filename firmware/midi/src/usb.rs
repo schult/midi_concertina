@@ -60,7 +60,7 @@ impl EventPacket {
         })
     }
 
-    pub fn encode_midi(cable: u8, message: &Message) -> Self {
+    pub fn encode_midi(cable: u8, message: &Message) -> EncodeMidi {
         assert!(cable <= 0x0F);
 
         let mut packet = EventPacket { raw: [0; 4] };
@@ -76,7 +76,9 @@ impl EventPacket {
         message.write(&mut buffer).unwrap();
         packet.raw[1..(1 + buffer.len())].copy_from_slice(buffer.make_contiguous());
 
-        packet
+        let mut iterator = EncodeMidi { packets: CircularBuffer::new() };
+        iterator.packets.push_back(packet);
+        iterator
     }
 
     pub fn encode_sysex(cable: u8, message: &SystemExclusiveMessage) -> EncodeSysEx {
@@ -108,6 +110,18 @@ impl EventPacket {
         };
         let end = size + 1;
         &self.raw[1..end]
+    }
+}
+
+pub struct EncodeMidi {
+    packets: CircularBuffer<{ (Message::MAX_LENGTH + 2) / 3 }, EventPacket>,
+}
+
+impl Iterator for EncodeMidi {
+    type Item = EventPacket;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.packets.pop_front()
     }
 }
 
