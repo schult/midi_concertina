@@ -45,7 +45,7 @@ bootloader:
 
 [private]
 keyboard:
-    cd anglo-keyboard && cargo build -r
+    cd anglo-keyboard && cargo objcopy --release -- -O binary ../build/anglo-keyboard.bin
 
 [private]
 firmware: bin2syx keyboard

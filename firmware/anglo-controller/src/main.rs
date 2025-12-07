@@ -79,6 +79,8 @@ async fn main(spawner: embassy_executor::Spawner) {
         ))
         .unwrap();
 
+    // TODO: let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
+
     let mut i2c_config = i2c::Config::default();
     // TODO: Disable pull-ups and increase frequency after fixing hardware.
     i2c_config.sda_pullup = true;
