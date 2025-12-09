@@ -11,6 +11,7 @@ use panic_probe as _;
 use panic_reset as _;
 
 use circular_buffer::CircularBuffer;
+use core::hint::black_box;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
@@ -94,6 +95,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap();
 
     let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
+    black_box(keyboard_firmware);
 
     let mut i2c_config = i2c::Config::default();
     // TODO: Disable pull-ups and increase frequency after fixing hardware.
