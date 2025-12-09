@@ -11,28 +11,28 @@ provision:
 
 test:
     cd bin2syx && cargo test -r
-    cd midi && cargo test -r
+    cd lib/midi && cargo test -r
 
 lint:
     cd bin2syx && cargo clippy --all-targets --all-features -- -D warnings
     cd anglo-bootloader && cargo clippy --all-features -- -D warnings
     cd anglo-keyboard && cargo clippy --all-features -- -D warnings
     cd anglo-controller && cargo clippy --all-features -- -D warnings
-    cd midi && cargo clippy --all-targets --all-features -- -D warnings
+    cd lib/midi && cargo clippy --all-targets --all-features -- -D warnings
 
 format:
     cd bin2syx && cargo fmt
     cd anglo-bootloader && cargo fmt
     cd anglo-keyboard && cargo fmt
     cd anglo-controller && cargo fmt
-    cd midi && cargo fmt
+    cd lib/midi && cargo fmt
 
 clean:
     cd bin2syx && cargo clean
     cd anglo-bootloader && cargo clean
     cd anglo-keyboard && cargo clean
     cd anglo-controller && cargo clean
-    cd midi && cargo clean
+    cd lib/midi && cargo clean
     rm -rf build
 
 [private]

@@ -26,7 +26,7 @@ embedded-storage-async = "0.4.1"
 portable-atomic = { version = "1.11.1", features = ["unsafe-assume-single-core"] }
 static_cell = "2.1.1"
 
-midi = { path = "../midi" }
+midi = { path = "../lib/midi" }
 
 [build-dependencies]
 regex = "1.12.2"
