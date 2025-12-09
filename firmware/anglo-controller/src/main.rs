@@ -24,6 +24,7 @@ use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
 use midi::util::FileDumpReceiver;
 use static_cell::StaticCell;
+use version::FirmwareVersion;
 
 mod bellows;
 mod file_dump_io;
@@ -38,13 +39,6 @@ type MessageChannel = Channel<NoopRawMutex, midi::Message, 8>;
 type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
 type MessageReceiver = Receiver<'static, NoopRawMutex, midi::Message, 8>;
 
-struct Version {
-    major: u8,
-    minor: u8,
-    patch: u8,
-    prerelease: Option<&'static str>,
-}
-
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
     let mut config = embassy_stm32::Config::default();
@@ -56,10 +50,10 @@ async fn main(spawner: embassy_executor::Spawner) {
     config.rcc.mux.clk48sel = rcc::mux::Clk48sel::HSI48;
     let p = embassy_stm32::init(config);
 
-    let version = Version {
-        major: u8::from_str_radix(env!("FIRMWARE_MAJOR_VERSION"), 10).unwrap(),
-        minor: u8::from_str_radix(env!("FIRMWARE_MINOR_VERSION"), 10).unwrap(),
-        patch: u8::from_str_radix(env!("FIRMWARE_PATCH_VERSION"), 10).unwrap(),
+    let version = FirmwareVersion {
+        major: env!("FIRMWARE_MAJOR_VERSION").parse().unwrap(),
+        minor: env!("FIRMWARE_MINOR_VERSION").parse().unwrap(),
+        patch: env!("FIRMWARE_PATCH_VERSION").parse().unwrap(),
         prerelease: option_env!("FIRMWARE_PRERELEASE_VERSION"),
     };
 

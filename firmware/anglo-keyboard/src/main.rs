@@ -13,6 +13,7 @@ use embassy_stm32::{Peri, adc, bind_interrupts, gpio, i2c, peripherals, rcc, tim
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
+use version::FirmwareVersion;
 
 bind_interrupts!(struct Irqs {
     ADC1_COMP => adc::InterruptHandler<peripherals::ADC1>;
@@ -21,13 +22,6 @@ bind_interrupts!(struct Irqs {
 
 const BUTTON_COUNT: usize = 15;
 const MUX_PINS: usize = 4;
-
-struct Version {
-    major: u8,
-    minor: u8,
-    patch: u8,
-    prerelease: Option<&'static str>,
-}
 
 enum Chirality {
     Left,
@@ -90,10 +84,10 @@ async fn main(spawner: embassy_executor::Spawner) {
     config.rcc.sys = rcc::Sysclk::HSI;
     let p = embassy_stm32::init(config);
 
-    let version = Version {
-        major: u8::from_str_radix(env!("FIRMWARE_MAJOR_VERSION"), 10).unwrap(),
-        minor: u8::from_str_radix(env!("FIRMWARE_MINOR_VERSION"), 10).unwrap(),
-        patch: u8::from_str_radix(env!("FIRMWARE_PATCH_VERSION"), 10).unwrap(),
+    let version = FirmwareVersion {
+        major: env!("FIRMWARE_MAJOR_VERSION").parse().unwrap(),
+        minor: env!("FIRMWARE_MINOR_VERSION").parse().unwrap(),
+        patch: env!("FIRMWARE_PATCH_VERSION").parse().unwrap(),
         prerelease: option_env!("FIRMWARE_PRERELEASE_VERSION"),
     };
 

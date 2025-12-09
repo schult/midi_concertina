@@ -27,9 +27,10 @@ portable-atomic = { version = "1.11.1", features = ["unsafe-assume-single-core"]
 static_cell = "2.1.1"
 
 midi = { path = "../lib/midi" }
+version = { path = "../lib/version" }
 
 [build-dependencies]
-regex = "1.12.2"
+version = { path = "../lib/version" }
 
 [features]
 defmt = [
