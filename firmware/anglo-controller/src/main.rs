@@ -37,6 +37,13 @@ type MessageChannel = Channel<NoopRawMutex, midi::Message, 8>;
 type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
 type MessageReceiver = Receiver<'static, NoopRawMutex, midi::Message, 8>;
 
+struct Version {
+    major: u8,
+    minor: u8,
+    patch: u8,
+    prerelease: Option<&'static str>,
+}
+
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
     let mut config = embassy_stm32::Config::default();
@@ -47,6 +54,13 @@ async fn main(spawner: embassy_executor::Spawner) {
     });
     config.rcc.mux.clk48sel = rcc::mux::Clk48sel::HSI48;
     let p = embassy_stm32::init(config);
+
+    let version = Version {
+        major: u8::from_str_radix(env!("FIRMWARE_MAJOR_VERSION"), 10).unwrap(),
+        minor: u8::from_str_radix(env!("FIRMWARE_MINOR_VERSION"), 10).unwrap(),
+        patch: u8::from_str_radix(env!("FIRMWARE_PATCH_VERSION"), 10).unwrap(),
+        prerelease: option_env!("FIRMWARE_PRERELEASE_VERSION"),
+    };
 
     let midi_out_channel: &'static mut MessageChannel = {
         static CHANNEL: StaticCell<MessageChannel> = StaticCell::new();
@@ -79,7 +93,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         ))
         .unwrap();
 
-    // TODO: let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
+    let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
 
     let mut i2c_config = i2c::Config::default();
     // TODO: Disable pull-ups and increase frequency after fixing hardware.

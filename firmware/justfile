@@ -45,6 +45,7 @@ bootloader:
 
 [private]
 keyboard:
+    mkdir -p build
     cd anglo-keyboard && cargo objcopy --release -- -O binary ../build/anglo-keyboard.bin
 
 [private]

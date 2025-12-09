@@ -28,6 +28,9 @@ static_cell = "2.1.1"
 
 midi = { path = "../midi" }
 
+[build-dependencies]
+regex = "1.12.2"
+
 [features]
 defmt = [
     "dep:defmt",

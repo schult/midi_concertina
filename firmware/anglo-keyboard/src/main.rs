@@ -22,6 +22,13 @@ bind_interrupts!(struct Irqs {
 const BUTTON_COUNT: usize = 15;
 const MUX_PINS: usize = 4;
 
+struct Version {
+    major: u8,
+    minor: u8,
+    patch: u8,
+    prerelease: Option<&'static str>,
+}
+
 enum Chirality {
     Left,
     Right,
@@ -82,6 +89,13 @@ async fn main(spawner: embassy_executor::Spawner) {
     config.rcc.hsi = true;
     config.rcc.sys = rcc::Sysclk::HSI;
     let p = embassy_stm32::init(config);
+
+    let version = Version {
+        major: u8::from_str_radix(env!("FIRMWARE_MAJOR_VERSION"), 10).unwrap(),
+        minor: u8::from_str_radix(env!("FIRMWARE_MINOR_VERSION"), 10).unwrap(),
+        patch: u8::from_str_radix(env!("FIRMWARE_PATCH_VERSION"), 10).unwrap(),
+        prerelease: option_env!("FIRMWARE_PRERELEASE_VERSION"),
+    };
 
     let chirality_in = gpio::Input::new(p.PB4, gpio::Pull::None);
     let chirality = if chirality_in.is_low() {
