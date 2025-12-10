@@ -15400,8 +15400,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
-		(at 96.52 179.07 0)
-		(mirror y)
+		(at 93.98 179.07 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15425,7 +15424,7 @@
 			)
 		)
 		(property "Footprint" "MidiConcertina:Wuerth_WR-WST_490107670612_2x03_P2.54mm_SKEDD"
-			(at 96.52 179.07 0)
+			(at 93.98 179.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15434,7 +15433,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 96.52 179.07 0)
+			(at 93.98 179.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15443,7 +15442,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 96.52 179.07 0)
+			(at 93.98 179.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)

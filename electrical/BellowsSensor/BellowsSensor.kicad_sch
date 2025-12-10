@@ -1319,14 +1319,12 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
-		(at 104.14 80.01 0)
-		(mirror y)
+		(at 101.6 80.01 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "1fcade92-01d8-452e-bfad-b9cabda08288")
 		(property "Reference" "J1"
 			(at 102.87 71.12 0)
@@ -1345,7 +1343,7 @@
 			)
 		)
 		(property "Footprint" "MidiConcertina:Wuerth_WR-WST_490107670612_2x03_P2.54mm_SKEDD"
-			(at 104.14 80.01 0)
+			(at 101.6 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1354,7 +1352,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 104.14 80.01 0)
+			(at 101.6 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1363,7 +1361,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 104.14 80.01 0)
+			(at 101.6 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)

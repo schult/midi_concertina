@@ -4974,7 +4974,7 @@
 		(uuid "0973e958-924f-49e6-9fdc-e78cb24c106e")
 	)
 	(no_connect
-		(at 198.12 115.57)
+		(at 233.68 153.67)
 		(uuid "0ce57483-b7b3-46ee-9460-8f512ea2b29a")
 	)
 	(no_connect
@@ -5098,16 +5098,6 @@
 			(type default)
 		)
 		(uuid "0161e38d-e7bb-4390-be06-4b2660ed4045")
-	)
-	(wire
-		(pts
-			(xy 276.86 153.67) (xy 276.86 135.89)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0176ab11-484e-4530-9c9f-981304b7d5b9")
 	)
 	(wire
 		(pts
@@ -5398,6 +5388,16 @@
 			(type default)
 		)
 		(uuid "297eba55-47a0-4a3a-9006-dc0af7b38222")
+	)
+	(wire
+		(pts
+			(xy 193.04 115.57) (xy 198.12 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2a445d0b-4d52-4cb8-9dac-72408649fce9")
 	)
 	(wire
 		(pts
@@ -5698,16 +5698,6 @@
 			(type default)
 		)
 		(uuid "6137646f-cfb1-4820-96c9-29eb14b785b8")
-	)
-	(wire
-		(pts
-			(xy 233.68 153.67) (xy 276.86 153.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "61da9126-a5d5-4e9a-95b4-8cb585dc325f")
 	)
 	(wire
 		(pts
@@ -6311,7 +6301,7 @@
 	)
 	(wire
 		(pts
-			(xy 276.86 135.89) (xy 284.48 135.89)
+			(xy 279.4 135.89) (xy 284.48 135.89)
 		)
 		(stroke
 			(width 0)
@@ -6709,16 +6699,6 @@
 		)
 		(uuid "511cd8c9-3a44-47f0-a2c8-79b0b770f015")
 	)
-	(label "~{I2C_PWR_EN}"
-		(at 236.22 153.67 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5257e55e-c84f-4b7b-b676-21691da1ed53")
-	)
 	(label "I2C_SDA"
 		(at 236.22 158.75 0)
 		(effects
@@ -6758,6 +6738,50 @@
 			(justify left bottom)
 		)
 		(uuid "8d2c6133-c489-4e08-ba5e-472ec20cfec9")
+	)
+	(global_label "~{I2C_PWR_EN}"
+		(shape input)
+		(at 279.4 135.89 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1b473a76-dfce-49a3-b661-437553375dba")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 264.9244 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "~{I2C_PWR_EN}"
+		(shape output)
+		(at 193.04 115.57 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c1c508cc-89e6-4492-93c2-dd17a7f19543")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 178.5644 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
 	)
 	(global_label "NRST"
 		(shape output)
@@ -7581,13 +7605,13 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
-		(at 322.58 158.75 0)
+		(at 325.12 158.75 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "199efed6-04d0-4417-a519-6f9150c29719")
 		(property "Reference" "J3"
 			(at 323.85 149.86 0)
@@ -7606,7 +7630,7 @@
 			)
 		)
 		(property "Footprint" "MidiConcertina:Wuerth_WR-WST_490107670612_2x03_P2.54mm_SKEDD"
-			(at 322.58 158.75 0)
+			(at 325.12 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7615,7 +7639,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 322.58 158.75 0)
+			(at 325.12 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7624,7 +7648,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 322.58 158.75 0)
+			(at 325.12 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
