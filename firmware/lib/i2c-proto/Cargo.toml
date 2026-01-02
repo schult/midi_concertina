@@ -1,0 +1,10 @@
+[package]
+name = "i2c-proto"
+edition = "2024"
+
+[dependencies]
+version = { path = "../version" }
+
+[dev-dependencies]
+mockall = "0.13.1"
+tokio = { version = "1.48.0", features = ["rt", "sync", "macros"] }
