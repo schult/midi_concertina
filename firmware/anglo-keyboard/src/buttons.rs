@@ -1,3 +1,4 @@
+use crate::state::Mode;
 use embassy_stm32::{Peri, adc, gpio, peripherals};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::watch;
@@ -55,6 +56,7 @@ impl<'a> ButtonConfig<'a> {
 
 #[embassy_executor::task]
 pub async fn scan_task(
+    mut mode_receiver: watch::Receiver<'static, ThreadModeRawMutex, Mode, 2>,
     button_state_sender: watch::Sender<'static, ThreadModeRawMutex, u16, 1>,
     mut buttons: [ButtonConfig<'static>; BUTTON_COUNT],
     mut mux: Mux<'static, MUX_PIN_COUNT>,
@@ -69,9 +71,11 @@ pub async fn scan_task(
     buttons[i].enable();
     ticker.next().await;
 
-    let mut state = 0u16;
+    let mut button_state = 0u16;
 
     loop {
+        let _ = mode_receiver.get_and(|x| *x == Mode::ScanButtons).await;
+
         let next_i = (i + 1) % buttons.len();
         buttons[next_i].enable();
         ticker.next().await;
@@ -80,11 +84,11 @@ pub async fn scan_task(
 
         let raw = adc.read(&mut adc_pin).await;
         if raw < 600 {
-            state |= 1 << i;
+            button_state |= 1 << i;
         } else {
-            state &= !(1 << i);
+            button_state &= !(1 << i);
         }
-        button_state_sender.send(state);
+        button_state_sender.send(button_state);
 
         buttons[i].disable();
         i = next_i;

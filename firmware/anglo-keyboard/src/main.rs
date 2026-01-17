@@ -1,6 +1,9 @@
 #![no_std]
 #![no_main]
 
+mod buttons;
+mod state;
+
 #[cfg(feature = "defmt")]
 use defmt_rtt as _;
 #[cfg(feature = "defmt")]
@@ -12,9 +15,8 @@ use embassy_stm32::adc::AdcChannel;
 use embassy_stm32::{adc, bind_interrupts, gpio, i2c, peripherals, rcc, time::khz};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::watch::Watch;
+use state::Mode;
 use version::FirmwareVersion;
-
-mod buttons;
 
 bind_interrupts!(struct Irqs {
     ADC1_COMP => adc::InterruptHandler<peripherals::ADC1>;
@@ -26,6 +28,7 @@ enum Chirality {
     Right,
 }
 
+static MODE: Watch<ThreadModeRawMutex, Mode, 2> = Watch::new_with(Mode::ScanButtons);
 static BUTTON_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new();
 
 #[embassy_executor::main]
@@ -95,6 +98,7 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     spawner
         .spawn(buttons::scan_task(
+            MODE.receiver().unwrap(),
             BUTTON_STATE.sender(),
             buttons,
             mux,
@@ -122,6 +126,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     let slave_config = i2c::SlaveAddrConfig::basic(i2c_addr);
     let mut i2c_slave = i2c_master.into_slave_multimaster(slave_config);
 
+    let mut mode_receiver = MODE.receiver().unwrap();
     let mut button_state_receiver = BUTTON_STATE.receiver().unwrap();
 
     loop {
