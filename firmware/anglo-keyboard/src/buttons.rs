@@ -3,15 +3,15 @@ use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::watch;
 use embassy_time::{Duration, Ticker};
 
-const BUTTON_COUNT: usize = 15;
-const MUX_PINS: usize = 4;
+pub const BUTTON_COUNT: usize = 15;
+pub const MUX_PIN_COUNT: usize = 4;
 
 pub struct Mux<'a, const N: usize> {
     out: [gpio::Output<'a>; N],
 }
 
 impl<'a, const N: usize> Mux<'a, N> {
-    pub fn new(pins: [Peri<'static, gpio::AnyPin>; N]) -> Self {
+    pub fn new(pins: [Peri<'a, gpio::AnyPin>; N]) -> Self {
         Self {
             out: pins.map(|p| gpio::Output::new(p, gpio::Level::Low, gpio::Speed::Medium)),
         }
@@ -57,7 +57,7 @@ impl<'a> ButtonConfig<'a> {
 pub async fn scan_task(
     button_state_sender: watch::Sender<'static, ThreadModeRawMutex, u16, 1>,
     mut buttons: [ButtonConfig<'static>; BUTTON_COUNT],
-    mut mux: Mux<'static, MUX_PINS>,
+    mut mux: Mux<'static, MUX_PIN_COUNT>,
     mut adc: adc::Adc<'static, peripherals::ADC1>,
     mut adc_pin: adc::AnyAdcChannel<peripherals::ADC1>,
 ) {
