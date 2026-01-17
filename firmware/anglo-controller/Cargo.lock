@@ -43,11 +43,13 @@ dependencies = [
  "embassy-time",
  "embassy-usb",
  "embedded-storage-async",
+ "i2c-proto",
  "midi",
  "panic-probe",
  "panic-reset",
  "portable-atomic",
  "static_cell",
+ "util",
  "version",
 ]
 
@@ -715,6 +717,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "i2c-proto"
+version = "0.0.0"
+dependencies = [
+ "version",
+]
+
+[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1080,6 +1089,17 @@ dependencies = [
  "serde",
  "syn 1.0.109",
  "usbd-hid-descriptors",
+]
+
+[[package]]
+name = "util"
+version = "0.0.0"
+dependencies = [
+ "circular-buffer",
+ "cortex-m",
+ "embassy-boot",
+ "embedded-storage-async",
+ "midi",
 ]
 
 [[package]]

@@ -114,6 +114,14 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     const MIDI_CHANNEL: u8 = 0;
 
+    // INIT
+    // TODO: Get local version
+    // TODO: Get remote version
+    // TODO: If local_version != remote_version
+    //           Send firmware to L and R
+    //           Power cycle L and R
+
+
     loop {
         let left_notes = match bellows_state.direction {
             bellows::BellowsDirection::Push => &keymap::LEFT_PUSH[..],

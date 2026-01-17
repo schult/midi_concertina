@@ -26,7 +26,9 @@ embedded-storage-async = "0.4.1"
 portable-atomic = { version = "1.11.1", features = ["unsafe-assume-single-core"] }
 static_cell = "2.1.1"
 
+i2c-proto = { path = "../lib/i2c-proto" }
 midi = { path = "../lib/midi" }
+util = { path = "../lib/util", features = ["flash-erase-zero", "midi"] }
 version = { path = "../lib/version" }
 
 [build-dependencies]
