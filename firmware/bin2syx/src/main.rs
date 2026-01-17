@@ -67,8 +67,7 @@ fn main() {
         };
 
         if n > 0 {
-            let packet =
-                midi::Message::file_dump_packet(DEVICE_ID, packet_num, &data[..n]);
+            let packet = midi::Message::file_dump_packet(DEVICE_ID, packet_num, &data[..n]);
             if let Err(e) = packet.write(&mut writer) {
                 println!("Write error: {e}");
                 return;

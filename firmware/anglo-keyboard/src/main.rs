@@ -94,7 +94,13 @@ async fn main(spawner: embassy_executor::Spawner) {
     let adc_pin = p.PA2;
 
     spawner
-        .spawn(buttons::scan_task(BUTTON_STATE.sender(), buttons, mux, adc1, adc_pin.degrade_adc()))
+        .spawn(buttons::scan_task(
+            BUTTON_STATE.sender(),
+            buttons,
+            mux,
+            adc1,
+            adc_pin.degrade_adc(),
+        ))
         .unwrap();
 
     let mut i2c_config = i2c::Config::default();

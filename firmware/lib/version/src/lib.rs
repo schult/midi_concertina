@@ -11,12 +11,11 @@ pub struct FirmwareVersion<'a> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ParseFirmwareError {
-}
+pub struct ParseFirmwareError {}
 
 impl From<ParseIntError> for ParseFirmwareError {
     fn from(_: ParseIntError) -> Self {
-        Self{}
+        Self {}
     }
 }
 
@@ -29,17 +28,26 @@ impl<'a> FirmwareVersion<'a> {
 
         let mut iter = version.split('.');
 
-        let major = iter.next().ok_or(ParseFirmwareError{})?.parse()?;
-        let minor = iter.next().ok_or(ParseFirmwareError{})?.parse()?;
-        let patch = iter.next().ok_or(ParseFirmwareError{})?.parse()?;
+        let major = iter.next().ok_or(ParseFirmwareError {})?.parse()?;
+        let minor = iter.next().ok_or(ParseFirmwareError {})?.parse()?;
+        let patch = iter.next().ok_or(ParseFirmwareError {})?.parse()?;
 
         if iter.next().is_some() {
             return Err(ParseFirmwareError {});
         }
 
-        let prerelease = if prerelease.is_empty() { None } else { Some(prerelease) };
+        let prerelease = if prerelease.is_empty() {
+            None
+        } else {
+            Some(prerelease)
+        };
 
-        Ok(FirmwareVersion { major, minor, patch, prerelease })
+        Ok(FirmwareVersion {
+            major,
+            minor,
+            patch,
+            prerelease,
+        })
     }
 }
 
@@ -86,48 +94,48 @@ mod tests {
     #[test]
     fn error_if_too_few_dots() {
         let result = FirmwareVersion::parse("1.2");
-        assert_eq!(result, Err(ParseFirmwareError{}));
+        assert_eq!(result, Err(ParseFirmwareError {}));
     }
 
     #[test]
     fn error_if_too_many_dots() {
         let result = FirmwareVersion::parse("1.2.3.4");
-        assert_eq!(result, Err(ParseFirmwareError{}));
+        assert_eq!(result, Err(ParseFirmwareError {}));
     }
 
     #[test]
     fn error_if_major_empty() {
         let result = FirmwareVersion::parse(".2.3");
-        assert_eq!(result, Err(ParseFirmwareError{}));
+        assert_eq!(result, Err(ParseFirmwareError {}));
     }
 
     #[test]
     fn error_if_minor_empty() {
         let result = FirmwareVersion::parse("1..3");
-        assert_eq!(result, Err(ParseFirmwareError{}));
+        assert_eq!(result, Err(ParseFirmwareError {}));
     }
 
     #[test]
     fn error_if_patch_empty() {
         let result = FirmwareVersion::parse("1.2.");
-        assert_eq!(result, Err(ParseFirmwareError{}));
+        assert_eq!(result, Err(ParseFirmwareError {}));
     }
 
     #[test]
     fn error_if_major_not_numeric() {
         let result = FirmwareVersion::parse("a.2.3");
-        assert_eq!(result, Err(ParseFirmwareError{}));
+        assert_eq!(result, Err(ParseFirmwareError {}));
     }
 
     #[test]
     fn error_if_minor_not_numeric() {
         let result = FirmwareVersion::parse("1.b.3");
-        assert_eq!(result, Err(ParseFirmwareError{}));
+        assert_eq!(result, Err(ParseFirmwareError {}));
     }
 
     #[test]
     fn error_if_patch_not_numeric() {
         let result = FirmwareVersion::parse("1.2.c");
-        assert_eq!(result, Err(ParseFirmwareError{}));
+        assert_eq!(result, Err(ParseFirmwareError {}));
     }
 }

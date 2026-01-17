@@ -671,10 +671,7 @@ fn message_read_sysex_identifies_file_dump_header_message() {
         "f0 7e 03 07 01 00  42 49 4e 20  1e 64 77 32  66 69 6c 65 2e 62 69 6e f7"
     ));
     let result = Message::read_sysex(&mut data);
-    assert!(matches!(
-        result,
-        Some(Message::FileDumpHeader(_))
-    ));
+    assert!(matches!(result, Some(Message::FileDumpHeader(_))));
 }
 
 #[test]
@@ -683,9 +680,7 @@ fn message_read_sysex_parses_file_dump_header_data() {
         "f0 7e 03 07 01 01  42 49 4e 20  1e 24 77 32  66 69 6c 65 2e 62 69 6e f7"
     ));
     let result = Message::read_sysex(&mut data);
-    let expected = Some(Message::file_dump_header(
-        3, 1, 0x65DD21E, "BIN ",
-    ));
+    let expected = Some(Message::file_dump_header(3, 1, 0x65DD21E, "BIN "));
     assert_eq!(result, expected);
 }
 
@@ -713,10 +708,7 @@ fn message_read_sysex_identifies_file_dump_packet_message() {
         "f0 7e 03 07 02 71 0f  00 01 20 03 40 05 60 07  55 00 09 20 0b 40 0d 60  5c f7"
     ));
     let result = Message::read_sysex(&mut data);
-    assert!(matches!(
-        result,
-        Some(Message::FileDumpPacket(_))
-    ));
+    assert!(matches!(result, Some(Message::FileDumpPacket(_))));
 }
 
 #[test]
@@ -791,11 +783,7 @@ fn message_read_sysex_parses_odd_length_file_dump_packet() {
     let mut data = CircularBuffer::<64, u8>::from(hex!("f0 7e 03 07 02 71 03  00 01 20 03  28 f7"));
     let result = Message::read_sysex(&mut data);
 
-    let expected = Some(Message::file_dump_packet(
-        3,
-        113,
-        &hex!("01 20 03"),
-    ));
+    let expected = Some(Message::file_dump_packet(3, 113, &hex!("01 20 03")));
     assert_eq!(result, expected);
 }
 

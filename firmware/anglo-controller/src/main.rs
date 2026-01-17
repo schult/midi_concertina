@@ -121,7 +121,6 @@ async fn main(spawner: embassy_executor::Spawner) {
     //           Send firmware to L and R
     //           Power cycle L and R
 
-
     loop {
         let left_notes = match bellows_state.direction {
             bellows::BellowsDirection::Push => &keymap::LEFT_PUSH[..],
@@ -217,8 +216,12 @@ async fn firmware_task(
     const SYSEX_DEVICE_ID: u8 = 0x01;
     let mut dfu_writer = file_dump_io::DfuWriter::new(updater);
     let mut message_adapter = file_dump_io::MessageChannelAdapter::new(midi_out_channel);
-    let mut receiver =
-        FileDumpReceiver::new(&mut dfu_writer, &mut message_adapter, SYSEX_DEVICE_ID, "BIN ");
+    let mut receiver = FileDumpReceiver::new(
+        &mut dfu_writer,
+        &mut message_adapter,
+        SYSEX_DEVICE_ID,
+        "BIN ",
+    );
 
     loop {
         let message = midi_in_channel.receive().await;

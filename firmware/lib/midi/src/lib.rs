@@ -486,9 +486,7 @@ fn parse_eof<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<Message> {
     Some(Message::Eof(parse_handshake(it, 0x7B)?))
 }
 
-fn parse_file_dump_header<'a>(
-    it: &mut impl Iterator<Item = &'a u8>,
-) -> Option<Message> {
+fn parse_file_dump_header<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<Message> {
     if *it.next()? != 0xF0 {
         return None;
     }
@@ -525,9 +523,7 @@ fn parse_file_dump_header<'a>(
     }))
 }
 
-fn parse_file_dump_packet<'a>(
-    it: &mut impl Iterator<Item = &'a u8>,
-) -> Option<Message> {
+fn parse_file_dump_packet<'a>(it: &mut impl Iterator<Item = &'a u8>) -> Option<Message> {
     if *it.next()? != 0xF0 {
         return None;
     }

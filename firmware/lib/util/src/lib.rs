@@ -1,8 +1,8 @@
 #![no_std]
 
 use circular_buffer::CircularBuffer;
-use embassy_boot::FirmwareUpdaterError;
 use embassy_boot::FirmwareUpdater;
+use embassy_boot::FirmwareUpdaterError;
 use embedded_storage_async::nor_flash::NorFlash;
 
 pub struct DfuWriter<'a, DFU: NorFlash, STATE: NorFlash> {

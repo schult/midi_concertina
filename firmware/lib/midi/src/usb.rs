@@ -118,17 +118,21 @@ impl Iterator for Encode {
 
 impl Encode {
     fn new(cable: u8, cin: Cin, data: &[u8]) -> Self {
-        let mut packet = EventPacket{ raw: [0; 4] };
+        let mut packet = EventPacket { raw: [0; 4] };
         packet.raw[0] = (cable << 4) | cin as u8;
         packet.raw[1..(1 + data.len())].copy_from_slice(data);
 
-        let mut result = Self { packets: CircularBuffer::new() };
+        let mut result = Self {
+            packets: CircularBuffer::new(),
+        };
         result.packets.push_back(packet);
         result
     }
 
     fn from_sysex(cable: u8, data: &[u8]) -> Self {
-        let mut result = Self { packets: CircularBuffer::new() };
+        let mut result = Self {
+            packets: CircularBuffer::new(),
+        };
 
         let mut iter = data.chunks(3).peekable();
         while let Some(chunk) = iter.next() {

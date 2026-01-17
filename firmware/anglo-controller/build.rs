@@ -5,7 +5,10 @@ fn main() {
     #[cfg(feature = "defmt")]
     println!("cargo:rustc-link-arg=-Tdefmt.x");
 
-    let version_text = match Command::new("git").args(["describe", "--tags", "--match", "firmware/v*"]).output() {
+    let version_text = match Command::new("git")
+        .args(["describe", "--tags", "--match", "firmware/v*"])
+        .output()
+    {
         Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).trim().to_owned(),
         Ok(o) => panic!("git-describe exited non-zero: {}", o.status),
         Err(err) => panic!("failed to execute git-describe: {err}"),

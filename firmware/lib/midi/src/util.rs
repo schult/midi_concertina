@@ -53,10 +53,7 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
     async fn cancel(&mut self) {
         if let Some(progress) = &mut self.progress {
             self.message
-                .send(Message::cancel(
-                    progress.source_id,
-                    progress.packet_num,
-                ))
+                .send(Message::cancel(progress.source_id, progress.packet_num))
                 .await;
             self.progress = None;
         }
@@ -75,9 +72,7 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
                 return;
             }
 
-            self.message
-                .send(Message::wait(header.source_id, 0))
-                .await;
+            self.message.send(Message::wait(header.source_id, 0)).await;
             let result = self.file.open().await;
             if result.is_err() {
                 self.message
@@ -85,9 +80,7 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
                     .await;
                 return;
             }
-            self.message
-                .send(Message::ack(header.source_id, 0))
-                .await;
+            self.message.send(Message::ack(header.source_id, 0)).await;
             self.progress = Some(FileDumpProgress {
                 source_id: header.source_id,
                 packet_num: 0,
@@ -106,19 +99,13 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
 
                     if !packet.checksum_ok {
                         self.message
-                            .send(Message::nak(
-                                progress.source_id,
-                                progress.packet_num,
-                            ))
+                            .send(Message::nak(progress.source_id, progress.packet_num))
                             .await;
                         return;
                     }
 
                     self.message
-                        .send(Message::wait(
-                            progress.source_id,
-                            progress.packet_num,
-                        ))
+                        .send(Message::wait(progress.source_id, progress.packet_num))
                         .await;
                     let result = self.file.write(packet.data()).await;
                     if result.is_err() {
@@ -126,10 +113,7 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
                         return;
                     }
                     self.message
-                        .send(Message::ack(
-                            progress.source_id,
-                            progress.packet_num,
-                        ))
+                        .send(Message::ack(progress.source_id, progress.packet_num))
                         .await;
                     progress.packet_num = progress.next_packet();
                 }

@@ -3,10 +3,8 @@ use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::watch;
 use embassy_time::{Duration, Ticker};
 
-
 const BUTTON_COUNT: usize = 15;
 const MUX_PINS: usize = 4;
-
 
 pub struct Mux<'a, const N: usize> {
     out: [gpio::Output<'a>; N],
@@ -28,7 +26,6 @@ impl<'a, const N: usize> Mux<'a, N> {
         }
     }
 }
-
 
 pub struct ButtonConfig<'a> {
     power: gpio::Output<'a>,
@@ -55,7 +52,6 @@ impl<'a> ButtonConfig<'a> {
         self.index
     }
 }
-
 
 #[embassy_executor::task]
 pub async fn scan_task(

@@ -36,19 +36,13 @@ async fn file_dump_receiver_ignores_header_with_wrong_device_ids() {
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut midi, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(Message::file_dump_header(
-            0x00, SOURCE_ID, 0, FILE_TYPE,
-        ))
+        .process(Message::file_dump_header(0x00, SOURCE_ID, 0, FILE_TYPE))
         .await;
     receiver
-        .process(Message::file_dump_header(
-            0x33, SOURCE_ID, 0, FILE_TYPE,
-        ))
+        .process(Message::file_dump_header(0x33, SOURCE_ID, 0, FILE_TYPE))
         .await;
     receiver
-        .process(Message::file_dump_header(
-            0x7E, SOURCE_ID, 0, FILE_TYPE,
-        ))
+        .process(Message::file_dump_header(0x7E, SOURCE_ID, 0, FILE_TYPE))
         .await;
 }
 
@@ -62,27 +56,20 @@ async fn file_dump_receiver_cancels_header_with_wrong_file_type() {
     let mut midi = MockMessageSender::new();
 
     file.expect_open().times(0);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(3);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut midi, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(Message::file_dump_header(
-            DEVICE_ID, SOURCE_ID, 0, "TEXT",
-        ))
+        .process(Message::file_dump_header(DEVICE_ID, SOURCE_ID, 0, "TEXT"))
         .await;
     receiver
-        .process(Message::file_dump_header(
-            DEVICE_ID, SOURCE_ID, 0, "MIDI",
-        ))
+        .process(Message::file_dump_header(DEVICE_ID, SOURCE_ID, 0, "MIDI"))
         .await;
     receiver
-        .process(Message::file_dump_header(
-            DEVICE_ID, SOURCE_ID, 0, "BINN",
-        ))
+        .process(Message::file_dump_header(DEVICE_ID, SOURCE_ID, 0, "BINN"))
         .await;
 }
 
@@ -116,8 +103,7 @@ async fn file_dump_receiver_requests_wait_before_open() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -146,8 +132,7 @@ async fn file_dump_receiver_cancels_on_open_error() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -156,8 +141,7 @@ async fn file_dump_receiver_cancels_on_open_error() {
         .return_const(Err(0))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -181,8 +165,7 @@ async fn file_dump_receiver_acks_on_open_ok() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -191,8 +174,7 @@ async fn file_dump_receiver_acks_on_open_ok() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -218,9 +200,7 @@ async fn file_dump_receiver_ignores_eof_before_header() {
     midi.expect_send().times(0);
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut midi, DEVICE_ID, FILE_TYPE);
-    receiver
-        .process(Message::eof(DEVICE_ID, 2))
-        .await;
+    receiver.process(Message::eof(DEVICE_ID, 2)).await;
 }
 
 #[tokio::test]
@@ -266,9 +246,7 @@ async fn file_dump_receiver_closes_file_on_eof() {
             DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
         ))
         .await;
-    receiver
-        .process(Message::eof(DEVICE_ID, 0))
-        .await;
+    receiver.process(Message::eof(DEVICE_ID, 0)).await;
 }
 
 #[tokio::test]
@@ -290,9 +268,7 @@ async fn file_dump_receiver_accepts_any_eof_packet_num() {
             DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
         ))
         .await;
-    receiver
-        .process(Message::eof(DEVICE_ID, 43))
-        .await;
+    receiver.process(Message::eof(DEVICE_ID, 43)).await;
 }
 
 #[tokio::test]
@@ -357,8 +333,7 @@ async fn file_dump_receiver_requests_wait_before_write() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -367,14 +342,12 @@ async fn file_dump_receiver_requests_wait_before_write() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -410,8 +383,7 @@ async fn file_dump_receiver_cancels_on_write_error() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -420,14 +392,12 @@ async fn file_dump_receiver_cancels_on_write_error() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -436,8 +406,7 @@ async fn file_dump_receiver_cancels_on_write_error() {
         .return_const(Err(0))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -468,8 +437,7 @@ async fn file_dump_receiver_acks_on_valid_packet() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -478,44 +446,37 @@ async fn file_dump_receiver_acks_on_valid_packet() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 1)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 1)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 2)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 2)))
         .return_const(())
         .times(1)
@@ -561,8 +522,7 @@ async fn file_dump_receiver_naks_on_bad_checksum() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -571,14 +531,12 @@ async fn file_dump_receiver_naks_on_bad_checksum() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::nak(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -591,8 +549,7 @@ async fn file_dump_receiver_naks_on_bad_checksum() {
         ))
         .await;
 
-    let mut corrupt_packet =
-        Message::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04"));
+    let mut corrupt_packet = Message::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04"));
     if let Message::FileDumpPacket(data) = &mut corrupt_packet {
         data.checksum_ok = false;
     }
@@ -609,8 +566,7 @@ async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -619,14 +575,12 @@ async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -635,8 +589,7 @@ async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
         .with(eq(hex!("01 02 03 04")))
         .return_const(Ok(()))
         .times(1);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -656,25 +609,13 @@ async fn file_dump_receiver_ignores_packets_with_wrong_device_id() {
         ))
         .await;
     receiver
-        .process(Message::file_dump_packet(
-            0x00,
-            1,
-            &hex!("F0 E0 D0 C0"),
-        ))
+        .process(Message::file_dump_packet(0x00, 1, &hex!("F0 E0 D0 C0")))
         .await;
     receiver
-        .process(Message::file_dump_packet(
-            0x33,
-            1,
-            &hex!("F0 E0 D0 C0"),
-        ))
+        .process(Message::file_dump_packet(0x33, 1, &hex!("F0 E0 D0 C0")))
         .await;
     receiver
-        .process(Message::file_dump_packet(
-            0x7E,
-            1,
-            &hex!("F0 E0 D0 C0"),
-        ))
+        .process(Message::file_dump_packet(0x7E, 1, &hex!("F0 E0 D0 C0")))
         .await;
 }
 
@@ -688,8 +629,7 @@ async fn file_dump_receiver_cancels_on_out_of_order_packet() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -698,38 +638,32 @@ async fn file_dump_receiver_cancels_on_out_of_order_packet() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 1)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 1)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::cancel(SOURCE_ID, 2)))
         .return_const(())
         .times(1)
@@ -834,9 +768,7 @@ async fn file_dump_receiver_ignores_packets_after_header_with_wrong_file_type() 
 
     let mut receiver = FileDumpReceiver::new(&mut file, &mut midi, DEVICE_ID, FILE_TYPE);
     receiver
-        .process(Message::file_dump_header(
-            DEVICE_ID, SOURCE_ID, 0, "TEXT",
-        ))
+        .process(Message::file_dump_header(DEVICE_ID, SOURCE_ID, 0, "TEXT"))
         .await;
     receiver
         .process(Message::file_dump_packet(
@@ -885,8 +817,7 @@ async fn file_dump_receiver_ignores_packets_after_write_error() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -895,14 +826,12 @@ async fn file_dump_receiver_ignores_packets_after_write_error() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -911,8 +840,7 @@ async fn file_dump_receiver_ignores_packets_after_write_error() {
         .return_const(Err(0))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -957,8 +885,7 @@ async fn file_dump_receiver_ignores_packets_after_out_of_order_packet() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -967,14 +894,12 @@ async fn file_dump_receiver_ignores_packets_after_out_of_order_packet() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::cancel(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -1028,9 +953,7 @@ async fn file_dump_receiver_ignores_packets_after_eof() {
             DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
         ))
         .await;
-    receiver
-        .process(Message::eof(DEVICE_ID, 0))
-        .await;
+    receiver.process(Message::eof(DEVICE_ID, 0)).await;
     receiver
         .process(Message::file_dump_packet(
             DEVICE_ID,
@@ -1073,12 +996,8 @@ async fn file_dump_receiver_eof_after_eof() {
             DEVICE_ID, SOURCE_ID, 0, FILE_TYPE,
         ))
         .await;
-    receiver
-        .process(Message::eof(DEVICE_ID, 0))
-        .await;
-    receiver
-        .process(Message::eof(DEVICE_ID, 0))
-        .await;
+    receiver.process(Message::eof(DEVICE_ID, 0)).await;
+    receiver.process(Message::eof(DEVICE_ID, 0)).await;
 }
 
 #[tokio::test]
@@ -1091,8 +1010,7 @@ async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
     let mut midi = MockMessageSender::new();
 
     let mut seq = Sequence::new();
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -1101,20 +1019,17 @@ async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
         .return_const(Ok(()))
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::nak(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
         .in_sequence(&mut seq);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::wait(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -1123,8 +1038,7 @@ async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
         .with(eq(hex!("01 02 03 04")))
         .return_const(Ok(()))
         .times(1);
-    midi
-        .expect_send()
+    midi.expect_send()
         .with(eq(Message::ack(SOURCE_ID, 0)))
         .return_const(())
         .times(1)
@@ -1137,8 +1051,7 @@ async fn file_dump_receiver_accepts_packets_after_bad_checksum() {
         ))
         .await;
 
-    let mut corrupt_packet =
-        Message::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04"));
+    let mut corrupt_packet = Message::file_dump_packet(DEVICE_ID, 0, &hex!("01 02 03 04"));
     if let Message::FileDumpPacket(data) = &mut corrupt_packet {
         data.checksum_ok = false;
     }
