@@ -9,8 +9,7 @@ TODO: printer settings (layer height, etc)
 
 Screws, threaded inserts, wire, magnets...
 
-Light Pipe: Bivar GLP Series
-
+Light Pipe: Bivar GLP1-188-F-54
 
 ## Parameters
 
