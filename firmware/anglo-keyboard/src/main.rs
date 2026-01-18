@@ -31,6 +31,28 @@ enum Chirality {
 static MODE: Watch<ThreadModeRawMutex, Mode, 2> = Watch::new_with(Mode::ScanButtons);
 static BUTTON_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new();
 
+struct I2cWrapper<'a> {
+    i2c: i2c::I2c<'a, embassy_stm32::mode::Async, i2c::mode::MultiMaster>,
+}
+
+impl<'a> i2c_proto::DeviceIo for I2cWrapper<'a> {
+    type Command = i2c::SlaveCommand;
+    type SendStatus = i2c::SendStatus;
+    type Error = i2c::Error;
+
+    async fn listen(&mut self) -> Result<Self::Command, Self::Error> {
+        self.i2c.listen().await
+    }
+
+    async fn respond_to_read(&mut self, write: &[u8]) -> Result<Self::SendStatus, Self::Error> {
+        self.i2c.respond_to_read(write).await
+    }
+
+    async fn respond_to_write(&mut self, read: &mut [u8]) -> Result<usize, Self::Error> {
+        self.i2c.respond_to_write(read).await
+    }
+}
+
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
     let mut config = embassy_stm32::Config::default();
@@ -124,7 +146,9 @@ async fn main(spawner: embassy_executor::Spawner) {
         Chirality::Right => 0x23,
     };
     let slave_config = i2c::SlaveAddrConfig::basic(i2c_addr);
-    let mut i2c_slave = i2c_master.into_slave_multimaster(slave_config);
+    let i2c_slave = i2c_master.into_slave_multimaster(slave_config);
+    let i2c_wrapper = I2cWrapper { i2c: i2c_slave };
+    let mut i2c_device = i2c_proto::Device::new(i2c_wrapper);
 
     let mut mode_receiver = MODE.receiver().unwrap();
     let mut button_state_receiver = BUTTON_STATE.receiver().unwrap();
@@ -133,11 +157,10 @@ async fn main(spawner: embassy_executor::Spawner) {
         if let Ok(i2c::SlaveCommand {
             kind: i2c::SlaveCommandKind::Read,
             address: _,
-        }) = i2c_slave.listen().await
+        }) = i2c_device.listen().await
         {
             let button_state = button_state_receiver.get().await;
-            let response_buffer = button_state.to_be_bytes();
-            let _ = i2c_slave.respond_to_read(&response_buffer).await;
+            let _ = i2c_device.send_buttons(button_state).await;
         }
     }
 }

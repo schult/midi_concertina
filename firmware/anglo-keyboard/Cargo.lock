@@ -24,6 +24,7 @@ dependencies = [
  "embassy-stm32",
  "embassy-sync",
  "embassy-time",
+ "i2c-proto",
  "panic-probe",
  "panic-reset",
  "portable-atomic",
@@ -564,6 +565,13 @@ checksum = "0bfb9eb618601c89945a70e254898da93b13be0388091d42117462b265bb3fad"
 dependencies = [
  "hash32",
  "stable_deref_trait",
+]
+
+[[package]]
+name = "i2c-proto"
+version = "0.0.0"
+dependencies = [
+ "version",
 ]
 
 [[package]]
