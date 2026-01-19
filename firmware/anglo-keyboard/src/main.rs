@@ -154,13 +154,43 @@ async fn main(spawner: embassy_executor::Spawner) {
     let mut button_state_receiver = BUTTON_STATE.receiver().unwrap();
 
     loop {
-        if let Ok(i2c::SlaveCommand {
-            kind: i2c::SlaveCommandKind::Read,
-            address: _,
-        }) = i2c_device.listen().await
-        {
-            let button_state = button_state_receiver.get().await;
-            let _ = i2c_device.send_buttons(button_state).await;
+        match i2c_device.listen().await {
+            Ok(i2c::SlaveCommand {
+                kind: i2c::SlaveCommandKind::Read,
+                address: _,
+            }) => {
+                let button_state = button_state_receiver.get().await;
+                let _ = i2c_device.send_buttons(button_state).await;
+            }
+            Ok(i2c::SlaveCommand {
+                kind: i2c::SlaveCommandKind::Write,
+                address: _,
+            }) => {
+                match i2c_device.receive_command().await {
+                    Ok(i2c_proto::Command::GetVersion) => {
+                        // TODO: Handle error?
+                        let _ = i2c_device.send_version(&version).await;
+                    }
+                    Ok(i2c_proto::Command::GetWriteStatus) => {
+                        let write_status = match mode_receiver.get().await {
+                            Mode::ScanButtons => i2c_proto::WriteStatus::Busy,
+                            Mode::FirmwareWait => i2c_proto::WriteStatus::Busy,
+                            Mode::FirmwareReady => i2c_proto::WriteStatus::Ready,
+                            Mode::FirmwareError => i2c_proto::WriteStatus::Cancel,
+                        };
+                        // TODO: If Cancel, switch back to ScanButtons mode?
+                        // TODO: Handle error?
+                        let _ = i2c_device.send_write_status(write_status).await;
+                    }
+                    Ok(command) => {
+                        // TODO: Forward command
+                    }
+                    Err(_) => {
+                        // TODO: Cancel?
+                    }
+                }
+            }
+            Err(_) => (), // TODO: Reset?
         }
     }
 }

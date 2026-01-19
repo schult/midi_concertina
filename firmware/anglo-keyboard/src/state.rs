@@ -3,4 +3,5 @@ pub enum Mode {
     ScanButtons,
     FirmwareReady,
     FirmwareWait,
+    FirmwareError,
 }
