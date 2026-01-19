@@ -11,6 +11,9 @@ panic-reset = "0.1.1"
 
 cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
 cortex-m-rt = "0.7.5"
+embassy-boot = { version = "0.6.1", features = ["flash-erase-zero"] }
+embassy-boot-stm32 = "0.6.0"
+embassy-embedded-hal = "0.5.0"
 embassy-executor = { version = "0.9.1", features = ["arch-cortex-m", "executor-thread"] }
 embassy-futures = "0.1.2"
 embassy-stm32 = { version = "0.4.0", features = ["stm32l072cb", "time-driver-any"] }
@@ -19,6 +22,7 @@ embassy-time = { version = "0.5.0", features = ["tick-hz-32_768"] }
 portable-atomic = { version = "1.11.1", features = ["unsafe-assume-single-core"] }
 
 i2c-proto = { path = "../lib/i2c-proto" }
+util = { path = "../lib/util" }
 version = { path = "../lib/version" }
 
 [build-dependencies]

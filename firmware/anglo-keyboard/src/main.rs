@@ -13,6 +13,7 @@ use panic_probe as _;
 use panic_reset as _;
 
 use embassy_stm32::adc::AdcChannel;
+use embassy_stm32::flash::Flash;
 use embassy_stm32::{adc, bind_interrupts, gpio, i2c, peripherals, rcc, time::khz};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Channel;
@@ -132,8 +133,14 @@ async fn main(spawner: embassy_executor::Spawner) {
         ))
         .unwrap();
 
+    let flash = Flash::new_blocking(p.FLASH);
+
     spawner
-        .spawn(update::update_task(I2C_COMMANDS.receiver(), MODE.sender()))
+        .spawn(update::update_task(
+            I2C_COMMANDS.receiver(),
+            MODE.sender(),
+            flash,
+        ))
         .unwrap();
 
     let mut i2c_config = i2c::Config::default();
