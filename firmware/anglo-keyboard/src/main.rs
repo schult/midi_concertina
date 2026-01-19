@@ -3,6 +3,7 @@
 
 mod buttons;
 mod state;
+mod update;
 
 #[cfg(feature = "defmt")]
 use defmt_rtt as _;
@@ -14,6 +15,7 @@ use panic_reset as _;
 use embassy_stm32::adc::AdcChannel;
 use embassy_stm32::{adc, bind_interrupts, gpio, i2c, peripherals, rcc, time::khz};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
+use embassy_sync::channel::Channel;
 use embassy_sync::watch::Watch;
 use state::Mode;
 use version::FirmwareVersion;
@@ -30,6 +32,7 @@ enum Chirality {
 
 static MODE: Watch<ThreadModeRawMutex, Mode, 2> = Watch::new_with(Mode::ScanButtons);
 static BUTTON_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new();
+static I2C_COMMANDS: Channel<ThreadModeRawMutex, i2c_proto::Command, 4> = Channel::new();
 
 struct I2cWrapper<'a> {
     i2c: i2c::I2c<'a, embassy_stm32::mode::Async, i2c::mode::MultiMaster>,
@@ -129,6 +132,10 @@ async fn main(spawner: embassy_executor::Spawner) {
         ))
         .unwrap();
 
+    spawner
+        .spawn(update::update_task(I2C_COMMANDS.receiver(), MODE.sender()))
+        .unwrap();
+
     let mut i2c_config = i2c::Config::default();
     // TODO: Increase frequency and disable pullups after fixing controller hardware.
     i2c_config.sda_pullup = true;
@@ -183,7 +190,7 @@ async fn main(spawner: embassy_executor::Spawner) {
                         let _ = i2c_device.send_write_status(write_status).await;
                     }
                     Ok(command) => {
-                        // TODO: Forward command
+                        I2C_COMMANDS.send(command).await;
                     }
                     Err(_) => {
                         // TODO: Cancel?
