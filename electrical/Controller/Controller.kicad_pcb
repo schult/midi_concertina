@@ -5767,7 +5767,7 @@
 				)
 			)
 		)
-		(property "Value" "STM32L072CBTx"
+		(property "Value" "STM32L072CZT6"
 			(at 0 5.85 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5779,7 +5779,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.st.com/resource/en/datasheet/stm32l072cb.pdf"
+		(property "Datasheet" "https://www.st.com/resource/en/datasheet/stm32l072cz.pdf"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5791,7 +5791,7 @@
 				)
 			)
 		)
-		(property "Description" "STMicroelectronics Arm Cortex-M0+ MCU, 128KB flash, 20KB RAM, 32 MHz, 1.65-3.6V, 37 GPIO, LQFP48"
+		(property "Description" "STMicroelectronics Arm Cortex-M0+ MCU, 192KB flash, 20KB RAM, 32 MHz, 1.65-3.6V, 37 GPIO, LQFP48"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5803,7 +5803,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C465977"
+		(property "LCSC" "C1337587"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5816,7 +5816,7 @@
 				)
 			)
 		)
-		(property "Part" "STM32L072CBT6"
+		(property "Part" "STM32L072CZT6"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
