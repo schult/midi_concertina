@@ -136,11 +136,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     let flash = Flash::new_blocking(p.FLASH);
 
     spawner
-        .spawn(update::update_task(
-            I2C_COMMANDS.receiver(),
-            MODE.sender(),
-            flash,
-        ))
+        .spawn(update::update_task(I2C_COMMANDS.receiver(), flash))
         .unwrap();
 
     let mut i2c_config = i2c::Config::default();
@@ -164,7 +160,8 @@ async fn main(spawner: embassy_executor::Spawner) {
     let i2c_wrapper = I2cWrapper { i2c: i2c_slave };
     let mut i2c_device = i2c_proto::Device::new(i2c_wrapper);
 
-    let mut mode_receiver = MODE.receiver().unwrap();
+    let mode_sender = MODE.sender();
+
     let mut button_state_receiver = BUTTON_STATE.receiver().unwrap();
 
     loop {
@@ -181,24 +178,32 @@ async fn main(spawner: embassy_executor::Spawner) {
                 address: _,
             }) => {
                 match i2c_device.receive_command().await {
-                    Ok(i2c_proto::Command::GetVersion) => {
-                        // TODO: Handle error?
-                        let _ = i2c_device.send_version(&version).await;
-                    }
-                    Ok(i2c_proto::Command::GetWriteStatus) => {
-                        let write_status = match mode_receiver.get().await {
-                            Mode::ScanButtons => i2c_proto::WriteStatus::Busy,
-                            Mode::FirmwareWait => i2c_proto::WriteStatus::Busy,
-                            Mode::FirmwareReady => i2c_proto::WriteStatus::Ready,
-                            Mode::FirmwareError => i2c_proto::WriteStatus::Cancel,
-                        };
-                        // TODO: If Cancel, switch back to ScanButtons mode?
-                        // TODO: Handle error?
-                        let _ = i2c_device.send_write_status(write_status).await;
-                    }
-                    Ok(command) => {
-                        I2C_COMMANDS.send(command).await;
-                    }
+                    Ok(command) => match command {
+                        i2c_proto::Command::GetVersion => {
+                            // TODO: Handle error?
+                            let _ = i2c_device.send_version(&version).await;
+                        }
+                        i2c_proto::Command::GetWriteStatus => {
+                            let write_status = match mode_sender.try_get().unwrap() {
+                                Mode::UpgradeFirmware => match I2C_COMMANDS.is_full() {
+                                    true => i2c_proto::WriteStatus::Busy,
+                                    false => i2c_proto::WriteStatus::Ready,
+                                },
+                                _ => i2c_proto::WriteStatus::Cancel,
+                            };
+                            // TODO: Handle error?
+                            let _ = i2c_device.send_write_status(write_status).await;
+                        }
+                        i2c_proto::Command::WriteBegin => {
+                            mode_sender.send(Mode::UpgradeFirmware);
+                            I2C_COMMANDS.send(command).await;
+                        }
+                        i2c_proto::Command::WritePacket { .. } | i2c_proto::Command::WriteEnd => {
+                            if mode_sender.try_get().unwrap() == Mode::UpgradeFirmware {
+                                I2C_COMMANDS.send(command).await;
+                            }
+                        }
+                    },
                     Err(_) => {
                         // TODO: Cancel?
                     }
