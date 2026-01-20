@@ -9106,7 +9106,7 @@
 		(sheetname "/")
 		(sheetfile "Controller.kicad_sch")
 		(zone_connect 2)
-		(attr smd)
+		(attr smd exclude_from_bom)
 		(fp_line
 			(start -3.175 5.98)
 			(end -3.175 7.98)

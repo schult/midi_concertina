@@ -1259,7 +1259,7 @@
 		(sheetname "/")
 		(sheetfile "BellowsSensor.kicad_sch")
 		(zone_connect 2)
-		(attr smd)
+		(attr smd exclude_from_bom)
 		(fp_line
 			(start -3.175 7.98)
 			(end -1.175 7.98)
