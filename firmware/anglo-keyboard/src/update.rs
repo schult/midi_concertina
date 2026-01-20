@@ -5,9 +5,15 @@ use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel;
 use embassy_sync::mutex::Mutex;
 
+pub enum Command {
+    Begin,
+    Write{ data: [u8;i2c_proto::PACKET_MAX_PAYLOAD_SIZE], length: usize },
+    End,
+}
+
 #[embassy_executor::task]
 pub async fn update_task(
-    command_receiver: channel::Receiver<'static, ThreadModeRawMutex, i2c_proto::Command, 4>,
+    command_receiver: channel::Receiver<'static, ThreadModeRawMutex, Command, 4>,
     flash: Flash<'static, flash::Blocking>,
 ) {
     let flash = Mutex::new(BlockingAsync::new(flash));
@@ -21,23 +27,20 @@ pub async fn update_task(
 
     loop {
         match command_receiver.receive().await {
-            i2c_proto::Command::WriteBegin => {
+            Command::Begin => {
                 if dfu_writer.open().await.is_err() {
                     // TODO: Error
                 }
             }
-            i2c_proto::Command::WritePacket { data, length } => {
+            Command::Write { data, length } => {
                 if dfu_writer.write(&data[..length]).await.is_err() {
                     // TODO: Error
                 }
             }
-            i2c_proto::Command::WriteEnd => {
+            Command::End => {
                 if dfu_writer.close().await.is_err() {
                     // TODO: Error
                 }
-            }
-            _ => {
-                // TODO: Error
             }
         }
     }

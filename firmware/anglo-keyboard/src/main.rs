@@ -33,7 +33,7 @@ enum Chirality {
 
 static MODE: Watch<ThreadModeRawMutex, Mode, 2> = Watch::new_with(Mode::ScanButtons);
 static BUTTON_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new();
-static I2C_COMMANDS: Channel<ThreadModeRawMutex, i2c_proto::Command, 4> = Channel::new();
+static UPDATE_COMMANDS: Channel<ThreadModeRawMutex, update::Command, 4> = Channel::new();
 
 struct I2cWrapper<'a> {
     i2c: i2c::I2c<'a, embassy_stm32::mode::Async, i2c::mode::MultiMaster>,
@@ -136,7 +136,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     let flash = Flash::new_blocking(p.FLASH);
 
     spawner
-        .spawn(update::update_task(I2C_COMMANDS.receiver(), flash))
+        .spawn(update::update_task(UPDATE_COMMANDS.receiver(), flash))
         .unwrap();
 
     let mut i2c_config = i2c::Config::default();
@@ -178,35 +178,36 @@ async fn main(spawner: embassy_executor::Spawner) {
                 address: _,
             }) => {
                 match i2c_device.receive_command().await {
-                    Ok(command) => match command {
-                        i2c_proto::Command::GetVersion => {
-                            // TODO: Handle error?
-                            let _ = i2c_device.send_version(&version).await;
-                        }
-                        i2c_proto::Command::GetWriteStatus => {
-                            let write_status = match mode_sender.try_get().unwrap() {
-                                Mode::UpgradeFirmware => match I2C_COMMANDS.is_full() {
-                                    true => i2c_proto::WriteStatus::Busy,
-                                    false => i2c_proto::WriteStatus::Ready,
-                                },
-                                _ => i2c_proto::WriteStatus::Cancel,
-                            };
-                            // TODO: Handle error?
-                            let _ = i2c_device.send_write_status(write_status).await;
-                        }
-                        i2c_proto::Command::WriteBegin => {
-                            mode_sender.send(Mode::UpgradeFirmware);
-                            I2C_COMMANDS.send(command).await;
-                        }
-                        i2c_proto::Command::WritePacket { .. } | i2c_proto::Command::WriteEnd => {
-                            if mode_sender.try_get().unwrap() == Mode::UpgradeFirmware {
-                                I2C_COMMANDS.send(command).await;
-                            }
-                        }
-                    },
-                    Err(_) => {
-                        // TODO: Cancel?
+                    Ok(i2c_proto::Command::GetVersion) => {
+                        // TODO: Handle error?
+                        let _ = i2c_device.send_version(&version).await;
                     }
+                    Ok(i2c_proto::Command::GetWriteStatus) => {
+                        let write_status = match mode_sender.try_get().unwrap() {
+                            Mode::UpgradeFirmware => match UPDATE_COMMANDS.is_full() {
+                                true => i2c_proto::WriteStatus::Busy,
+                                false => i2c_proto::WriteStatus::Ready,
+                            },
+                            _ => i2c_proto::WriteStatus::Cancel,
+                        };
+                        // TODO: Handle error?
+                        let _ = i2c_device.send_write_status(write_status).await;
+                    }
+                    Ok(i2c_proto::Command::WriteBegin) => {
+                        mode_sender.send(Mode::UpgradeFirmware);
+                        UPDATE_COMMANDS.send(update::Command::Begin).await;
+                    }
+                    Ok(i2c_proto::Command::WritePacket { data, length }) => {
+                        if mode_sender.try_get().unwrap() == Mode::UpgradeFirmware {
+                            UPDATE_COMMANDS.send(update::Command::Write{ data, length }).await;
+                        }
+                    }
+                    Ok(i2c_proto::Command::WriteEnd) => {
+                        if mode_sender.try_get().unwrap() == Mode::UpgradeFirmware {
+                            UPDATE_COMMANDS.send(update::Command::End).await;
+                        }
+                    }
+                    Err(_) => mode_sender.send(Mode::ScanButtons), // Cancel in-progress update
                 }
             }
             Err(_) => (), // TODO: Reset?
