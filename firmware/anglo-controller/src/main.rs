@@ -89,7 +89,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap();
 
     let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
-    black_box(keyboard_firmware);
+    black_box(keyboard_firmware); // TODO: Remove black_box once keyboard upgrades are implemented
 
     let mut i2c_config = i2c::Config::default();
     // TODO: Disable pull-ups and increase frequency after fixing hardware.
