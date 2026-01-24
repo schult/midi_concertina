@@ -34,6 +34,7 @@ enum Chirality {
 static MODE: Watch<ThreadModeRawMutex, Mode, 2> = Watch::new_with(Mode::ScanButtons);
 static BUTTON_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new();
 static UPDATE_COMMANDS: Channel<ThreadModeRawMutex, update::Command, 4> = Channel::new();
+static UPDATE_STATUS: Watch<ThreadModeRawMutex, update::Status, 1> = Watch::new();
 
 struct I2cWrapper<'a> {
     i2c: i2c::I2c<'a, embassy_stm32::mode::Async, i2c::mode::MultiMaster>,
@@ -136,7 +137,11 @@ async fn main(spawner: embassy_executor::Spawner) {
     let flash = Flash::new_blocking(p.FLASH);
 
     spawner
-        .spawn(update::update_task(UPDATE_COMMANDS.receiver(), flash))
+        .spawn(update::update_task(
+            UPDATE_COMMANDS.receiver(),
+            UPDATE_STATUS.sender(),
+            flash,
+        ))
         .unwrap();
 
     let mut i2c_config = i2c::Config::default();
@@ -161,8 +166,8 @@ async fn main(spawner: embassy_executor::Spawner) {
     let mut i2c_device = i2c_proto::Device::new(i2c_wrapper);
 
     let mode_sender = MODE.sender();
-
     let mut button_state_receiver = BUTTON_STATE.receiver().unwrap();
+    let mut update_status_receiver = UPDATE_STATUS.receiver().unwrap();
 
     loop {
         match i2c_device.listen().await {
@@ -179,27 +184,34 @@ async fn main(spawner: embassy_executor::Spawner) {
             }) => {
                 match i2c_device.receive_command().await {
                     Ok(i2c_proto::Command::GetVersion) => {
-                        // TODO: Handle error?
                         let _ = i2c_device.send_version(&version).await;
                     }
                     Ok(i2c_proto::Command::GetWriteStatus) => {
-                        let write_status = match mode_sender.try_get().unwrap() {
-                            Mode::UpgradeFirmware => match UPDATE_COMMANDS.is_full() {
-                                true => i2c_proto::WriteStatus::Busy,
-                                false => i2c_proto::WriteStatus::Ready,
-                            },
+                        let mode = mode_sender.try_get().unwrap();
+                        let update_status = update_status_receiver.get().await;
+                        let write_status = match (mode, update_status) {
+                            (Mode::UpgradeFirmware, update::Status::Ok) => {
+                                match UPDATE_COMMANDS.is_full() {
+                                    true => i2c_proto::WriteStatus::Busy,
+                                    false => i2c_proto::WriteStatus::Ready,
+                                }
+                            }
                             _ => i2c_proto::WriteStatus::Cancel,
                         };
-                        // TODO: Handle error?
                         let _ = i2c_device.send_write_status(write_status).await;
                     }
                     Ok(i2c_proto::Command::WriteBegin) => {
                         mode_sender.send(Mode::UpgradeFirmware);
                         UPDATE_COMMANDS.send(update::Command::Begin).await;
+                        update_status_receiver
+                            .get_and(|x| *x == update::Status::Ok)
+                            .await;
                     }
                     Ok(i2c_proto::Command::WritePacket { data, length }) => {
                         if mode_sender.try_get().unwrap() == Mode::UpgradeFirmware {
-                            UPDATE_COMMANDS.send(update::Command::Write{ data, length }).await;
+                            UPDATE_COMMANDS
+                                .send(update::Command::Write { data, length })
+                                .await;
                         }
                     }
                     Ok(i2c_proto::Command::WriteEnd) => {
@@ -210,7 +222,7 @@ async fn main(spawner: embassy_executor::Spawner) {
                     Err(_) => mode_sender.send(Mode::ScanButtons), // Cancel in-progress update
                 }
             }
-            Err(_) => (), // TODO: Reset?
+            Err(_) => (),
         }
     }
 }
