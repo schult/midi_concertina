@@ -65,6 +65,94 @@ async fn get_buttons_parses_response() {
 }
 
 #[tokio::test]
+async fn get_bellows_forwards_address() {
+    let mut io = MockControllerIo::new();
+    io
+        .expect_read()
+        .with(eq(0x28), always())
+        .returning(|_, _| { Ok(()) })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let _ = controller.get_bellows(address).await;
+}
+
+#[tokio::test]
+async fn get_bellows_propogates_io_error() {
+    let mut io = MockControllerIo::new();
+    io
+        .expect_read()
+        .returning(|_, _| { Err(std::io::Error::from(std::io::ErrorKind::Other)) })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let result = controller.get_bellows(address).await;
+
+    assert!(matches!(result, Err(ControllerError::Communication(_))));
+    if let Err(ControllerError::Communication(e)) = result {
+        assert_eq!(e.kind(), std::io::ErrorKind::Other);
+    }
+}
+
+#[tokio::test]
+async fn get_bellows_parses_pressure() {
+    let mut io = MockControllerIo::new();
+    io
+        .expect_read()
+        .returning(|_, buffer| {
+            let bellows: u16 = 0x1234;
+            buffer.copy_from_slice(&bellows.to_be_bytes());
+            Ok(())
+        })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let bellows = controller.get_bellows(address).await.unwrap();
+    assert_eq!(bellows, 0x1234);
+}
+
+#[tokio::test]
+async fn get_bellows_ignores_stale_status() {
+    let mut io = MockControllerIo::new();
+    io
+        .expect_read()
+        .returning(|_, buffer| {
+            let stale = 0x8000;
+            let bellows: u16 = 0x1234 | stale;
+            buffer.copy_from_slice(&bellows.to_be_bytes());
+            Ok(())
+        })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let bellows = controller.get_bellows(address).await.unwrap();
+    assert_eq!(bellows, 0x1234);
+}
+
+#[tokio::test]
+async fn get_bellows_reports_sensor_fault() {
+    let mut io = MockControllerIo::new();
+    io
+        .expect_read()
+        .returning(|_, buffer| {
+            let fault = 0xC000;
+            let bellows: u16 = 0x1234 | fault;
+            buffer.copy_from_slice(&bellows.to_be_bytes());
+            Ok(())
+        })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let result = controller.get_bellows(address).await;
+    assert!(matches!(result, Err(ControllerError::SensorFault)));
+}
+
+#[tokio::test]
 async fn get_version_forwards_address() {
     let mut io = MockControllerIo::new();
     io
