@@ -39,6 +39,26 @@ type MessageChannel = Channel<NoopRawMutex, midi::Message, 8>;
 type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
 type MessageReceiver = Receiver<'static, NoopRawMutex, midi::Message, 8>;
 
+struct I2cWrapper<'a> {
+    i2c: i2c::I2c<'a, embassy_stm32::mode::Async, i2c::mode::Master>,
+}
+
+impl<'a> i2c_proto::ControllerIo for I2cWrapper<'a> {
+    type Error = i2c::Error;
+
+    async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error> {
+        self.i2c.read(address, read).await
+    }
+
+    async fn write(&mut self, address: u8, write: &[u8]) -> Result<(), Self::Error> {
+        self.i2c.write(address, write).await
+    }
+
+    async fn write_read(&mut self, address: u8, write: &[u8], read: &mut [u8]) -> Result<(), Self::Error> {
+        self.i2c.write_read(address, write, read).await
+    }
+}
+
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
     let mut config = embassy_stm32::Config::default();
@@ -98,12 +118,13 @@ async fn main(spawner: embassy_executor::Spawner) {
     let sda_pin = p.PB9;
     let tx_dma = p.DMA1_CH2;
     let rx_dma = p.DMA1_CH3;
-    let mut i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, Irqs, tx_dma, rx_dma, i2c_config);
+    let i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, Irqs, tx_dma, rx_dma, i2c_config);
+    let i2c_wrapper = I2cWrapper{ i2c: i2c_master };
+    let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
     const BELLOWS_ADDR: u8 = 0x28;
     const LEFT_ADDR: u8 = 0x22;
     const RIGHT_ADDR: u8 = 0x23;
-    let mut buffer = [0; 2];
     let mut left_buttons: u16 = 0;
     let mut right_buttons: u16 = 0;
 
@@ -131,8 +152,7 @@ async fn main(spawner: embassy_executor::Spawner) {
             bellows::BellowsDirection::None => &[],
         };
 
-        if i2c_master.read(LEFT_ADDR, &mut buffer).await.is_ok() {
-            let new_state = u16::from_be_bytes(buffer);
+        if let Ok(new_state) = i2c_controller.get_buttons(LEFT_ADDR).await {
             let changes = left_buttons ^ new_state;
             for (i, note) in left_notes.iter().enumerate() {
                 if (changes >> i) & 1 == 1 {
@@ -149,8 +169,7 @@ async fn main(spawner: embassy_executor::Spawner) {
             left_buttons = new_state;
         }
 
-        if i2c_master.read(RIGHT_ADDR, &mut buffer).await.is_ok() {
-            let new_state = u16::from_be_bytes(buffer);
+        if let Ok(new_state) = i2c_controller.get_buttons(RIGHT_ADDR).await {
             let changes = right_buttons ^ new_state;
             for (i, note) in right_notes.iter().enumerate() {
                 if (changes >> i) & 1 == 1 {
@@ -167,32 +186,28 @@ async fn main(spawner: embassy_executor::Spawner) {
             right_buttons = new_state;
         }
 
-        if i2c_master.read(BELLOWS_ADDR, &mut buffer).await.is_ok() {
-            let new_state = u16::from_be_bytes(buffer);
-            let fresh = (new_state & 0xA0) == 0;
-            if fresh {
-                let new_bellows_state = bellows::BellowsState::new(new_state);
-                if new_bellows_state.direction != bellows_state.direction {
-                    for (i, note) in left_notes.iter().enumerate() {
-                        if (left_buttons >> i) & 1 == 1 {
-                            let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                            midi_out_channel.send(message).await;
-                        }
+        if let Ok(new_state) = i2c_controller.get_bellows(BELLOWS_ADDR).await {
+            let new_bellows_state = bellows::BellowsState::new(new_state);
+            if new_bellows_state.direction != bellows_state.direction {
+                for (i, note) in left_notes.iter().enumerate() {
+                    if (left_buttons >> i) & 1 == 1 {
+                        let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
+                        midi_out_channel.send(message).await;
                     }
-
-                    for (i, note) in right_notes.iter().enumerate() {
-                        if (right_buttons >> i) & 1 == 1 {
-                            let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                            midi_out_channel.send(message).await;
-                        }
-                    }
-
-                    left_buttons = 0;
-                    right_buttons = 0;
                 }
 
-                bellows_state = new_bellows_state;
+                for (i, note) in right_notes.iter().enumerate() {
+                    if (right_buttons >> i) & 1 == 1 {
+                        let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
+                        midi_out_channel.send(message).await;
+                    }
+                }
+
+                left_buttons = 0;
+                right_buttons = 0;
             }
+
+            bellows_state = new_bellows_state;
         }
     }
 }
