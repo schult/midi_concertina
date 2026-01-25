@@ -98,7 +98,7 @@ impl<IO: ControllerIo> Controller<IO> {
         Ok(u16::from_be_bytes(buffer))
     }
 
-    pub async fn get_bellows(&mut self, address: u8) -> Result<u16, ControllerError<IO::Error>> {
+    pub async fn get_bellows(&mut self, address: u8) -> Result<f32, ControllerError<IO::Error>> {
         let mut buffer = [0; 2];
         self.io.read(address, &mut buffer).await?;
         let raw = u16::from_be_bytes(buffer);
@@ -108,7 +108,10 @@ impl<IO: ControllerIo> Controller<IO> {
             return Err(ControllerError::SensorFault);
         }
 
-        Ok(raw & 0x3FFF)
+        let center = 0x2000;
+        let pressure = (raw & 0x3FFF) as i16 - center;
+        let ratio = (pressure as f32 / center as f32).clamp(-1.0, 1.0);
+        Ok(ratio)
     }
 
     pub async fn get_version(

@@ -18,12 +18,9 @@ impl BellowsState {
         }
     }
 
-    pub fn new(raw: u16) -> Self {
-        const CENTER: u16 = 0x2000;
+    pub fn new(ratio: f32) -> Self {
         const DEAD_ZONE: f32 = 0.01;
 
-        let diff = raw as f32 - CENTER as f32;
-        let ratio = (diff / CENTER as f32).clamp(-1.0, 1.0);
         // TODO: Apply mapping function to ratio.
         // let magnitude = (127.0 * ratio.abs()) as u8;
 

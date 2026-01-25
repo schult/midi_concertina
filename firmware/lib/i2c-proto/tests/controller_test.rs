@@ -1,3 +1,4 @@
+use assert_float_eq::*;
 use i2c_proto::*;
 use mockall::mock;
 use mockall::predicate::*;
@@ -92,11 +93,11 @@ async fn get_bellows_propogates_io_error() {
 }
 
 #[tokio::test]
-async fn get_bellows_parses_pressure() {
+async fn get_bellows_parses_zero_pressure() {
     let mut io = MockControllerIo::new();
     io.expect_read()
         .returning(|_, buffer| {
-            let bellows: u16 = 0x1234;
+            let bellows: u16 = 0x2000;
             buffer.copy_from_slice(&bellows.to_be_bytes());
             Ok(())
         })
@@ -105,7 +106,75 @@ async fn get_bellows_parses_pressure() {
     let mut controller = Controller::new(io);
     let address = 0x28;
     let bellows = controller.get_bellows(address).await.unwrap();
-    assert_eq!(bellows, 0x1234);
+    assert_f32_near!(bellows, 0.0);
+}
+
+#[tokio::test]
+async fn get_bellows_parses_positive_pressure() {
+    let mut io = MockControllerIo::new();
+    io.expect_read()
+        .returning(|_, buffer| {
+            let bellows: u16 = 0x3000;
+            buffer.copy_from_slice(&bellows.to_be_bytes());
+            Ok(())
+        })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let bellows = controller.get_bellows(address).await.unwrap();
+    assert_f32_near!(bellows, 0.5);
+}
+
+#[tokio::test]
+async fn get_bellows_parses_negative_pressure() {
+    let mut io = MockControllerIo::new();
+    io.expect_read()
+        .returning(|_, buffer| {
+            let bellows: u16 = 0x1000;
+            buffer.copy_from_slice(&bellows.to_be_bytes());
+            Ok(())
+        })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let bellows = controller.get_bellows(address).await.unwrap();
+    assert_f32_near!(bellows, -0.5);
+}
+
+#[tokio::test]
+async fn get_bellows_parses_max_positive_pressure() {
+    let mut io = MockControllerIo::new();
+    io.expect_read()
+        .returning(|_, buffer| {
+            let bellows: u16 = 0x3FFF;
+            buffer.copy_from_slice(&bellows.to_be_bytes());
+            Ok(())
+        })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let bellows = controller.get_bellows(address).await.unwrap();
+    assert_f32_near!(bellows, 0.99987793);
+}
+
+#[tokio::test]
+async fn get_bellows_parses_max_negative_pressure() {
+    let mut io = MockControllerIo::new();
+    io.expect_read()
+        .returning(|_, buffer| {
+            let bellows: u16 = 0x0000;
+            buffer.copy_from_slice(&bellows.to_be_bytes());
+            Ok(())
+        })
+        .times(1);
+
+    let mut controller = Controller::new(io);
+    let address = 0x28;
+    let bellows = controller.get_bellows(address).await.unwrap();
+    assert_f32_near!(bellows, -1.0);
 }
 
 #[tokio::test]
@@ -114,7 +183,7 @@ async fn get_bellows_ignores_stale_status() {
     io.expect_read()
         .returning(|_, buffer| {
             let stale = 0x8000;
-            let bellows: u16 = 0x1234 | stale;
+            let bellows: u16 = 0x3000 | stale;
             buffer.copy_from_slice(&bellows.to_be_bytes());
             Ok(())
         })
@@ -123,7 +192,7 @@ async fn get_bellows_ignores_stale_status() {
     let mut controller = Controller::new(io);
     let address = 0x28;
     let bellows = controller.get_bellows(address).await.unwrap();
-    assert_eq!(bellows, 0x1234);
+    assert_eq!(bellows, 0.5);
 }
 
 #[tokio::test]
@@ -132,7 +201,7 @@ async fn get_bellows_reports_sensor_fault() {
     io.expect_read()
         .returning(|_, buffer| {
             let fault = 0xC000;
-            let bellows: u16 = 0x1234 | fault;
+            let bellows: u16 = 0x3000 | fault;
             buffer.copy_from_slice(&bellows.to_be_bytes());
             Ok(())
         })
