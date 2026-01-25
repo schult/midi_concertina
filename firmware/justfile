@@ -20,6 +20,7 @@ lint:
     cd anglo-bootloader && cargo clippy --all-features -- -D warnings
     cd anglo-keyboard && cargo clippy --all-features -- -D warnings
     cd anglo-controller && cargo clippy --all-features -- -D warnings
+    cd lib/i2c-proto && cargo clippy --all-targets --all-features -- -D warnings
     cd lib/midi && cargo clippy --all-targets --all-features -- -D warnings
     cd lib/util && cargo clippy --all-targets --all-features -- -D warnings
     cd lib/version && cargo clippy --all-targets --all-features -- -D warnings
@@ -29,6 +30,7 @@ format:
     cd anglo-bootloader && cargo fmt
     cd anglo-keyboard && cargo fmt
     cd anglo-controller && cargo fmt
+    cd lib/i2c-proto && cargo fmt
     cd lib/midi && cargo fmt
     cd lib/util && cargo fmt
     cd lib/version && cargo fmt
@@ -38,6 +40,7 @@ clean:
     cd anglo-bootloader && cargo clean
     cd anglo-keyboard && cargo clean
     cd anglo-controller && cargo clean
+    cd lib/i2c-proto && cargo clean
     cd lib/midi && cargo clean
     cd lib/util && cargo clean
     cd lib/version && cargo clean
