@@ -92,10 +92,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     black_box(keyboard_firmware); // TODO: Remove black_box once keyboard upgrades are implemented
 
     let mut i2c_config = i2c::Config::default();
-    // TODO: Disable pull-ups and increase frequency after fixing hardware.
-    i2c_config.sda_pullup = true;
-    i2c_config.scl_pullup = true;
-    i2c_config.frequency = khz(10);
+    i2c_config.frequency = khz(100);
 
     let scl_pin = p.PB8;
     let sda_pin = p.PB9;
