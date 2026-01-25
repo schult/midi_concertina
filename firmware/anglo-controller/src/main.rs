@@ -16,6 +16,7 @@ use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
 use embassy_stm32::{bind_interrupts, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
+use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::Mutex;
@@ -100,9 +101,10 @@ async fn main(spawner: embassy_executor::Spawner) {
         ))
         .unwrap();
 
-    let led = gpio::Output::new(p.PB4, gpio::Level::High, gpio::Speed::Low);
+    let led_pin = PwmPin::new(p.PB4, gpio::OutputType::PushPull);
+    let led_pwm = SimplePwm::new(p.TIM3, Some(led_pin), None, None, None, khz(30), Default::default());
     let button = gpio::Input::new(p.PB5, gpio::Pull::Up);
-    spawner.spawn(control_panel_task(led, button)).unwrap();
+    spawner.spawn(control_panel_task(led_pwm, button)).unwrap();
 
     let usb_driver = usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
     spawner
@@ -247,11 +249,33 @@ async fn firmware_task(
 }
 
 #[embassy_executor::task]
-async fn control_panel_task(mut led: gpio::Output<'static>, button: gpio::Input<'static>) {
+async fn control_panel_task(mut led_pwm: SimplePwm<'static, peripherals::TIM3>, button: gpio::Input<'static>) {
+    let mut led = led_pwm.ch1();
+    let led_max = led.max_duty_cycle() / 4;
+    let led_step = led_max / 64;
+    let mut led_duty = 0;
+    let mut inc = true;
+
     loop {
+        if inc && (led_max - led_duty < led_step) {
+            led_duty = led_max;
+            inc = !inc;
+        } else if !inc && (led_duty < led_step) {
+            led_duty = 0;
+            inc = !inc;
+        } else if inc {
+            led_duty = led_duty + led_step
+        } else {
+            led_duty = led_duty - led_step
+        }
+        led.set_duty_cycle(led_duty);
+
         // TODO: Hold button to enter wait for firmware update
         // TODO: Indicate system state with LED
-        led.set_level(button.get_level());
+        match button.get_level() {
+            gpio::Level::High => led.enable(),
+            gpio::Level::Low => led.disable(),
+        }
         Timer::after_millis(20).await;
     }
 }
