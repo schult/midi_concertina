@@ -48,10 +48,17 @@ impl ControllerIo for HalfPipe {
     }
 
     async fn write(&mut self, _address: u8, write: &[u8]) -> Result<(), std::io::Error> {
-        self.output.send(Vec::from(write)).map_err(|_| broken_pipe())
+        self.output
+            .send(Vec::from(write))
+            .map_err(|_| broken_pipe())
     }
 
-    async fn write_read(&mut self, address: u8, write: &[u8], read: &mut [u8]) -> Result<(), std::io::Error> {
+    async fn write_read(
+        &mut self,
+        address: u8,
+        write: &[u8],
+        read: &mut [u8],
+    ) -> Result<(), std::io::Error> {
         self.write(address, write).await?;
         self.read(address, read).await
     }
@@ -67,7 +74,9 @@ impl DeviceIo for HalfPipe {
     }
 
     async fn respond_to_read(&mut self, write: &[u8]) -> Result<(), std::io::Error> {
-        self.output.send(Vec::from(write)).map_err(|_| broken_pipe())
+        self.output
+            .send(Vec::from(write))
+            .map_err(|_| broken_pipe())
     }
 
     async fn respond_to_write(&mut self, read: &mut [u8]) -> Result<usize, std::io::Error> {
@@ -116,12 +125,15 @@ async fn get_version_release() {
     tasks.spawn(async move {
         let addr = 0x22;
         let version = controller.get_version(addr).await.unwrap();
-        assert_eq!(version, FirmwareVersion {
-            major: 1,
-            minor: 2,
-            patch: 3,
-            prerelease: None,
-        });
+        assert_eq!(
+            version,
+            FirmwareVersion {
+                major: 1,
+                minor: 2,
+                patch: 3,
+                prerelease: None,
+            }
+        );
     });
 
     tasks.spawn(async move {
@@ -151,12 +163,15 @@ async fn get_version_prerelease() {
     tasks.spawn(async move {
         let addr = 0x22;
         let version = controller.get_version(addr).await.unwrap();
-        assert_eq!(version, FirmwareVersion {
-            major: 3,
-            minor: 2,
-            patch: 1,
-            prerelease: Some("*"),
-        });
+        assert_eq!(
+            version,
+            FirmwareVersion {
+                major: 3,
+                minor: 2,
+                patch: 1,
+                prerelease: Some("*"),
+            }
+        );
     });
 
     tasks.spawn(async move {
@@ -291,7 +306,7 @@ async fn write_packet() {
         data[..length].copy_from_slice(&[1, 1, 2, 3, 5, 8, 13, 21]);
 
         let command = device.receive_command().await.unwrap();
-        assert_eq!(command, Command::WritePacket{data, length});
+        assert_eq!(command, Command::WritePacket { data, length });
     });
 
     tasks.join_all().await;

@@ -54,7 +54,12 @@ impl<'a> i2c_proto::ControllerIo for I2cWrapper<'a> {
         self.i2c.write(address, write).await
     }
 
-    async fn write_read(&mut self, address: u8, write: &[u8], read: &mut [u8]) -> Result<(), Self::Error> {
+    async fn write_read(
+        &mut self,
+        address: u8,
+        write: &[u8],
+        read: &mut [u8],
+    ) -> Result<(), Self::Error> {
         self.i2c.write_read(address, write, read).await
     }
 }
@@ -119,7 +124,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     let tx_dma = p.DMA1_CH2;
     let rx_dma = p.DMA1_CH3;
     let i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, Irqs, tx_dma, rx_dma, i2c_config);
-    let i2c_wrapper = I2cWrapper{ i2c: i2c_master };
+    let i2c_wrapper = I2cWrapper { i2c: i2c_master };
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
     const BELLOWS_ADDR: u8 = 0x28;

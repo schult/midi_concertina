@@ -19,9 +19,8 @@ mock! {
 #[tokio::test]
 async fn send_buttons_propogates_io_error() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
-        .returning(|_| { Err(std::io::Error::from(std::io::ErrorKind::Other)) })
+    io.expect_respond_to_read()
+        .returning(|_| Err(std::io::Error::from(std::io::ErrorKind::Other)))
         .times(1);
 
     let buttons = 0;
@@ -37,10 +36,7 @@ async fn send_buttons_propogates_io_error() {
 #[tokio::test]
 async fn send_buttons_propogates_send_status() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
-        .returning(|_| { Ok(42) })
-        .times(1);
+    io.expect_respond_to_read().returning(|_| Ok(42)).times(1);
 
     let buttons = 0;
     let mut device = Device::new(io);
@@ -52,10 +48,9 @@ async fn send_buttons_propogates_send_status() {
 #[tokio::test]
 async fn send_buttons_encodes_payload() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
+    io.expect_respond_to_read()
         .with(eq([0x12, 0x34]))
-        .returning(|_| { Ok(42) })
+        .returning(|_| Ok(42))
         .times(1);
 
     let buttons = 0x1234;
@@ -66,9 +61,8 @@ async fn send_buttons_encodes_payload() {
 #[tokio::test]
 async fn send_version_propogates_io_error() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
-        .returning(|_| { Err(std::io::Error::from(std::io::ErrorKind::Other)) })
+    io.expect_respond_to_read()
+        .returning(|_| Err(std::io::Error::from(std::io::ErrorKind::Other)))
         .times(1);
 
     let version = FirmwareVersion {
@@ -89,10 +83,7 @@ async fn send_version_propogates_io_error() {
 #[tokio::test]
 async fn send_version_propogates_send_status() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
-        .returning(|_| { Ok(42) })
-        .times(1);
+    io.expect_respond_to_read().returning(|_| Ok(42)).times(1);
 
     let version = FirmwareVersion {
         major: 1,
@@ -109,10 +100,9 @@ async fn send_version_propogates_send_status() {
 #[tokio::test]
 async fn send_version_encodes_release_payload() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
+    io.expect_respond_to_read()
         .withf(|d| d.starts_with(&[1, 2, 3, 0]))
-        .returning(|_| { Ok(0) })
+        .returning(|_| Ok(0))
         .times(1);
 
     let version = FirmwareVersion {
@@ -128,10 +118,9 @@ async fn send_version_encodes_release_payload() {
 #[tokio::test]
 async fn send_version_encodes_prerelease_payload() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
+    io.expect_respond_to_read()
         .withf(|d| d.starts_with(&[1, 2, 3, '*' as u8]))
-        .returning(|_| { Ok(0) })
+        .returning(|_| Ok(0))
         .times(1);
 
     let version = FirmwareVersion {
@@ -147,10 +136,9 @@ async fn send_version_encodes_prerelease_payload() {
 #[tokio::test]
 async fn send_version_calculates_checksum() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
+    io.expect_respond_to_read()
         .withf(|d| d.ends_with(&[48]))
-        .returning(|_| { Ok(0) })
+        .returning(|_| Ok(0))
         .times(1);
 
     let version = FirmwareVersion {
@@ -166,10 +154,9 @@ async fn send_version_calculates_checksum() {
 #[tokio::test]
 async fn send_version_sends_correct_length() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
+    io.expect_respond_to_read()
         .withf(|d| d.len() == 5)
-        .returning(|_| { Ok(0) })
+        .returning(|_| Ok(0))
         .times(1);
 
     let version = FirmwareVersion {
@@ -185,9 +172,8 @@ async fn send_version_sends_correct_length() {
 #[tokio::test]
 async fn send_write_status_propogates_io_error() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
-        .returning(|_| { Err(std::io::Error::from(std::io::ErrorKind::Other)) })
+    io.expect_respond_to_read()
+        .returning(|_| Err(std::io::Error::from(std::io::ErrorKind::Other)))
         .times(1);
 
     let status = WriteStatus::Ready;
@@ -203,10 +189,7 @@ async fn send_write_status_propogates_io_error() {
 #[tokio::test]
 async fn send_write_status_propogates_send_status() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
-        .returning(|_| { Ok(42) })
-        .times(1);
+    io.expect_respond_to_read().returning(|_| Ok(42)).times(1);
 
     let status = WriteStatus::Ready;
     let mut device = Device::new(io);
@@ -218,10 +201,9 @@ async fn send_write_status_propogates_send_status() {
 #[tokio::test]
 async fn send_write_status_encodes_ready() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
+    io.expect_respond_to_read()
         .with(eq([0x00, 0xFF]))
-        .returning(|_| { Ok(0) })
+        .returning(|_| Ok(0))
         .times(1);
 
     let status = WriteStatus::Ready;
@@ -232,10 +214,9 @@ async fn send_write_status_encodes_ready() {
 #[tokio::test]
 async fn send_write_status_encodes_busy() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
+    io.expect_respond_to_read()
         .with(eq([0x01, 0xFE]))
-        .returning(|_| { Ok(0) })
+        .returning(|_| Ok(0))
         .times(1);
 
     let status = WriteStatus::Busy;
@@ -246,10 +227,9 @@ async fn send_write_status_encodes_busy() {
 #[tokio::test]
 async fn send_write_status_encodes_cancel() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_read()
+    io.expect_respond_to_read()
         .with(eq([0x02, 0xFD]))
-        .returning(|_| { Ok(0) })
+        .returning(|_| Ok(0))
         .times(1);
 
     let status = WriteStatus::Cancel;
@@ -260,9 +240,8 @@ async fn send_write_status_encodes_cancel() {
 #[tokio::test]
 async fn receive_command_propogates_io_error() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
-        .returning(|_| { Err(std::io::Error::from(std::io::ErrorKind::Other)) })
+    io.expect_respond_to_write()
+        .returning(|_| Err(std::io::Error::from(std::io::ErrorKind::Other)))
         .times(1);
 
     let mut device = Device::new(io);
@@ -277,8 +256,7 @@ async fn receive_command_propogates_io_error() {
 #[tokio::test]
 async fn receive_command_reports_messages_that_are_too_short() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x02;
             Ok(1)
@@ -294,8 +272,7 @@ async fn receive_command_reports_messages_that_are_too_short() {
 #[tokio::test]
 async fn receive_command_reports_corrupt_command() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x02;
             d[1] = 0xFE;
@@ -312,8 +289,7 @@ async fn receive_command_reports_corrupt_command() {
 #[tokio::test]
 async fn receive_command_reports_unknown_command() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x33;
             d[1] = 0xCC;
@@ -330,8 +306,7 @@ async fn receive_command_reports_unknown_command() {
 #[tokio::test]
 async fn receive_command_parses_get_version() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x00;
             d[1] = 0xFF;
@@ -348,8 +323,7 @@ async fn receive_command_parses_get_version() {
 #[tokio::test]
 async fn receive_command_parses_get_write_status() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x01;
             d[1] = 0xFE;
@@ -366,8 +340,7 @@ async fn receive_command_parses_get_write_status() {
 #[tokio::test]
 async fn receive_command_parses_write_begin() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x02;
             d[1] = 0xFD;
@@ -384,8 +357,7 @@ async fn receive_command_parses_write_begin() {
 #[tokio::test]
 async fn receive_command_parses_write_packet() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x03;
             d[1] = 0xFC;
@@ -399,8 +371,11 @@ async fn receive_command_parses_write_packet() {
     let mut device = Device::new(io);
     let command = device.receive_command().await.unwrap();
 
-    assert!(matches!(command, Command::WritePacket{ data: _, length: _ }));
-    if let Command::WritePacket{ data, length } = command {
+    assert!(matches!(
+        command,
+        Command::WritePacket { data: _, length: _ }
+    ));
+    if let Command::WritePacket { data, length } = command {
         assert!(data.starts_with(&[0x12, 0x34]));
         assert_eq!(length, 2);
     }
@@ -409,8 +384,7 @@ async fn receive_command_parses_write_packet() {
 #[tokio::test]
 async fn receive_command_reports_write_packet_that_is_too_short() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x03;
             d[1] = 0xFC;
@@ -428,8 +402,7 @@ async fn receive_command_reports_write_packet_that_is_too_short() {
 #[tokio::test]
 async fn receive_command_reports_write_packet_with_bad_checksum() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x03;
             d[1] = 0xFC;
@@ -448,8 +421,7 @@ async fn receive_command_reports_write_packet_with_bad_checksum() {
 #[tokio::test]
 async fn receive_command_parses_write_end() {
     let mut io = MockDeviceIo::new();
-    io
-        .expect_respond_to_write()
+    io.expect_respond_to_write()
         .returning(|d| {
             d[0] = 0x04;
             d[1] = 0xFB;

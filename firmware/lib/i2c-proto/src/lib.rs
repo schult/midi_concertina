@@ -13,7 +13,10 @@ pub enum Command {
     GetVersion,
     GetWriteStatus,
     WriteBegin,
-    WritePacket{ data: [u8;PACKET_MAX_PAYLOAD_SIZE], length: usize },
+    WritePacket {
+        data: [u8; PACKET_MAX_PAYLOAD_SIZE],
+        length: usize,
+    },
     WriteEnd,
 }
 
@@ -70,7 +73,12 @@ pub trait ControllerIo {
 
     async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error>;
     async fn write(&mut self, address: u8, write: &[u8]) -> Result<(), Self::Error>;
-    async fn write_read(&mut self, address: u8, write: &[u8], read: &mut [u8]) -> Result<(), Self::Error>;
+    async fn write_read(
+        &mut self,
+        address: u8,
+        write: &[u8],
+        read: &mut [u8],
+    ) -> Result<(), Self::Error>;
 }
 
 /*******************/
@@ -103,10 +111,13 @@ impl<IO: ControllerIo> Controller<IO> {
         Ok(raw & 0x3FFF)
     }
 
-    pub async fn get_version(&mut self, address: u8) -> Result<FirmwareVersion<'static>, ControllerError<IO::Error>> {
+    pub async fn get_version(
+        &mut self,
+        address: u8,
+    ) -> Result<FirmwareVersion<'static>, ControllerError<IO::Error>> {
         let command = command_code::GET_VERSION;
         let message = [command, !command];
-        let mut buffer = [0;5];
+        let mut buffer = [0; 5];
         self.io.write_read(address, &message, &mut buffer).await?;
 
         let (check, version) = buffer.split_last().unwrap();
@@ -125,7 +136,10 @@ impl<IO: ControllerIo> Controller<IO> {
         })
     }
 
-    pub async fn get_write_status(&mut self, address: u8) -> Result<WriteStatus, ControllerError<IO::Error>> {
+    pub async fn get_write_status(
+        &mut self,
+        address: u8,
+    ) -> Result<WriteStatus, ControllerError<IO::Error>> {
         let command = command_code::GET_WRITE_STATUS;
         let message = [command, !command];
         let mut status = [0, 2];
@@ -146,14 +160,21 @@ impl<IO: ControllerIo> Controller<IO> {
     pub async fn write_begin(&mut self, address: u8) -> Result<(), ControllerError<IO::Error>> {
         let command = command_code::WRITE_BEGIN;
         let message = [command, !command];
-        self.io.write(address, &message).await.map_err(ControllerError::from)
+        self.io
+            .write(address, &message)
+            .await
+            .map_err(ControllerError::from)
     }
 
-    pub async fn write_packet(&mut self, address: u8, data: &[u8]) -> Result<(), ControllerError<IO::Error>> {
+    pub async fn write_packet(
+        &mut self,
+        address: u8,
+        data: &[u8],
+    ) -> Result<(), ControllerError<IO::Error>> {
         assert!(data.len() > 0);
         assert!(data.len() <= PACKET_MAX_PAYLOAD_SIZE);
 
-        let mut message = [0u8;PACKET_MAX_SIZE];
+        let mut message = [0u8; PACKET_MAX_SIZE];
         let command = command_code::WRITE_PACKET;
         let data_idx = 2;
         let check_idx = data_idx + data.len();
@@ -161,15 +182,23 @@ impl<IO: ControllerIo> Controller<IO> {
         message[0] = command;
         message[1] = !command;
         message[data_idx..check_idx].copy_from_slice(&data);
-        message[check_idx] = message[data_idx..check_idx].iter().fold(0, |acc, e| acc.wrapping_add(*e));
+        message[check_idx] = message[data_idx..check_idx]
+            .iter()
+            .fold(0, |acc, e| acc.wrapping_add(*e));
 
-        self.io.write(address, &message[..message_length]).await.map_err(ControllerError::from)
+        self.io
+            .write(address, &message[..message_length])
+            .await
+            .map_err(ControllerError::from)
     }
 
     pub async fn write_end(&mut self, address: u8) -> Result<(), ControllerError<IO::Error>> {
         let command = command_code::WRITE_END;
         let message = [command, !command];
-        self.io.write(address, &message).await.map_err(ControllerError::from)
+        self.io
+            .write(address, &message)
+            .await
+            .map_err(ControllerError::from)
     }
 }
 
@@ -228,12 +257,21 @@ impl<IO: DeviceIo> Device<IO> {
         self.io.listen().await
     }
 
-    pub async fn send_buttons(&mut self, buttons: u16) -> Result<IO::SendStatus, DeviceError<IO::Error>> {
+    pub async fn send_buttons(
+        &mut self,
+        buttons: u16,
+    ) -> Result<IO::SendStatus, DeviceError<IO::Error>> {
         let buffer = buttons.to_be_bytes();
-        self.io.respond_to_read(&buffer).await.map_err(DeviceError::from)
+        self.io
+            .respond_to_read(&buffer)
+            .await
+            .map_err(DeviceError::from)
     }
 
-    pub async fn send_version<'b>(&mut self, version: &FirmwareVersion<'b>) -> Result<IO::SendStatus, DeviceError<IO::Error>> {
+    pub async fn send_version<'b>(
+        &mut self,
+        version: &FirmwareVersion<'b>,
+    ) -> Result<IO::SendStatus, DeviceError<IO::Error>> {
         let prerelease = match version.prerelease {
             Some(_) => '*' as u8,
             None => 0,
@@ -244,13 +282,22 @@ impl<IO: DeviceIo> Device<IO> {
         let check = message.iter().fold(0u8, |acc, e| acc.wrapping_add(*e));
         *message.last_mut().unwrap() = check;
 
-        self.io.respond_to_read(&message).await.map_err(DeviceError::from)
+        self.io
+            .respond_to_read(&message)
+            .await
+            .map_err(DeviceError::from)
     }
 
-    pub async fn send_write_status(&mut self, status: WriteStatus) -> Result<IO::SendStatus, DeviceError<IO::Error>> {
+    pub async fn send_write_status(
+        &mut self,
+        status: WriteStatus,
+    ) -> Result<IO::SendStatus, DeviceError<IO::Error>> {
         let byte = status as u8;
         let message = [byte, !byte];
-        self.io.respond_to_read(&message).await.map_err(DeviceError::from)
+        self.io
+            .respond_to_read(&message)
+            .await
+            .map_err(DeviceError::from)
     }
 
     pub async fn receive_command(&mut self) -> Result<Command, DeviceError<IO::Error>> {
@@ -279,17 +326,17 @@ impl<IO: DeviceIo> Device<IO> {
                         }
 
                         let length = payload.len();
-                        let mut data = [0;PACKET_MAX_PAYLOAD_SIZE];
+                        let mut data = [0; PACKET_MAX_PAYLOAD_SIZE];
                         data[..length].copy_from_slice(payload);
                         return Ok(Command::WritePacket { data, length });
                     }
                     command_code::WRITE_END => return Ok(Command::WriteEnd),
                     _ => return Err(DeviceError::UnknownCommand),
                 }
-            },
+            }
             Err(e) => {
                 return Err(DeviceError::Communication(e));
-            },
+            }
         }
     }
 }
