@@ -11,6 +11,7 @@ provision:
 
 test:
     cd bin2syx && cargo test -r
+    cd lib/i2c-proto && cargo test -r
     cd lib/midi && cargo test -r
     cd lib/version && cargo test -r
 
