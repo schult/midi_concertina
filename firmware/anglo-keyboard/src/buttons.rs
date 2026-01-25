@@ -85,7 +85,7 @@ pub async fn scan_task(
         let raw = adc.read(&mut adc_pin).await;
         if raw < 600 {
             button_state |= 1 << i;
-        } else {
+        } else if raw > 700 {
             button_state &= !(1 << i);
         }
         button_state_sender.send(button_state);
