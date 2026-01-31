@@ -11,7 +11,6 @@ use panic_probe as _;
 use panic_reset as _;
 
 use circular_buffer::CircularBuffer;
-use core::hint::black_box;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
@@ -29,6 +28,7 @@ use version::FirmwareVersion;
 
 mod bellows;
 mod file_dump_io;
+mod i2c_transfer;
 mod keymap;
 
 bind_interrupts!(struct Irqs {
@@ -116,7 +116,6 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap();
 
     let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
-    black_box(keyboard_firmware); // TODO: Remove black_box once keyboard upgrades are implemented
 
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = khz(100);
@@ -139,12 +138,31 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     const MIDI_CHANNEL: u8 = 0;
 
-    // INIT
-    // TODO: Get local version
-    // TODO: Get remote version
-    // TODO: If local_version != remote_version
-    //           Send firmware to L and R
-    //           Power cycle L and R
+    let mut keyboard_sessions = [
+        i2c_transfer::Session::new(LEFT_ADDR),
+        i2c_transfer::Session::new(RIGHT_ADDR),
+    ];
+    for session in &mut keyboard_sessions {
+        for _ in 0..5 {
+            if let Ok(v) = i2c_controller.get_version(session.address()).await {
+                if v != version || v.prerelease.is_some() {
+                    session.begin(keyboard_firmware);
+                }
+                break;
+            }
+        }
+    }
+    let mut in_progress = true;
+    while in_progress {
+        in_progress = false;
+        for session in &mut keyboard_sessions {
+            in_progress |= match session.poll(&mut i2c_controller).await {
+                Ok(i2c_transfer::Status::InProgress) => true,
+                Err(_) => panic!("I2C communication error"),
+                _ => false,
+            }
+        }
+    }
 
     loop {
         let left_notes = match bellows_state.direction {
