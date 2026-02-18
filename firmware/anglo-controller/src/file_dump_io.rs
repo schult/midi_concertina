@@ -1,9 +1,9 @@
-use embassy_sync::blocking_mutex::raw::NoopRawMutex;
+use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Sender;
 
 pub use util::DfuWriter;
 
-type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
+type MessageSender = Sender<'static, ThreadModeRawMutex, midi::Message, 8>;
 
 pub struct MessageChannelAdapter {
     sender: MessageSender,

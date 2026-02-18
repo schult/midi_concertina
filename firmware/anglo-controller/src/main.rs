@@ -16,14 +16,13 @@ use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
 use embassy_stm32::{bind_interrupts, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
-use embassy_sync::blocking_mutex::raw::NoopRawMutex;
+use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
 use midi::util::FileDumpReceiver;
-use static_cell::StaticCell;
 use version::FirmwareVersion;
 
 mod bellows;
@@ -35,10 +34,6 @@ bind_interrupts!(struct Irqs {
     USB => usb::InterruptHandler<peripherals::USB>;
     I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
 });
-
-type MessageChannel = Channel<NoopRawMutex, midi::Message, 8>;
-type MessageSender = Sender<'static, NoopRawMutex, midi::Message, 8>;
-type MessageReceiver = Receiver<'static, NoopRawMutex, midi::Message, 8>;
 
 struct I2cWrapper<'a> {
     i2c: i2c::I2c<'a, embassy_stm32::mode::Async, i2c::mode::Master>,
@@ -65,6 +60,13 @@ impl<'a> i2c_proto::ControllerIo for I2cWrapper<'a> {
     }
 }
 
+type MessageChannel = Channel<ThreadModeRawMutex, midi::Message, 8>;
+type MessageSender = Sender<'static, ThreadModeRawMutex, midi::Message, 8>;
+type MessageReceiver = Receiver<'static, ThreadModeRawMutex, midi::Message, 8>;
+
+static MIDI_OUT_CHANNEL: MessageChannel = MessageChannel::new();
+static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
+
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
     let mut config = embassy_stm32::Config::default();
@@ -85,21 +87,12 @@ async fn main(spawner: embassy_executor::Spawner) {
     #[cfg(feature = "defmt")]
     defmt::info!("Controller version: {}", controller_version);
 
-    let midi_out_channel: &'static mut MessageChannel = {
-        static CHANNEL: StaticCell<MessageChannel> = StaticCell::new();
-        CHANNEL.init_with(MessageChannel::new)
-    };
-    let midi_in_channel: &'static mut MessageChannel = {
-        static CHANNEL: StaticCell<MessageChannel> = StaticCell::new();
-        CHANNEL.init_with(MessageChannel::new)
-    };
-
     let flash = Flash::new_blocking(p.FLASH);
     spawner
         .spawn(firmware_task(
             flash,
-            midi_in_channel.receiver(),
-            midi_out_channel.sender(),
+            MIDI_IN_CHANNEL.receiver(),
+            MIDI_OUT_CHANNEL.sender(),
         ))
         .unwrap();
 
@@ -120,8 +113,8 @@ async fn main(spawner: embassy_executor::Spawner) {
     spawner
         .spawn(usb_task(
             usb_driver,
-            midi_in_channel.sender(),
-            midi_out_channel.receiver(),
+            MIDI_IN_CHANNEL.sender(),
+            MIDI_OUT_CHANNEL.receiver(),
         ))
         .unwrap();
 
@@ -197,10 +190,10 @@ async fn main(spawner: embassy_executor::Spawner) {
                 if (changes >> i) & 1 == 1 {
                     if (new_state >> i) & 1 == 1 {
                         let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message).await;
+                        MIDI_OUT_CHANNEL.send(message).await;
                     } else {
                         let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message).await;
+                        MIDI_OUT_CHANNEL.send(message).await;
                     }
                 }
             }
@@ -214,10 +207,10 @@ async fn main(spawner: embassy_executor::Spawner) {
                 if (changes >> i) & 1 == 1 {
                     if (new_state >> i) & 1 == 1 {
                         let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message).await;
+                        MIDI_OUT_CHANNEL.send(message).await;
                     } else {
                         let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message).await;
+                        MIDI_OUT_CHANNEL.send(message).await;
                     }
                 }
             }
@@ -231,14 +224,14 @@ async fn main(spawner: embassy_executor::Spawner) {
                 for (i, note) in left_notes.iter().enumerate() {
                     if (left_buttons >> i) & 1 == 1 {
                         let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message).await;
+                        MIDI_OUT_CHANNEL.send(message).await;
                     }
                 }
 
                 for (i, note) in right_notes.iter().enumerate() {
                     if (right_buttons >> i) & 1 == 1 {
                         let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                        midi_out_channel.send(message).await;
+                        MIDI_OUT_CHANNEL.send(message).await;
                     }
                 }
 
