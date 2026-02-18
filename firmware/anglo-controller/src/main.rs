@@ -76,12 +76,14 @@ async fn main(spawner: embassy_executor::Spawner) {
     config.rcc.mux.clk48sel = rcc::mux::Clk48sel::HSI48;
     let p = embassy_stm32::init(config);
 
-    let version = FirmwareVersion {
+    let controller_version = FirmwareVersion {
         major: env!("FIRMWARE_MAJOR_VERSION").parse().unwrap(),
         minor: env!("FIRMWARE_MINOR_VERSION").parse().unwrap(),
         patch: env!("FIRMWARE_PATCH_VERSION").parse().unwrap(),
         prerelease: option_env!("FIRMWARE_PRERELEASE_VERSION"),
     };
+    #[cfg(feature = "defmt")]
+    defmt::info!("Controller version: {}", controller_version);
 
     let midi_out_channel: &'static mut MessageChannel = {
         static CHANNEL: StaticCell<MessageChannel> = StaticCell::new();
@@ -123,8 +125,6 @@ async fn main(spawner: embassy_executor::Spawner) {
         ))
         .unwrap();
 
-    let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
-
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = khz(100);
 
@@ -146,28 +146,34 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     const MIDI_CHANNEL: u8 = 0;
 
-    let mut keyboard_sessions = [
-        i2c_transfer::Session::new(LEFT_ADDR),
-        i2c_transfer::Session::new(RIGHT_ADDR),
-    ];
-    for session in &mut keyboard_sessions {
-        for _ in 0..5 {
-            if let Ok(v) = i2c_controller.get_version(session.address()).await {
-                if v != version || v.prerelease.is_some() {
-                    session.begin(keyboard_firmware);
+    // Remove keyboard upgrade code/data when defmt is enabled to make more room in flash
+    // TODO: Check if this is still necessary on 192kb part
+    #[cfg(not(feature = "defmt"))]
+    {
+        let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
+        let mut keyboard_sessions = [
+            i2c_transfer::Session::new(LEFT_ADDR),
+            i2c_transfer::Session::new(RIGHT_ADDR),
+        ];
+        for session in &mut keyboard_sessions {
+            for _ in 0..5 {
+                if let Ok(v) = i2c_controller.get_version(session.address()).await {
+                    if v != controller_version || v.prerelease.is_some() {
+                        session.begin(keyboard_firmware);
+                    }
+                    break;
                 }
-                break;
             }
         }
-    }
-    let mut in_progress = true;
-    while in_progress {
-        in_progress = false;
-        for session in &mut keyboard_sessions {
-            in_progress |= match session.poll(&mut i2c_controller).await {
-                Ok(i2c_transfer::Status::InProgress) => true,
-                Err(_) => panic!("I2C communication error"),
-                _ => false,
+        let mut in_progress = true;
+        while in_progress {
+            in_progress = false;
+            for session in &mut keyboard_sessions {
+                in_progress |= match session.poll(&mut i2c_controller).await {
+                    Ok(i2c_transfer::Status::InProgress) => true,
+                    Err(_) => panic!("I2C communication error"),
+                    _ => false,
+                }
             }
         }
     }

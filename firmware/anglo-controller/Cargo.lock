@@ -27,7 +27,6 @@ dependencies = [
 name = "anglo-controller"
 version = "0.0.0"
 dependencies = [
- "cfg-if",
  "circular-buffer",
  "cortex-m",
  "cortex-m-rt",

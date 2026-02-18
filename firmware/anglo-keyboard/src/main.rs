@@ -71,6 +71,8 @@ async fn main(spawner: embassy_executor::Spawner) {
         patch: env!("FIRMWARE_PATCH_VERSION").parse().unwrap(),
         prerelease: option_env!("FIRMWARE_PRERELEASE_VERSION"),
     };
+    #[cfg(feature = "defmt")]
+    defmt::info!("Version: {}", version);
 
     let chirality_in = gpio::Input::new(p.PB4, gpio::Pull::None);
     let chirality = if chirality_in.is_low() {

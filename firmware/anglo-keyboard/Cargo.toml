@@ -44,3 +44,4 @@ defmt = [
 debug = 2
 opt-level = "z"
 lto = true
+codegen-units = 1
