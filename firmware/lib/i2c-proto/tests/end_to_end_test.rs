@@ -302,7 +302,7 @@ async fn write_packet() {
 
     tasks.spawn(async move {
         let length = 8;
-        let mut data = [0; 256];
+        let mut data = [0; i2c_proto::PACKET_MAX_PAYLOAD_SIZE];
         data[..length].copy_from_slice(&[1, 1, 2, 3, 5, 8, 13, 21]);
 
         let command = device.receive_command().await.unwrap();

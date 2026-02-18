@@ -5,8 +5,10 @@ use core::error::Error;
 use core::fmt::{Display, Formatter};
 use version::FirmwareVersion;
 
-pub const PACKET_MAX_PAYLOAD_SIZE: usize = 256;
-const PACKET_MAX_SIZE: usize = PACKET_MAX_PAYLOAD_SIZE + 3;
+// Limit i2c message size to 255 due to observed misbehavior with larger messages. It's possible
+// this is the result of a bug in embassy-stm32, but I haven't investigated enough to be sure.
+const PACKET_MAX_SIZE: usize = 255;
+pub const PACKET_MAX_PAYLOAD_SIZE: usize = PACKET_MAX_SIZE - 3;
 
 #[derive(Debug, PartialEq)]
 pub enum Command {
