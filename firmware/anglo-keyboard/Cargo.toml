@@ -37,6 +37,7 @@ defmt = [
     "embassy-stm32/defmt",
     "embassy-time/defmt",
     "embassy-time/defmt-timestamp-uptime",
+    "version/defmt",
 ]
 
 [profile.release]

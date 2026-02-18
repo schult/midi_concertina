@@ -51,6 +51,23 @@ impl<'a> FirmwareVersion<'a> {
     }
 }
 
+#[cfg(feature = "defmt")]
+impl<'a> defmt::Format for FirmwareVersion<'a> {
+    fn format(&self, f: defmt::Formatter) {
+        match self.prerelease {
+            Some(prerelease) => defmt::write!(
+                f,
+                "{}.{}.{}-{}",
+                self.major,
+                self.minor,
+                self.patch,
+                prerelease,
+            ),
+            None => defmt::write!(f, "{}.{}.{}", self.major, self.minor, self.patch,),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

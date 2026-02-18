@@ -44,6 +44,7 @@ defmt = [
     "embassy-time/defmt",
     "embassy-time/defmt-timestamp-uptime",
     "embassy-usb/defmt",
+    "version/defmt",
 ]
 
 [profile.release]
