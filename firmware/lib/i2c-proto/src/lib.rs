@@ -211,19 +211,26 @@ impl<IO: ControllerIo> Controller<IO> {
 
 #[derive(Debug)]
 pub enum DeviceError<CommError: Error> {
+    ShortMessage(usize),
+    LongMessage(usize),
+    UnknownCommand(u8),
+    CorruptCommand,
     CorruptMessage,
-    UnknownCommand,
+    EmptyPacket,
     Communication(CommError),
 }
 
 impl<E: Error> Display for DeviceError<E> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        let message = match self {
-            DeviceError::CorruptMessage => "Corrupt Message",
-            DeviceError::UnknownCommand => "Unknown Command",
-            DeviceError::Communication(e) => return Display::fmt(&e, f),
-        };
-        write!(f, "{}", message)
+        match self {
+            DeviceError::ShortMessage(length) => write!(f, "Short Message: {length} bytes"),
+            DeviceError::LongMessage(length) => write!(f, "Long Message: {length} bytes"),
+            DeviceError::UnknownCommand(command) => write!(f, "Unknown Command: {command:#04x}"),
+            DeviceError::CorruptCommand => write!(f, "Corrupt Command"),
+            DeviceError::CorruptMessage => write!(f, "Corrupt Message"),
+            DeviceError::EmptyPacket => write!(f, "Empty Packet"),
+            DeviceError::Communication(e) => Display::fmt(&e, f),
+        }
     }
 }
 
@@ -309,10 +316,18 @@ impl<IO: DeviceIo> Device<IO> {
         let mut buffer = [0u8; PACKET_MAX_SIZE];
         match self.io.respond_to_write(&mut buffer).await {
             Ok(len) => {
+                if len < 2 {
+                    return Err(DeviceError::ShortMessage(len));
+                }
+
+                if len > buffer.len() {
+                    return Err(DeviceError::LongMessage(len));
+                }
+
                 let message = &buffer[..len];
 
-                if message.len() < 2 || message[0] != !message[1] {
-                    return Err(DeviceError::CorruptMessage);
+                if message[0] != !message[1] {
+                    return Err(DeviceError::CorruptCommand);
                 }
 
                 match message[0] {
@@ -321,8 +336,7 @@ impl<IO: DeviceIo> Device<IO> {
                     command_code::WRITE_BEGIN => return Ok(Command::WriteBegin),
                     command_code::WRITE_PACKET => {
                         if message.len() < 4 {
-                            // Packet must include at least one data byte.
-                            return Err(DeviceError::CorruptMessage);
+                            return Err(DeviceError::EmptyPacket);
                         }
 
                         let (check, payload) = message[2..].split_last().unwrap();
@@ -336,7 +350,7 @@ impl<IO: DeviceIo> Device<IO> {
                         return Ok(Command::WritePacket { data, length });
                     }
                     command_code::WRITE_END => return Ok(Command::WriteEnd),
-                    _ => return Err(DeviceError::UnknownCommand),
+                    unknown_code => return Err(DeviceError::UnknownCommand(unknown_code)),
                 }
             }
             Err(e) => {

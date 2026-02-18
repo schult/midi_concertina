@@ -266,7 +266,24 @@ async fn receive_command_reports_messages_that_are_too_short() {
     let mut device = Device::new(io);
     let result = device.receive_command().await;
 
-    assert!(matches!(result, Err(DeviceError::CorruptMessage)));
+    assert!(matches!(result, Err(DeviceError::ShortMessage(1))));
+}
+
+#[tokio::test]
+async fn receive_command_reports_messages_that_are_too_long() {
+    let mut io = MockDeviceIo::new();
+    io.expect_respond_to_write()
+        .returning(|d| {
+            d[0] = 0x03;
+            d[1] = 0xFC;
+            Ok(10_000)
+        })
+        .times(1);
+
+    let mut device = Device::new(io);
+    let result = device.receive_command().await;
+
+    assert!(matches!(result, Err(DeviceError::LongMessage(10_000))));
 }
 
 #[tokio::test]
@@ -283,7 +300,7 @@ async fn receive_command_reports_corrupt_command() {
     let mut device = Device::new(io);
     let result = device.receive_command().await;
 
-    assert!(matches!(result, Err(DeviceError::CorruptMessage)));
+    assert!(matches!(result, Err(DeviceError::CorruptCommand)));
 }
 
 #[tokio::test]
@@ -300,7 +317,7 @@ async fn receive_command_reports_unknown_command() {
     let mut device = Device::new(io);
     let result = device.receive_command().await;
 
-    assert!(matches!(result, Err(DeviceError::UnknownCommand)));
+    assert!(matches!(result, Err(DeviceError::UnknownCommand(0x33))));
 }
 
 #[tokio::test]
@@ -382,7 +399,7 @@ async fn receive_command_parses_write_packet() {
 }
 
 #[tokio::test]
-async fn receive_command_reports_write_packet_that_is_too_short() {
+async fn receive_command_reports_write_packet_that_is_empty() {
     let mut io = MockDeviceIo::new();
     io.expect_respond_to_write()
         .returning(|d| {
@@ -396,7 +413,7 @@ async fn receive_command_reports_write_packet_that_is_too_short() {
     let mut device = Device::new(io);
     let result = device.receive_command().await;
 
-    assert!(matches!(result, Err(DeviceError::CorruptMessage)));
+    assert!(matches!(result, Err(DeviceError::EmptyPacket)));
 }
 
 #[tokio::test]
