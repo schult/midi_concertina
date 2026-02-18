@@ -147,10 +147,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap();
 
     let mut i2c_config = i2c::Config::default();
-    // TODO: Increase frequency and disable pullups after fixing controller hardware.
-    i2c_config.sda_pullup = true;
-    i2c_config.scl_pullup = true;
-    i2c_config.frequency = khz(10);
+    i2c_config.frequency = khz(100);
 
     let scl_pin = p.PB8;
     let sda_pin = p.PB9;
