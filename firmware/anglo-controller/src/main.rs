@@ -262,6 +262,8 @@ async fn main(spawner: embassy_executor::Spawner) {
 
             bellows_state = new_bellows_state;
         }
+
+        Timer::after_micros(1).await;
     }
 }
 
