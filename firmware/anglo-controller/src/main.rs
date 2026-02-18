@@ -19,6 +19,7 @@ use embassy_stm32::{bind_interrupts, flash, gpio, i2c, peripherals, rcc, time::k
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::Mutex;
+use embassy_sync::watch::{self, Watch};
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
@@ -67,6 +68,8 @@ type MessageReceiver = Receiver<'static, ThreadModeRawMutex, midi::Message, 8>;
 static MIDI_OUT_CHANNEL: MessageChannel = MessageChannel::new();
 static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
 
+static UPDATE_COMPLETE: Watch<ThreadModeRawMutex, bool, 1> = Watch::new_with(false);
+
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
     let mut config = embassy_stm32::Config::default();
@@ -107,7 +110,13 @@ async fn main(spawner: embassy_executor::Spawner) {
         Default::default(),
     );
     let button = gpio::Input::new(p.PB5, gpio::Pull::Up);
-    spawner.spawn(control_panel_task(led_pwm, button)).unwrap();
+    spawner
+        .spawn(control_panel_task(
+            UPDATE_COMPLETE.receiver().unwrap(),
+            led_pwm,
+            button,
+        ))
+        .unwrap();
 
     let usb_driver = usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
     spawner
@@ -180,6 +189,8 @@ async fn main(spawner: embassy_executor::Spawner) {
             }
         }
     }
+
+    UPDATE_COMPLETE.sender().send(true);
 
     loop {
         let left_notes = match bellows_state.direction {
@@ -285,6 +296,7 @@ async fn firmware_task(
 
 #[embassy_executor::task]
 async fn control_panel_task(
+    mut update_complete: watch::Receiver<'static, ThreadModeRawMutex, bool, 1>,
     mut led_pwm: SimplePwm<'static, peripherals::TIM3>,
     button: gpio::Input<'static>,
 ) {
@@ -293,8 +305,12 @@ async fn control_panel_task(
     let led_step = led_max / 64;
     let mut led_duty = 0;
     let mut inc = true;
+    led.enable();
 
-    loop {
+    // TODO: Hold button to enter wait for firmware update
+    // TODO: Indicate system state with LED
+
+    while !update_complete.get().await {
         if inc && (led_max - led_duty < led_step) {
             led_duty = led_max;
             inc = !inc;
@@ -308,13 +324,16 @@ async fn control_panel_task(
         }
         led.set_duty_cycle(led_duty);
 
-        // TODO: Hold button to enter wait for firmware update
-        // TODO: Indicate system state with LED
+        Timer::after_millis(10).await;
+    }
+
+    led.set_duty_cycle(led_max);
+    loop {
         match button.get_level() {
             gpio::Level::High => led.enable(),
             gpio::Level::Low => led.disable(),
         }
-        Timer::after_millis(20).await;
+        Timer::after_millis(10).await;
     }
 }
 
