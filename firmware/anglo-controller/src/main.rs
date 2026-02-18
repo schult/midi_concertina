@@ -144,25 +144,35 @@ async fn main(spawner: embassy_executor::Spawner) {
     #[cfg(not(feature = "defmt"))]
     {
         let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
-        let mut keyboard_sessions = [
+        let mut transfer_sessions = [
             i2c_transfer::Session::new(LEFT_ADDR),
             i2c_transfer::Session::new(RIGHT_ADDR),
         ];
-        for session in &mut keyboard_sessions {
-            for _ in 0..5 {
-                if let Ok(v) = i2c_controller.get_version(session.address()).await {
-                    if v != controller_version || v.prerelease.is_some() {
+        for session in &mut transfer_sessions {
+            const RETRY_COUNT: usize = 3;
+            for _ in 0..RETRY_COUNT {
+                if let Ok(keyboard_version) = i2c_controller.get_version(session.address()).await {
+                    #[cfg(feature = "defmt")]
+                    defmt::info!(
+                        "Keyboard({}) version: {}",
+                        session.address(),
+                        keyboard_version
+                    );
+
+                    if keyboard_version != controller_version
+                        || keyboard_version.prerelease.is_some()
+                    {
                         session.begin(keyboard_firmware);
                     }
                     break;
                 }
             }
         }
-        let mut in_progress = true;
-        while in_progress {
-            in_progress = false;
-            for session in &mut keyboard_sessions {
-                in_progress |= match session.poll(&mut i2c_controller).await {
+        let mut transfer_in_progress = true;
+        while transfer_in_progress {
+            transfer_in_progress = false;
+            for session in &mut transfer_sessions {
+                transfer_in_progress |= match session.poll(&mut i2c_controller).await {
                     Ok(i2c_transfer::Status::InProgress) => true,
                     Err(_) => panic!("I2C communication error"),
                     _ => false,
