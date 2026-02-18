@@ -14,8 +14,8 @@ use circular_buffer::CircularBuffer;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
-use embassy_stm32::{bind_interrupts, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
+use embassy_stm32::{bind_interrupts, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::Mutex;
@@ -102,7 +102,15 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap();
 
     let led_pin = PwmPin::new(p.PB4, gpio::OutputType::PushPull);
-    let led_pwm = SimplePwm::new(p.TIM3, Some(led_pin), None, None, None, khz(30), Default::default());
+    let led_pwm = SimplePwm::new(
+        p.TIM3,
+        Some(led_pin),
+        None,
+        None,
+        None,
+        khz(30),
+        Default::default(),
+    );
     let button = gpio::Input::new(p.PB5, gpio::Pull::Up);
     spawner.spawn(control_panel_task(led_pwm, button)).unwrap();
 
@@ -267,7 +275,10 @@ async fn firmware_task(
 }
 
 #[embassy_executor::task]
-async fn control_panel_task(mut led_pwm: SimplePwm<'static, peripherals::TIM3>, button: gpio::Input<'static>) {
+async fn control_panel_task(
+    mut led_pwm: SimplePwm<'static, peripherals::TIM3>,
+    button: gpio::Input<'static>,
+) {
     let mut led = led_pwm.ch1();
     let led_max = led.max_duty_cycle() / 4;
     let led_step = led_max / 64;
