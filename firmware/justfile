@@ -46,6 +46,16 @@ clean:
     cd lib/version && cargo clean
     rm -rf build
 
+update:
+    cd bin2syx && cargo update
+    cd anglo-bootloader && cargo update
+    cd anglo-keyboard && cargo update
+    cd anglo-controller && cargo update
+    cd lib/i2c-proto && cargo update
+    cd lib/midi && cargo update
+    cd lib/util && cargo update
+    cd lib/version && cargo update
+
 [private]
 bin2syx:
     cd bin2syx && cargo build -r

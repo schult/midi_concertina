@@ -61,7 +61,7 @@ pub async fn scan_task(
     mut buttons: [ButtonConfig<'static>; BUTTON_COUNT],
     mut mux: Mux<'static, MUX_PIN_COUNT>,
     mut adc: adc::Adc<'static, peripherals::ADC1>,
-    mut adc_pin: adc::AnyAdcChannel<peripherals::ADC1>,
+    mut adc_pin: adc::AnyAdcChannel<'static, peripherals::ADC1>,
 ) {
     // Allow for DRV5053 power-up. Duration is max turn-on time divided by number of simultaneously
     // powered sensors.
@@ -82,7 +82,7 @@ pub async fn scan_task(
 
         mux.select(buttons[i].index());
 
-        let raw = adc.read(&mut adc_pin).await;
+        let raw = adc.read(&mut adc_pin, adc::SampleTime::CYCLES160_5).await;
         if raw < 600 {
             button_state |= 1 << i;
         } else if raw > 700 {

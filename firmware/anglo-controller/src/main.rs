@@ -15,7 +15,7 @@ use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
-use embassy_stm32::{bind_interrupts, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
+use embassy_stm32::{bind_interrupts, dma, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::Mutex;
@@ -34,6 +34,7 @@ mod keymap;
 bind_interrupts!(struct Irqs {
     USB => usb::InterruptHandler<peripherals::USB>;
     I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
+    DMA1_CHANNEL2_3 => dma::InterruptHandler<peripherals::DMA1_CH2>, dma::InterruptHandler<peripherals::DMA1_CH3>;
 });
 
 struct I2cWrapper<'a> {
@@ -91,13 +92,9 @@ async fn main(spawner: embassy_executor::Spawner) {
     defmt::info!("Controller version: {}", controller_version);
 
     let flash = Flash::new_blocking(p.FLASH);
-    spawner
-        .spawn(firmware_task(
-            flash,
-            MIDI_IN_CHANNEL.receiver(),
-            MIDI_OUT_CHANNEL.sender(),
-        ))
-        .unwrap();
+    spawner.spawn(
+        firmware_task(flash, MIDI_IN_CHANNEL.receiver(), MIDI_OUT_CHANNEL.sender()).unwrap(),
+    );
 
     let led_pin = PwmPin::new(p.PB4, gpio::OutputType::PushPull);
     let led_pwm = SimplePwm::new(
@@ -111,21 +108,17 @@ async fn main(spawner: embassy_executor::Spawner) {
     );
     let button = gpio::Input::new(p.PB5, gpio::Pull::Up);
     spawner
-        .spawn(control_panel_task(
-            UPDATE_COMPLETE.receiver().unwrap(),
-            led_pwm,
-            button,
-        ))
-        .unwrap();
+        .spawn(control_panel_task(UPDATE_COMPLETE.receiver().unwrap(), led_pwm, button).unwrap());
 
     let usb_driver = usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
-    spawner
-        .spawn(usb_task(
+    spawner.spawn(
+        usb_task(
             usb_driver,
             MIDI_IN_CHANNEL.sender(),
             MIDI_OUT_CHANNEL.receiver(),
-        ))
-        .unwrap();
+        )
+        .unwrap(),
+    );
 
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = khz(100);
@@ -134,7 +127,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     let sda_pin = p.PB9;
     let tx_dma = p.DMA1_CH2;
     let rx_dma = p.DMA1_CH3;
-    let i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, Irqs, tx_dma, rx_dma, i2c_config);
+    let i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, tx_dma, rx_dma, Irqs, i2c_config);
     let i2c_wrapper = I2cWrapper { i2c: i2c_master };
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
@@ -150,7 +143,7 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     // Remove keyboard upgrade code/data when defmt is enabled to make more room in flash
     // TODO: Check if this is still necessary on 192kb part
-    #[cfg(not(feature = "defmt"))]
+    // #[cfg(not(feature = "defmt"))]
     {
         Timer::after_secs(5).await;
 
