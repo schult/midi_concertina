@@ -145,8 +145,6 @@ async fn main(spawner: embassy_executor::Spawner) {
     // TODO: Check if this is still necessary on 192kb part
     // #[cfg(not(feature = "defmt"))]
     {
-        Timer::after_secs(5).await;
-
         let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
         let mut transfer_sessions = [
             i2c_transfer::Session::new(LEFT_ADDR),
