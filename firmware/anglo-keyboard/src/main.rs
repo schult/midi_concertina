@@ -77,8 +77,12 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     let chirality_in = gpio::Input::new(p.PB4, gpio::Pull::None);
     let chirality = if chirality_in.is_low() {
+        #[cfg(feature = "defmt")]
+        defmt::info!("Left keyboard");
         Chirality::Left
     } else {
+        #[cfg(feature = "defmt")]
+        defmt::info!("Right keyboard");
         Chirality::Right
     };
 
