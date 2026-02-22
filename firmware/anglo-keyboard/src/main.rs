@@ -168,24 +168,28 @@ async fn main(spawner: embassy_executor::Spawner) {
     let mut button_state_receiver = BUTTON_STATE.receiver().unwrap();
     let mut update_status_receiver = UPDATE_STATUS.receiver().unwrap();
 
+    enum ReadResponse {
+        Buttons,
+        Version,
+        WriteStatus,
+    }
+    let mut next_read = ReadResponse::Buttons;
+
     loop {
         match i2c_device.listen().await {
             Ok(i2c::SlaveCommand {
                 kind: i2c::SlaveCommandKind::Read,
                 address: _,
             }) => {
-                let button_state = button_state_receiver.get().await;
-                let _ = i2c_device.send_buttons(button_state).await;
-            }
-            Ok(i2c::SlaveCommand {
-                kind: i2c::SlaveCommandKind::Write,
-                address: _,
-            }) => {
-                match i2c_device.receive_command().await {
-                    Ok(i2c_proto::Command::GetVersion) => {
+                match next_read {
+                    ReadResponse::Buttons => {
+                        let button_state = button_state_receiver.get().await;
+                        let _ = i2c_device.send_buttons(button_state).await;
+                    }
+                    ReadResponse::Version => {
                         let _ = i2c_device.send_version(&version).await;
                     }
-                    Ok(i2c_proto::Command::GetWriteStatus) => {
+                    ReadResponse::WriteStatus => {
                         let mode = mode_sender.try_get().unwrap();
                         let update_status = update_status_receiver.get().await;
                         let write_status = match (mode, update_status) {
@@ -198,6 +202,20 @@ async fn main(spawner: embassy_executor::Spawner) {
                             _ => i2c_proto::WriteStatus::Cancel,
                         };
                         let _ = i2c_device.send_write_status(write_status).await;
+                    }
+                }
+                next_read = ReadResponse::Buttons;
+            }
+            Ok(i2c::SlaveCommand {
+                kind: i2c::SlaveCommandKind::Write,
+                address: _,
+            }) => {
+                match i2c_device.receive_command().await {
+                    Ok(i2c_proto::Command::GetVersion) => {
+                        next_read = ReadResponse::Version;
+                    }
+                    Ok(i2c_proto::Command::GetWriteStatus) => {
+                        next_read = ReadResponse::WriteStatus;
                     }
                     Ok(i2c_proto::Command::WriteBegin) => {
                         mode_sender.send(Mode::UpgradeFirmware);

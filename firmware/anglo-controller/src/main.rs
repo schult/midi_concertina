@@ -152,6 +152,8 @@ async fn main(spawner: embassy_executor::Spawner) {
     // TODO: Check if this is still necessary on 192kb part
     #[cfg(not(feature = "defmt"))]
     {
+        Timer::after_secs(5).await;
+
         let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
         let mut transfer_sessions = [
             i2c_transfer::Session::new(LEFT_ADDR),
@@ -168,15 +170,18 @@ async fn main(spawner: embassy_executor::Spawner) {
                         keyboard_version
                     );
 
+                    /*
                     if keyboard_version != controller_version
                         || keyboard_version.prerelease.is_some()
                     {
                         session.begin(keyboard_firmware);
                     }
+                    */
                     break;
                 }
             }
         }
+        /*
         let mut transfer_in_progress = true;
         while transfer_in_progress {
             transfer_in_progress = false;
@@ -188,6 +193,7 @@ async fn main(spawner: embassy_executor::Spawner) {
                 }
             }
         }
+        */
     }
 
     UPDATE_COMPLETE.sender().send(true);
