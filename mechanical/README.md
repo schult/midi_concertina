@@ -21,7 +21,7 @@ Light Pipe: Bivar GLP1-188-F-54
 
 ## 3D Print Setup
 
-Recommended base settings:
+### Base Settings
 
 - PETG
 - 0.4 mm nozzle
@@ -29,10 +29,18 @@ Recommended base settings:
 - 15% Gyroid infill
 - 2 wall loops
 
+### Deviations
+
 Button flanges should be printed with TPU on a smooth plate.
+
+Button caps should be printed with the smallest layer height possible. 0.8 mm is
+good. This helps to reduce noise when pressing buttons and produces a smoother
+top. It is recommended to use an outer brim when printing this part.
 
 Handrests have a curved top that benefits from a reduced layer height of 0.12 mm
 or less.
+
+Faceplates should be printed with "Only one wall on first layer" enabled.
 
 Parts that incorporate threaded inserts should use 4 wall loops:
 
@@ -41,8 +49,6 @@ Parts that incorporate threaded inserts should use 4 wall loops:
 - Controller panel
 - Handrest
 - Valve blocks
-
-Faceplates should be printed with "Only one wall on first layer" enabled.
 
 
 ## Assembly Instructions
