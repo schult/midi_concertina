@@ -12,13 +12,6 @@ Light Pipe: Bivar GLP1-188-F-54
 - Customization?
 
 
-## Mirrored Parts
-
-- Symetrical Print
-- Left/Right Designs
-- Mirror in Print
-
-
 ## 3D Print Setup
 
 ### Base Settings
