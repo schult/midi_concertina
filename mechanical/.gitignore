@@ -1,3 +1,4 @@
 exports/
 *.FCBak
 ~*.dxf
+__pycache__
