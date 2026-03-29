@@ -8,7 +8,7 @@
 	)
 	(paper "USLetter")
 	(title_block
-		(title "MIDI Bellows Sensor")
+		(title "MIDI Bellows Sensor B")
 		(date "2026-01-19")
 		(rev "1")
 		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
