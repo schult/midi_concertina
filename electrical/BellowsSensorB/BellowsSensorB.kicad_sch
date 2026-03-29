@@ -493,12 +493,12 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "MidiConcertina:Consensic_CPS610x"
+		(symbol "MidiConcertina:WF_WF200Dx"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "U"
-				(at 2.54 12.7 0)
+				(at 2.54 15.24 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -506,8 +506,8 @@
 					(justify left)
 				)
 			)
-			(property "Value" "CPS610x"
-				(at 2.54 10.16 0)
+			(property "Value" "WF200Dx"
+				(at 2.54 12.7 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -551,10 +551,10 @@
 					(hide yes)
 				)
 			)
-			(symbol "Consensic_CPS610x_0_1"
+			(symbol "WF_WF200Dx_0_1"
 				(rectangle
-					(start -5.08 7.62)
-					(end 5.08 -5.08)
+					(start -5.08 10.16)
+					(end 5.08 -12.7)
 					(stroke
 						(width 0.254)
 						(type default)
@@ -564,9 +564,9 @@
 					)
 				)
 			)
-			(symbol "Consensic_CPS610x_1_1"
+			(symbol "WF_WF200Dx_1_1"
 				(pin no_connect line
-					(at -7.62 5.08 0)
+					(at -7.62 7.62 0)
 					(length 2.54)
 					(hide yes)
 					(name "1"
@@ -585,7 +585,7 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 2.54 0)
+					(at -7.62 5.08 0)
 					(length 2.54)
 					(hide yes)
 					(name "2"
@@ -604,7 +604,7 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 0 0)
+					(at -7.62 2.54 0)
 					(length 2.54)
 					(hide yes)
 					(name "3"
@@ -623,7 +623,7 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 -2.54 0)
+					(at -7.62 0 0)
 					(length 2.54)
 					(hide yes)
 					(name "4"
@@ -642,26 +642,7 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 -5.08 0)
-					(length 2.54)
-					(hide yes)
-					(name "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin no_connect line
-					(at -7.62 -7.62 0)
+					(at -7.62 -2.54 0)
 					(length 2.54)
 					(hide yes)
 					(name "8"
@@ -680,7 +661,7 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 -10.16 0)
+					(at -7.62 -5.08 0)
 					(length 2.54)
 					(hide yes)
 					(name "9"
@@ -699,45 +680,7 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 -12.7 0)
-					(length 2.54)
-					(hide yes)
-					(name "12"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "12"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin no_connect line
-					(at -7.62 -15.24 0)
-					(length 2.54)
-					(hide yes)
-					(name "13"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "13"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin no_connect line
-					(at -7.62 -17.78 0)
+					(at -7.62 -7.62 0)
 					(length 2.54)
 					(hide yes)
 					(name "14"
@@ -756,7 +699,7 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 -20.32 0)
+					(at -7.62 -10.16 0)
 					(length 2.54)
 					(hide yes)
 					(name "15"
@@ -775,7 +718,7 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 -22.86 0)
+					(at -7.62 -12.7 0)
 					(length 2.54)
 					(hide yes)
 					(name "16"
@@ -794,7 +737,7 @@
 					)
 				)
 				(pin power_in line
-					(at 0 10.16 270)
+					(at 0 12.7 270)
 					(length 2.54)
 					(name "VDD"
 						(effects
@@ -803,7 +746,7 @@
 							)
 						)
 					)
-					(number "7"
+					(number "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -812,7 +755,7 @@
 					)
 				)
 				(pin power_in line
-					(at 0 -7.62 90)
+					(at 0 -15.24 90)
 					(length 2.54)
 					(name "GND"
 						(effects
@@ -821,7 +764,7 @@
 							)
 						)
 					)
-					(number "6"
+					(number "13"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -830,7 +773,7 @@
 					)
 				)
 				(pin passive line
-					(at 7.62 2.54 180)
+					(at 7.62 5.08 180)
 					(length 2.54)
 					(name "SCL"
 						(effects
@@ -848,7 +791,7 @@
 					)
 				)
 				(pin bidirectional line
-					(at 7.62 0 180)
+					(at 7.62 2.54 180)
 					(length 2.54)
 					(name "SDA"
 						(effects
@@ -858,6 +801,60 @@
 						)
 					)
 					(number "10"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 7.62 -2.54 180)
+					(length 2.54)
+					(name "ADDR"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 7.62 -5.08 180)
+					(length 2.54)
+					(name "INT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 7.62 -7.62 180)
+					(length 2.54)
+					(name "CS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1232,6 +1229,18 @@
 		(color 0 0 0 0)
 		(uuid "cb773bb1-42fc-4cd6-8d27-2ec200a6b3c0")
 	)
+	(no_connect
+		(at 151.13 87.63)
+		(uuid "219e3db8-1ca2-4fd2-8ae4-a230e99f31e7")
+	)
+	(no_connect
+		(at 151.13 90.17)
+		(uuid "564dd54e-6fd1-439b-bf54-191e6f0f8b80")
+	)
+	(no_connect
+		(at 151.13 85.09)
+		(uuid "ebd7ee9f-1d03-4b61-9167-8702c113df25")
+	)
 	(wire
 		(pts
 			(xy 93.98 80.01) (xy 93.98 82.55)
@@ -1434,7 +1443,7 @@
 	)
 	(wire
 		(pts
-			(xy 158.75 90.17) (xy 158.75 87.63)
+			(xy 158.75 100.33) (xy 158.75 97.79)
 		)
 		(stroke
 			(width 0)
@@ -1764,8 +1773,138 @@
 		)
 	)
 	(symbol
+		(lib_id "MidiConcertina:WF_WF200Dx")
+		(at 158.75 82.55 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "82faff8b-3ce8-4f2d-875c-ba2e51fd810c")
+		(property "Reference" "U1"
+			(at 156.21 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "WF200DPZ 0.1BG S16 DT"
+			(at 156.21 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
+			(at 158.75 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://jlcpcb.com/api/file/downloadByFileSystemAccessId/8603406260650205184"
+			(at 158.75 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Pressure Sensor ±10kPa Differential Male - 2.2mm Tube, Dual Ports, ROHS"
+			(at 158.75 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C3001195"
+			(at 158.75 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part" "WF WF200DPZ 0.1BG S16 DT"
+			(at 158.75 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "7"
+			(uuid "3ce39b66-e160-4c85-9348-f54b9feae2d1")
+		)
+		(pin "15"
+			(uuid "79f5cd71-a8f3-4319-8c53-9c999e23142d")
+		)
+		(pin "14"
+			(uuid "445b1e05-3c1a-41a9-b674-df34ef7aea53")
+		)
+		(pin "16"
+			(uuid "30f873e1-9c92-4b10-9eb0-80cb6e729e1a")
+		)
+		(pin "1"
+			(uuid "4e9ed2b9-5e76-4c23-be7c-a2063730719c")
+		)
+		(pin "9"
+			(uuid "6fcc3514-20f1-4b62-9eeb-596f6ed4f736")
+		)
+		(pin "2"
+			(uuid "73e30d77-4639-4bef-acdc-54ff0433e7d9")
+		)
+		(pin "4"
+			(uuid "29befa54-5043-49cc-a6af-c04ca87f76a3")
+		)
+		(pin "3"
+			(uuid "d1dfd1b3-3ffc-4304-8c2e-c4a5981dd544")
+		)
+		(pin "8"
+			(uuid "157d9255-f51f-4891-bfb5-fefc3f389ee2")
+		)
+		(pin "12"
+			(uuid "51d912a8-f5c6-41d0-973f-0f0156f11a99")
+		)
+		(pin "13"
+			(uuid "153b45d8-c679-4f29-913b-2f2cce8d916a")
+		)
+		(pin "10"
+			(uuid "51b6e5d6-ac2b-4bdc-b030-dfcac5c5f625")
+		)
+		(pin "11"
+			(uuid "97baa038-1578-48fa-99e5-e1712422663d")
+		)
+		(pin "6"
+			(uuid "3c740358-8d0f-43e7-8b84-6bcb155605ed")
+		)
+		(pin "5"
+			(uuid "f080a440-40ac-45a1-a3a4-ad1390047069")
+		)
+		(instances
+			(project ""
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "U1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
-		(at 158.75 90.17 0)
+		(at 158.75 100.33 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1775,7 +1914,7 @@
 		(fields_autoplaced yes)
 		(uuid "83493e03-d6b8-4e2d-a261-47c01295a705")
 		(property "Reference" "#PWR05"
-			(at 158.75 96.52 0)
+			(at 158.75 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1784,7 +1923,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 158.75 95.25 0)
+			(at 158.75 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1793,7 +1932,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 158.75 90.17 0)
+			(at 158.75 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1802,7 +1941,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 158.75 90.17 0)
+			(at 158.75 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1811,7 +1950,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 158.75 90.17 0)
+			(at 158.75 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2265,136 +2404,6 @@
 			(project "BellowsSensor"
 				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
 					(reference "#PWR07")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "MidiConcertina:Consensic_CPS610x")
-		(at 158.75 80.01 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ce6722f9-bce1-44c0-a90b-83ee71ae62f2")
-		(property "Reference" "U1"
-			(at 156.21 67.31 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "CPS610DSD010DH01"
-			(at 156.21 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://jlcpcb.com/api/file/downloadByFileSystemAccessId/8603406260650205184"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Pressure Sensor ±10kPa Differential Male - 2.2mm Tube, Dual Ports, ROHS"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C28646450"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part" "Consensic CPS610DSD010DH01"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "14"
-			(uuid "c309cb01-768f-45de-b0fc-8644feea933e")
-		)
-		(pin "15"
-			(uuid "eba73bae-1266-4906-b4a0-3b36092d6ef4")
-		)
-		(pin "16"
-			(uuid "7f81d613-e287-4973-90be-b6f19fc40bae")
-		)
-		(pin "2"
-			(uuid "0490053f-5826-47cc-a2e3-3abed9772a6d")
-		)
-		(pin "3"
-			(uuid "30a56ec8-287a-45f8-ac91-4933c30f88ff")
-		)
-		(pin "4"
-			(uuid "8f4492b8-d908-4322-83be-72a44f7a4839")
-		)
-		(pin "5"
-			(uuid "5088be3f-afde-4d7f-9578-ac3c5378b142")
-		)
-		(pin "8"
-			(uuid "429e1339-6d28-4392-90c6-1f3e22f61854")
-		)
-		(pin "9"
-			(uuid "211d8b23-800b-47eb-8612-802f0ce9745b")
-		)
-		(pin "7"
-			(uuid "8cefe74b-84bf-49d9-85de-72703624c10c")
-		)
-		(pin "12"
-			(uuid "06fa5ed3-62cd-4408-9396-72e43c8862c8")
-		)
-		(pin "13"
-			(uuid "46176129-d129-4ce6-87fc-500f51d8ea1c")
-		)
-		(pin "6"
-			(uuid "8de51d18-d1ca-4f51-8830-760c7083b9fe")
-		)
-		(pin "11"
-			(uuid "c15a3a37-8e95-4bce-a81f-2b18efa4088c")
-		)
-		(pin "10"
-			(uuid "82ca3761-e390-4da3-8377-6828230b0849")
-		)
-		(pin "1"
-			(uuid "8dcdecca-aa8d-4cb9-b467-a6cb1d36cb21")
-		)
-		(instances
-			(project ""
-				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
-					(reference "U1")
 					(unit 1)
 				)
 			)
