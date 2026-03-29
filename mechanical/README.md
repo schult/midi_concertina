@@ -12,7 +12,12 @@ Light Pipe: Bivar GLP1-188-F-54
 - Customization?
 
 
-## 3D Print Setup
+## 3D Printing
+
+### STL Export
+
+Run `freecadcmd export_all.py` in this directory. The generated STL files will
+be placed in an `exports` subdirectory.
 
 ### Base Settings
 
@@ -24,7 +29,7 @@ Light Pipe: Bivar GLP1-188-F-54
 
 ### Deviations
 
-Button flanges should be printed with TPU on a smooth plate.
+Button flanges should be printed with TPU.
 
 Button caps should be printed with the smallest layer height possible. 0.8 mm is
 good. This helps to reduce noise when pressing buttons and produces a smoother
