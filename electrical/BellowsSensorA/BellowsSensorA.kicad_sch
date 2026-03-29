@@ -493,7 +493,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "MidiConcertina:Amphenol_ELVH-x"
+		(symbol "MidiConcertina:Consensic_CPS610x"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -506,7 +506,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "Amphenol_ELVH-x"
+			(property "Value" "CPS610x"
 				(at 2.54 10.16 0)
 				(effects
 					(font
@@ -515,7 +515,7 @@
 					(justify left)
 				)
 			)
-			(property "Footprint" "MidiConcertina:Amphenol_ELVH-x-xJ-x-x"
+			(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
 				(at 0 0 0)
 				(effects
 					(font
@@ -524,7 +524,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://428059.fs1.hubspotusercontent-na1.net/hubfs/428059/Product-Data-Sheets/DS-0376.pdf"
+			(property "Datasheet" "https://jlcpcb.com/api/file/downloadByFileSystemAccessId/8603406260650205184"
 				(at 0 0 0)
 				(effects
 					(font
@@ -533,7 +533,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Pressure Sensor ±1PSI (±6.89kPa) Differential Male - 0.06\" (1.6mm) Tube, Dual Ports, Same Side, ROHS"
+			(property "Description" "Pressure Sensor ±10kPa Differential Male - 2.2mm Tube, Dual Ports, ROHS"
 				(at 0 0 0)
 				(effects
 					(font
@@ -551,16 +551,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "*Amphenol*ELV*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "Amphenol_ELVH-x_0_1"
+			(symbol "Consensic_CPS610x_0_1"
 				(rectangle
 					(start -5.08 7.62)
 					(end 5.08 -5.08)
@@ -573,12 +564,88 @@
 					)
 				)
 			)
-			(symbol "Amphenol_ELVH-x_1_1"
+			(symbol "Consensic_CPS610x_1_1"
 				(pin no_connect line
 					(at -7.62 5.08 0)
 					(length 2.54)
 					(hide yes)
-					(name "NC"
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 2.54 0)
+					(length 2.54)
+					(hide yes)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 0 0)
+					(length 2.54)
+					(hide yes)
+					(name "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 -2.54 0)
+					(length 2.54)
+					(hide yes)
+					(name "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 -5.08 0)
+					(length 2.54)
+					(hide yes)
+					(name "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -594,48 +661,10 @@
 					)
 				)
 				(pin no_connect line
-					(at -7.62 2.54 0)
+					(at -7.62 -7.62 0)
 					(length 2.54)
 					(hide yes)
-					(name "NC"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin no_connect line
-					(at -7.62 0 0)
-					(length 2.54)
-					(hide yes)
-					(name "NC"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "7"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin no_connect line
-					(at -7.62 -2.54 0)
-					(length 2.54)
-					(hide yes)
-					(name "NC"
+					(name "8"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -643,6 +672,120 @@
 						)
 					)
 					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 -10.16 0)
+					(length 2.54)
+					(hide yes)
+					(name "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 -12.7 0)
+					(length 2.54)
+					(hide yes)
+					(name "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 -15.24 0)
+					(length 2.54)
+					(hide yes)
+					(name "13"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "13"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 -17.78 0)
+					(length 2.54)
+					(hide yes)
+					(name "14"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "14"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 -20.32 0)
+					(length 2.54)
+					(hide yes)
+					(name "15"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "15"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -7.62 -22.86 0)
+					(length 2.54)
+					(hide yes)
+					(name "16"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "16"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -660,7 +803,7 @@
 							)
 						)
 					)
-					(number "2"
+					(number "7"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -678,7 +821,7 @@
 							)
 						)
 					)
-					(number "1"
+					(number "6"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -696,7 +839,7 @@
 							)
 						)
 					)
-					(number "4"
+					(number "11"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -714,7 +857,7 @@
 							)
 						)
 					)
-					(number "3"
+					(number "10"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1393,112 +1536,6 @@
 			(project ""
 				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
 					(reference "J1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "MidiConcertina:Amphenol_ELVH-x")
-		(at 158.75 80.01 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "259f612f-09c7-4ffb-b559-320f179d1d51")
-		(property "Reference" "U1"
-			(at 156.21 67.31 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "ELVH-001D-HRRJ-C-N2A4"
-			(at 156.21 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MidiConcertina:Amphenol_ELVH-x-xJ-x-x"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://428059.fs1.hubspotusercontent-na1.net/hubfs/428059/Product-Data-Sheets/DS-0376.pdf"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Pressure Sensor ±1PSI (±6.89kPa) Differential Male - 0.06\" (1.6mm) Tube, Dual Ports, Same Side, ROHS"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C3241336"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part" "Amphenol ELVH-001D-HRRJ-C-N2A4"
-			(at 158.75 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "8"
-			(uuid "1a0559cb-8fa1-4431-9092-576f951f441d")
-		)
-		(pin "4"
-			(uuid "72823fda-0964-4307-a54a-7caab65e0397")
-		)
-		(pin "1"
-			(uuid "54965f0f-c14a-442b-8359-d471378eb76f")
-		)
-		(pin "3"
-			(uuid "f85bbb23-0a9b-4e21-92e4-e4de1dc21f65")
-		)
-		(pin "6"
-			(uuid "246cb42f-4795-4dea-b503-3096e4f38370")
-		)
-		(pin "7"
-			(uuid "63aa0a1c-cd5e-466c-818a-dca487eae4f5")
-		)
-		(pin "2"
-			(uuid "2d9b14c3-5d74-4c41-8eb8-ed474403acdf")
-		)
-		(pin "5"
-			(uuid "e1d1f373-ff4d-4a4e-b4bc-97aa3526910f")
-		)
-		(instances
-			(project ""
-				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
-					(reference "U1")
 					(unit 1)
 				)
 			)
@@ -2228,6 +2265,136 @@
 			(project "BellowsSensor"
 				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
 					(reference "#PWR07")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "MidiConcertina:Consensic_CPS610x")
+		(at 158.75 80.01 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ce6722f9-bce1-44c0-a90b-83ee71ae62f2")
+		(property "Reference" "U1"
+			(at 156.21 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "CPS610DSD010DH01"
+			(at 156.21 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://jlcpcb.com/api/file/downloadByFileSystemAccessId/8603406260650205184"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Pressure Sensor ±10kPa Differential Male - 2.2mm Tube, Dual Ports, ROHS"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C28646450"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part" "Consensic CPS610DSD010DH01"
+			(at 158.75 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "14"
+			(uuid "c309cb01-768f-45de-b0fc-8644feea933e")
+		)
+		(pin "15"
+			(uuid "eba73bae-1266-4906-b4a0-3b36092d6ef4")
+		)
+		(pin "16"
+			(uuid "7f81d613-e287-4973-90be-b6f19fc40bae")
+		)
+		(pin "2"
+			(uuid "0490053f-5826-47cc-a2e3-3abed9772a6d")
+		)
+		(pin "3"
+			(uuid "30a56ec8-287a-45f8-ac91-4933c30f88ff")
+		)
+		(pin "4"
+			(uuid "8f4492b8-d908-4322-83be-72a44f7a4839")
+		)
+		(pin "5"
+			(uuid "5088be3f-afde-4d7f-9578-ac3c5378b142")
+		)
+		(pin "8"
+			(uuid "429e1339-6d28-4392-90c6-1f3e22f61854")
+		)
+		(pin "9"
+			(uuid "211d8b23-800b-47eb-8612-802f0ce9745b")
+		)
+		(pin "7"
+			(uuid "8cefe74b-84bf-49d9-85de-72703624c10c")
+		)
+		(pin "12"
+			(uuid "06fa5ed3-62cd-4408-9396-72e43c8862c8")
+		)
+		(pin "13"
+			(uuid "46176129-d129-4ce6-87fc-500f51d8ea1c")
+		)
+		(pin "6"
+			(uuid "8de51d18-d1ca-4f51-8830-760c7083b9fe")
+		)
+		(pin "11"
+			(uuid "c15a3a37-8e95-4bce-a81f-2b18efa4088c")
+		)
+		(pin "10"
+			(uuid "82ca3761-e390-4da3-8377-6828230b0849")
+		)
+		(pin "1"
+			(uuid "8dcdecca-aa8d-4cb9-b467-a6cb1d36cb21")
+		)
+		(instances
+			(project ""
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "U1")
 					(unit 1)
 				)
 			)
