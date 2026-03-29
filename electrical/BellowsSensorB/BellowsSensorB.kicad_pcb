@@ -9,7 +9,7 @@
 	(paper "USLetter")
 	(title_block
 		(title "MIDI Bellows Sensor B")
-		(date "2026-01-19")
+		(date "2026-03-28")
 		(rev "1")
 		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
 		(comment 2 "Licensed under CERN-OHL-S v2 or any later version")
