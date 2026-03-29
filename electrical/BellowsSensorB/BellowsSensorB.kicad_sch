@@ -6,7 +6,7 @@
 	(paper "USLetter")
 	(title_block
 		(title "MIDI Bellows Sensor B")
-		(date "2026-03-28")
+		(date "2026-03-29")
 		(rev "1")
 		(comment 1 "https://ohwr.org/cern_ohl_s_v2.pdf")
 		(comment 2 "Licensed under CERN-OHL-S v2 or any later version")
@@ -393,6 +393,192 @@
 					(at 0 -3.81 90)
 					(length 2.794)
 					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Jumper:SolderJumper_2_Open"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "JP"
+				(at 0 2.032 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SolderJumper_2_Open"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Solder Jumper, 2-pole, open"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "solder jumper SPST"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SolderJumper*Open*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SolderJumper_2_Open_0_1"
+				(polyline
+					(pts
+						(xy -0.254 1.016) (xy -0.254 -1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -0.254 -1.016)
+					(mid -1.2656 0)
+					(end -0.254 1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -0.254 -1.016)
+					(mid -1.2656 0)
+					(end -0.254 1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(arc
+					(start 0.254 1.016)
+					(mid 1.2656 0)
+					(end 0.254 -1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 0.254 1.016)
+					(mid 1.2656 0)
+					(end 0.254 -1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 1.016) (xy 0.254 -1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SolderJumper_2_Open_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "B"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1206,6 +1392,12 @@
 		(uuid "1711fa8d-6dc9-4c75-90b9-a46e6d220d1b")
 	)
 	(junction
+		(at 130.81 107.95)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "295a87d6-6d39-43f7-a8f1-161a9fffee52")
+	)
+	(junction
 		(at 111.76 82.55)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1224,22 +1416,42 @@
 		(uuid "684822a7-5b20-4b0c-83a4-f0796184985c")
 	)
 	(junction
+		(at 130.81 92.71)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8c0c9b07-1b2f-4b6b-b81f-7c0b4cbe3314")
+	)
+	(junction
+		(at 143.51 92.71)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9c51f6f2-b6af-4cc9-8e31-3d480812214c")
+	)
+	(junction
 		(at 93.98 82.55)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "cb773bb1-42fc-4cd6-8d27-2ec200a6b3c0")
 	)
+	(junction
+		(at 146.05 97.79)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d545b7d6-ed46-44a3-a812-826280fc8e30")
+	)
 	(no_connect
 		(at 151.13 87.63)
 		(uuid "219e3db8-1ca2-4fd2-8ae4-a230e99f31e7")
 	)
-	(no_connect
-		(at 151.13 90.17)
-		(uuid "564dd54e-6fd1-439b-bf54-191e6f0f8b80")
-	)
-	(no_connect
-		(at 151.13 85.09)
-		(uuid "ebd7ee9f-1d03-4b61-9167-8702c113df25")
+	(wire
+		(pts
+			(xy 140.97 92.71) (xy 143.51 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "01b0a797-63ea-484d-beca-a38df414d46e")
 	)
 	(wire
 		(pts
@@ -1263,6 +1475,16 @@
 	)
 	(wire
 		(pts
+			(xy 146.05 97.79) (xy 146.05 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "142997b8-d0a6-46e1-a856-426124b0e6cb")
+	)
+	(wire
+		(pts
 			(xy 111.76 82.55) (xy 111.76 85.09)
 		)
 		(stroke
@@ -1273,6 +1495,16 @@
 	)
 	(wire
 		(pts
+			(xy 140.97 97.79) (xy 146.05 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1e7673be-79d2-40be-a4e5-f06c12d5e333")
+	)
+	(wire
+		(pts
 			(xy 158.75 64.77) (xy 158.75 67.31)
 		)
 		(stroke
@@ -1280,6 +1512,16 @@
 			(type default)
 		)
 		(uuid "20c7653f-fc97-49de-acf1-0c1d33fc9dfa")
+	)
+	(wire
+		(pts
+			(xy 143.51 85.09) (xy 143.51 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "21674d21-2882-44ac-bf13-c3f59d8c2db1")
 	)
 	(wire
 		(pts
@@ -1303,6 +1545,26 @@
 	)
 	(wire
 		(pts
+			(xy 133.35 102.87) (xy 130.81 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c8c8604-b093-4e60-b632-15bf0bb5dada")
+	)
+	(wire
+		(pts
+			(xy 143.51 102.87) (xy 140.97 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5aca0350-0c8b-4d1e-b7df-014698023d01")
+	)
+	(wire
+		(pts
 			(xy 93.98 80.01) (xy 96.52 80.01)
 		)
 		(stroke
@@ -1313,6 +1575,16 @@
 	)
 	(wire
 		(pts
+			(xy 130.81 92.71) (xy 133.35 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7d6ebe56-37b2-4c27-a68b-b6ea6e1bb3ff")
+	)
+	(wire
+		(pts
 			(xy 93.98 77.47) (xy 96.52 77.47)
 		)
 		(stroke
@@ -1320,6 +1592,16 @@
 			(type default)
 		)
 		(uuid "80aabb61-527a-415e-9a79-3ce0a241d276")
+	)
+	(wire
+		(pts
+			(xy 130.81 107.95) (xy 133.35 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "81fdbac5-0685-4d1d-a050-014d4d9a7133")
 	)
 	(wire
 		(pts
@@ -1353,6 +1635,26 @@
 	)
 	(wire
 		(pts
+			(xy 151.13 85.09) (xy 143.51 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8ffcb290-369c-49a3-b162-c73a18352910")
+	)
+	(wire
+		(pts
+			(xy 130.81 92.71) (xy 130.81 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "978c1539-8779-4f2f-a379-98cd8bdfb0a7")
+	)
+	(wire
+		(pts
 			(xy 109.22 80.01) (xy 151.13 80.01)
 		)
 		(stroke
@@ -1363,6 +1665,16 @@
 	)
 	(wire
 		(pts
+			(xy 130.81 97.79) (xy 130.81 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a0529604-3c21-4579-9f73-3193daf0aa54")
+	)
+	(wire
+		(pts
 			(xy 91.44 77.47) (xy 93.98 77.47)
 		)
 		(stroke
@@ -1370,6 +1682,16 @@
 			(type default)
 		)
 		(uuid "a1b5539b-d5b7-4f8e-89f2-0ca1c514d38f")
+	)
+	(wire
+		(pts
+			(xy 133.35 97.79) (xy 130.81 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a5f310b2-c78f-42cf-a320-0ad7bde4be0c")
 	)
 	(wire
 		(pts
@@ -1390,6 +1712,46 @@
 			(type default)
 		)
 		(uuid "bc74c6ec-5481-4ca2-b97f-cf0fd684dd17")
+	)
+	(wire
+		(pts
+			(xy 146.05 90.17) (xy 146.05 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c690ea5f-95c8-4e5a-93ac-83fc6d6e3abe")
+	)
+	(wire
+		(pts
+			(xy 130.81 102.87) (xy 130.81 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cf16b699-5167-4227-854c-4f201a25795b")
+	)
+	(wire
+		(pts
+			(xy 130.81 107.95) (xy 130.81 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d0df1709-a15d-41de-9e3f-8d2c84e19bd2")
+	)
+	(wire
+		(pts
+			(xy 151.13 90.17) (xy 146.05 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d94b01b8-ef34-49e0-866b-fd83b3ae5552")
 	)
 	(wire
 		(pts
@@ -1433,6 +1795,16 @@
 	)
 	(wire
 		(pts
+			(xy 143.51 92.71) (xy 143.51 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f1ffb21f-4656-406a-a8be-66ce6c9fe6c4")
+	)
+	(wire
+		(pts
 			(xy 109.22 82.55) (xy 111.76 82.55)
 		)
 		(stroke
@@ -1450,6 +1822,16 @@
 			(type default)
 		)
 		(uuid "f4aa8fd6-89c1-4146-846d-edb6971290ad")
+	)
+	(wire
+		(pts
+			(xy 146.05 107.95) (xy 140.97 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f5ed54f0-f8cd-4190-9fb6-8d33c898ad67")
 	)
 	(label "I2C_SDA"
 		(at 148.59 80.01 180)
@@ -1470,6 +1852,144 @@
 			(justify right bottom)
 		)
 		(uuid "7374a220-5c74-4f1b-96ff-5ac4fe264229")
+	)
+	(symbol
+		(lib_id "Jumper:SolderJumper_2_Open")
+		(at 137.16 97.79 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "111aedaa-bd1b-4b75-b72f-3c866c28e4fe")
+		(property "Reference" "JP2"
+			(at 138.938 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "+"
+			(at 135.382 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+			(at 137.16 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 137.16 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Solder Jumper, 2-pole, open"
+			(at 137.16 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "14731a97-1b08-4550-b117-6e9902b9da55")
+		)
+		(pin "2"
+			(uuid "e437c50a-eabc-4a89-96c2-96ca5fb4403b")
+		)
+		(instances
+			(project "BellowsSensorB"
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "JP2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Jumper:SolderJumper_2_Open")
+		(at 137.16 107.95 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "1d6ea7e5-743b-4f2d-badd-00d1f2f48cd9")
+		(property "Reference" "JP4"
+			(at 138.938 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "-"
+			(at 135.382 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+			(at 137.16 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 137.16 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Solder Jumper, 2-pole, open"
+			(at 137.16 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "54d429a1-2429-42d5-a6e3-4cfe5ce3da1e")
+		)
+		(pin "2"
+			(uuid "256f3db2-0249-40b8-9acd-89a8224722a6")
+		)
+		(instances
+			(project "BellowsSensorB"
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "JP4")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
@@ -2074,6 +2594,75 @@
 		)
 	)
 	(symbol
+		(lib_id "Jumper:SolderJumper_2_Open")
+		(at 137.16 102.87 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "90e93b42-de90-4438-b12f-4376ff79f029")
+		(property "Reference" "JP3"
+			(at 138.938 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "-"
+			(at 135.382 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+			(at 137.16 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 137.16 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Solder Jumper, 2-pole, open"
+			(at 137.16 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d818a4c3-f468-4101-89d7-c5eb2595c42d")
+		)
+		(pin "2"
+			(uuid "c8fd624c-e9c8-4e07-88c9-f1d695121446")
+		)
+		(instances
+			(project "BellowsSensorB"
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "JP3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:PWR_FLAG")
 		(at 91.44 77.47 90)
 		(unit 1)
@@ -2274,7 +2863,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole")
-		(at 133.35 116.84 0)
+		(at 102.87 115.57 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -2282,7 +2871,7 @@
 		(dnp no)
 		(uuid "c74b242e-0d51-4937-9685-5d33b301ba94")
 		(property "Reference" "H1"
-			(at 133.35 109.22 0)
+			(at 102.87 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2290,7 +2879,7 @@
 			)
 		)
 		(property "Value" "MountingHole"
-			(at 133.35 111.76 0)
+			(at 102.87 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2298,7 +2887,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
-			(at 133.35 116.84 0)
+			(at 102.87 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2307,7 +2896,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 133.35 116.84 0)
+			(at 102.87 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2316,7 +2905,7 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
-			(at 133.35 116.84 0)
+			(at 102.87 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2325,7 +2914,7 @@
 			)
 		)
 		(property "Part" ""
-			(at 133.35 116.84 0)
+			(at 102.87 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2472,6 +3061,210 @@
 			(project "BellowsSensor"
 				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
 					(reference "#FLG01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 130.81 110.49 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f1eaedca-05df-405d-b305-e2f0c10d5bf2")
+		(property "Reference" "#PWR01"
+			(at 130.81 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 130.81 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 130.81 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 130.81 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 130.81 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ab93e2a4-7eef-44bf-82c6-0aa3d7a4eaa9")
+		)
+		(instances
+			(project "BellowsSensorB"
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Jumper:SolderJumper_2_Open")
+		(at 137.16 92.71 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "f7651482-44e5-4db6-af2d-bd6c6342a2a0")
+		(property "Reference" "JP1"
+			(at 138.938 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "+"
+			(at 135.382 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+			(at 137.16 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 137.16 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Solder Jumper, 2-pole, open"
+			(at 137.16 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8d8b9229-9e9d-430f-b0c8-03c881b38c8e")
+		)
+		(pin "2"
+			(uuid "e3c2f064-b56e-4ed8-afb9-bdb4bde5da33")
+		)
+		(instances
+			(project ""
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "JP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3.3V")
+		(at 130.81 90.17 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "fee787ff-eaa2-4822-a538-dbe57324b8a1")
+		(property "Reference" "#PWR02"
+			(at 130.81 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.3V"
+			(at 130.81 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 130.81 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 130.81 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
+			(at 130.81 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b376000f-8c54-46ea-8523-876172cf431c")
+		)
+		(instances
+			(project "BellowsSensorB"
+				(path "/ceae7089-9cb4-4950-bb64-2f75302207fd"
+					(reference "#PWR02")
 					(unit 1)
 				)
 			)
