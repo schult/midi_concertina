@@ -38,7 +38,8 @@ top. It is recommended to use an outer brim when printing this part.
 Handrests have a curved top that benefits from a reduced layer height of 0.12 mm
 or less.
 
-Faceplates should be printed with "Only one wall on first layer" enabled.
+Faceplates and the controller panel should be printed with "Only one wall on
+first layer" enabled.
 
 Parts that incorporate threaded inserts should use 4 wall loops:
 
