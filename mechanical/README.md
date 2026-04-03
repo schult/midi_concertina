@@ -35,7 +35,9 @@ Button caps should be printed with the smallest layer height possible. 0.8 mm is
 good. This helps to reduce noise when pressing buttons and produces a smoother
 top. It is recommended to use an outer brim when printing this part.
 
-The magnet posts require a pause mid-print in order to insert the magnets.
+The magnet posts require a pause mid-print in order to insert the magnets.  They
+should also be printed with the same layer height as the button caps to ensure
+the wire press-fits the same way in both parts.
 
 Handrests have a curved top that benefits from a reduced layer height of 0.12 mm
 or less.
