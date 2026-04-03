@@ -31,9 +31,9 @@ be placed in an `exports` subdirectory.
 
 Button flanges should be printed with TPU.
 
-Button caps should be printed with the smallest layer height possible. 0.8 mm is
-good. This helps to reduce noise when pressing buttons and produces a smoother
-top. It is recommended to use an outer brim when printing this part.
+Button caps should be printed with the smallest layer height possible. 0.08 mm
+is good. This helps to reduce noise when pressing buttons and produces a
+smoother top. It is recommended to use an outer brim when printing this part.
 
 The magnet posts require a pause mid-print in order to insert the magnets.  They
 should also be printed with the same layer height as the button caps to ensure
