@@ -109,6 +109,34 @@ Parts that incorporate threaded inserts should use 4 wall loops:
 
 ## Assembly Instructions
 
+### Handrest Buckle
+
+Each handrest buckle is constructed from two lengths of 12 gauge steel hanging
+wire.
+
+
+#### Frame
+
+Make marks 12mm, 63mm, 80mm, 121mm, and 136mm from the end of the wire. At the
+first mark, hold the wire firmly with pliers on the side closest to the end, and
+make a 90-degree bend. Repeat this for each of the following three marks, making
+all bends in the same direction. Cut the wire at the final mark.
+
+
+#### Prong
+
+Round the end of the wire, then cut it to 16 mm long.
+
+
+#### Assembly
+
+With the short leg of the frame below the handrest, fit the longer leg of the
+frame into the hole in the middle of the handrest. Pay attention to which side
+of the handrest the leg is on (you want the right and left hands to match).
+Rotate the frame until the short leg snaps into the notch in the bottom of the
+handrest. Hold the frame past the prong hole while pressing the unfinished end
+of the prong into place.
+
 
 ## License
 
