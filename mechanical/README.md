@@ -5,10 +5,10 @@
 |    Quantity | Part |
 | ----------: | :--- |
 |             | [PETG Filament](https://shop.polymaker.com/products/polymaker-petg?variant=45079221108793) |
-|             | [TPU Filament](https://shop.polymaker.com/products/polyflex-tpu90?variant=39574341320761) |
+|             | [TPU Filament](https://shop.polymaker.com/products/polyflex-tpu95?variant=39574341681209) |
 |          30 | [Heat Set Insert M3 x 5.7](https://cnckitchenus.store/products/heat-set-insert-m3-x-5-7-100-pieces) |
 |           3 | [M3 x 6mm Button Head Screw](https://boltdepot.com/Product-Details?product=7218) |
-|           6 | [M3 x 10mm Button Head Screw](https://boltdepot.com/Product-Details?product=7220) |
+|          10 | [M3 x 10mm Button Head Screw](https://boltdepot.com/Product-Details?product=7220) |
 |           1 | [M3 x 16mm Button Head Screw](https://boltdepot.com/Product-Details?product=7222) |
 |           4 | [M3 x 20mm Button Head Screw](https://boltdepot.com/Product-Details?product=7223) |
 |          12 | [M3 x 40mm Flat Head Screw](https://boltdepot.com/Product-Details?product=18839) |
