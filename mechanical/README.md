@@ -2,37 +2,37 @@
 
 ## Materials
 
-| Part | Quantity |
-| :--- | --: |
-| [PETG Filament](https://shop.polymaker.com/products/polymaker-petg?variant=45079221108793) | |
-| [TPU Filament](https://shop.polymaker.com/products/polyflex-tpu90?variant=39574341320761) | |
-| [Heat Set Insert M3 x 5.7](https://cnckitchenus.store/products/heat-set-insert-m3-x-5-7-100-pieces) | 30 |
-| [M3 x 6mm Button Head Screw](https://boltdepot.com/Product-Details?product=7218) | 3 |
-| [M3 x 10mm Button Head Screw](https://boltdepot.com/Product-Details?product=7220) | 6 |
-| [M3 x 16mm Button Head Screw](https://boltdepot.com/Product-Details?product=7222) | 1 |
-| [M3 x 20mm Button Head Screw](https://boltdepot.com/Product-Details?product=7223) | 4 |
-| [M3 x 40mm Flat Head Screw](https://boltdepot.com/Product-Details?product=18839) | 12 |
-| [M3 x 8mm Flat Head Screw](https://boltdepot.com/Product-Details?product=7213) | 2 |
-| [M6 Finishing Washer](https://boltdepot.com/Product-Details?product=2937) | 2 |
-| 16 Gauge Brass Wire | |
-| [55g Keyboard Switch Spring](https://www.amazon.com/DUROCK-Mechanical-Keyboard-Compatible-Switches/dp/B09TD7CF3H) | 31 |
-| [3mm x 1mm Neodymium Magnet](https://www.amazon.com/MEALOS-Magnets-3mmx1mm-Miniatures-Storage/dp/B08NZSL2V6) | 30 |
-| 12 Gauge Steel Hanging Wire | |
-| [~4 oz Black Leather](https://leatherboxusa.com/products/tuscany-collection-soft-vegetable-tanned-vachetta-leather-3-5-4-0) | 12" x 3" |
-| [Bivar GLP1-188-F-54 Light Pipe](https://www.digikey.com/en/products/detail/bivar-inc/GLP1-188-F-54/26730936) | 1 |
-| [Würth Elektronik 6-Pin WR-WST REDFIT IDC](https://www.digikey.com/en/products/detail/w%C3%BCrth-elektronik/490107670612/7917217) | 4 |
-| [6 Conductor Ribbon Cable](https://www.digikey.com/en/products/detail/3m/3365-06-300/2766998) | 3' |
-| [2mm ID Silicone Tubing](https://www.dubro.com/products/super-blue-slicone-tubing?variant=39705737920596) | 1" |
-| [Tyvek 1460R (preferred) or 1073D](https://www.outdoorpaper.com/products/tyvek-soft-structure-style-1460c-uv-fabric) | 20" x 20.5" |
-| [Acrylic Paint (optional) | |
-| [Liquitex Fabric Medium](https://www.dickblick.com/products/liquitex-effects-fabric-medium/) (optional) | |
-| [2-Ply Museum Board](https://www.dickblick.com/items/rising-museum-board-32-x-40-x-2-ply-natural-sheet/) | 16" x 20" |
-| [PVA Glue](https://www.dickblick.com/products/gorilla-wood-glue/) | |
-| [CA Glue](https://www.dickblick.com/products/gorilla-super-glue/) | |
-| Controller PCBA | 1 |
-| Left Keyboard PCBA | 1 |
-| Right Keyboard PCBA | 1 |
-| Bellows Sensor PCBA | 1 |
+|    Quantity | Part |
+| ----------: | :--- |
+|             | [PETG Filament](https://shop.polymaker.com/products/polymaker-petg?variant=45079221108793) |
+|             | [TPU Filament](https://shop.polymaker.com/products/polyflex-tpu90?variant=39574341320761) |
+|          30 | [Heat Set Insert M3 x 5.7](https://cnckitchenus.store/products/heat-set-insert-m3-x-5-7-100-pieces) |
+|           3 | [M3 x 6mm Button Head Screw](https://boltdepot.com/Product-Details?product=7218) |
+|           6 | [M3 x 10mm Button Head Screw](https://boltdepot.com/Product-Details?product=7220) |
+|           1 | [M3 x 16mm Button Head Screw](https://boltdepot.com/Product-Details?product=7222) |
+|           4 | [M3 x 20mm Button Head Screw](https://boltdepot.com/Product-Details?product=7223) |
+|          12 | [M3 x 40mm Flat Head Screw](https://boltdepot.com/Product-Details?product=18839) |
+|           2 | [M3 x 8mm Flat Head Screw](https://boltdepot.com/Product-Details?product=7213) |
+|           2 | [M6 Finishing Washer](https://boltdepot.com/Product-Details?product=2937) |
+|             | 16 Gauge Brass Wire |
+|          31 | [55g Keyboard Switch Spring](https://www.amazon.com/DUROCK-Mechanical-Keyboard-Compatible-Switches/dp/B09TD7CF3H) |
+|          30 | [3mm x 1mm Neodymium Magnet](https://www.amazon.com/MEALOS-Magnets-3mmx1mm-Miniatures-Storage/dp/B08NZSL2V6) |
+|             | 12 Gauge Steel Hanging Wire |
+|    12" x 3" | [4 oz Black Leather](https://leatherboxusa.com/products/tuscany-collection-soft-vegetable-tanned-vachetta-leather-3-5-4-0) |
+|           1 | [Bivar GLP1-188-F-54 Light Pipe](https://www.digikey.com/en/products/detail/bivar-inc/GLP1-188-F-54/26730936) |
+|           4 | [Würth Elektronik 6-Pin WR-WST REDFIT IDC](https://www.digikey.com/en/products/detail/w%C3%BCrth-elektronik/490107670612/7917217) |
+|          3' | [6 Conductor Ribbon Cable](https://www.digikey.com/en/products/detail/3m/3365-06-300/2766998) |
+|          1" | [2mm ID Silicone Tubing](https://www.dubro.com/products/super-blue-slicone-tubing?variant=39705737920596) |
+| 20" x 20.5" | [Tyvek 1460R (preferred) or 1073D](https://www.outdoorpaper.com/products/tyvek-soft-structure-style-1460c-uv-fabric) |
+|             | Acrylic Paint (optional) |
+|             | [Liquitex Fabric Medium](https://www.dickblick.com/products/liquitex-effects-fabric-medium/) (optional) |
+|   16" x 20" | [2-Ply Museum Board](https://www.dickblick.com/items/rising-museum-board-32-x-40-x-2-ply-natural-sheet/) |
+|             | [PVA Glue](https://www.dickblick.com/products/gorilla-wood-glue/) |
+|             | [CA Glue](https://www.dickblick.com/products/gorilla-super-glue/) |
+|           1 | Controller PCBA |
+|           1 | Left Keyboard PCBA |
+|           1 | Right Keyboard PCBA |
+|           1 | Bellows Sensor PCBA |
 
 
 ## Parameters
