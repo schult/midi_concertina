@@ -23,7 +23,7 @@
 |           4 | [Würth Elektronik 6-Pin WR-WST REDFIT IDC](https://www.digikey.com/en/products/detail/w%C3%BCrth-elektronik/490107670612/7917217) |
 |          3' | [6 Conductor Ribbon Cable](https://www.digikey.com/en/products/detail/3m/3365-06-300/2766998) |
 |          1" | [2mm ID Silicone Tubing](https://www.dubro.com/products/super-blue-slicone-tubing?variant=39705737920596) |
-| 20" x 20.5" | [Tyvek 1460R (preferred) or 1073D](https://www.outdoorpaper.com/products/tyvek-soft-structure-style-1460c-uv-fabric) |
+| 20" x 20.5" | [Tyvek 1460R](https://www.outdoorpaper.com/products/tyvek-soft-structure-style-1460c-uv-fabric) (preferred) or [1073D](https://www.etsy.com/listing/1057960283/1m-x-102m-tyvek-75-gsm-1073d-paper-style) |
 |             | Acrylic Paint (optional) |
 |             | [Liquitex Fabric Medium](https://www.dickblick.com/products/liquitex-effects-fabric-medium/) (optional) |
 |   16" x 20" | [2-Ply Museum Board](https://www.dickblick.com/items/rising-museum-board-32-x-40-x-2-ply-natural-sheet/) |
