@@ -35,26 +35,50 @@
 |           1 | Bellows Sensor PCBA |
 
 
-## Parameters
+## 3D Printed Parts
 
-- Changes for printing
-- Customization?
+### Parameters
 
+Many key dimensions are stored in spreadsheets in Parameters.FCStd to be
+referenced by the other FreeCAD files. A few of these may need to be adjusted to
+accomodate your 3d printing setup:
 
-## 3D Printing
+- `CommonParams.clearance_tight` sets the clearance between press-fit 3d-printed
+  parts. Test with ControllerPanel and ControllerPanelRetainer, since these
+  are smaller parts.
+- `HardwareParams.m3_insert_hole_diameter` and
+  `HardwareParams.m3_insert_horizontal_hole_diameter` adjust the hole sizes
+  for the threaded inserts.
+- `ButtonParams.wire_press_fit_diameter` sets the inner diameter for button
+  wires to press-fit into. Wires should punch through these layers without
+  excessive effort and remain firmly in place once fully seated.
+- `ButtonParams.wire_clearance_diameter` sets the size of the ActionBoard holes
+  that the wires pass through. These should be as closely fitted as possible
+  while still allowing the wires to slide freely.
+- `ButtonParams.magnet_diameter` should be adjusted so that the magnets are easy
+  to insert into MagnetPost mid-print but don't jump out as the nozzle passes
+  over them.
+
+When changing these or other spreadsheet values, it is recommended to open
+Parameters.FSCStd first, then open all other FreeCAD files, edit the parameters,
+and finally recompute the Body in each file before saving it. This ensures that
+all dependent parts are correctly updated.
+
 
 ### STL Export
 
 Run `freecadcmd export_all.py` in this directory. The generated STL files will
 be placed in an `exports` subdirectory.
 
-### Base Settings
+
+### Base Slicer Settings
 
 - PETG
 - 0.4 mm nozzle
 - 0.2 mm layer height
 - 15% Gyroid infill
 - 2 wall loops
+
 
 ### Deviations
 
@@ -81,6 +105,7 @@ Parts that incorporate threaded inserts should use 4 wall loops:
 - Controller panel
 - Handrest
 - Valve blocks
+
 
 ## Assembly Instructions
 
