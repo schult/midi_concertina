@@ -133,6 +133,7 @@ accomodate your 3d printing setup:
   over them.
 - TODO: Handrest buckle prong hole diameter?
 - TODO: Button jig cutter allowance?
+- TODO: ControllerPanel light pipe press-fit
 
 When changing these or other spreadsheet values, it is recommended to open
 Parameters.FSCStd first, then open all other FreeCAD files, edit the parameters,
