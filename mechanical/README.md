@@ -14,18 +14,18 @@
 |        12 | [M3 x 40mm Flat Head Screw](https://boltdepot.com/Product-Details?product=18839) |
 |         2 | [M3 x 8mm Flat Head Screw](https://boltdepot.com/Product-Details?product=7213) |
 |         2 | [#6 Finishing Washer](https://boltdepot.com/Product-Details?product=2937) |
-|           | 16 Gauge Brass Wire |
+|        3' | [16 Gauge Brass Wire](https://www.acehardware.com/departments/hardware/chain-and-rope/wire/52796) |
 |        31 | [55g Keyboard Switch Spring](https://www.amazon.com/DUROCK-Mechanical-Keyboard-Compatible-Switches/dp/B09TD7CF3H) |
 |        30 | [3mm x 1mm Neodymium Magnet](https://www.amazon.com/MEALOS-Magnets-3mmx1mm-Miniatures-Storage/dp/B08NZSL2V6) |
-|           | 12 Gauge Steel Hanging Wire |
+|       18" | [12 Gauge Steel Hanging Wire](https://www.lowes.com/pd/RELIABILT-1200-in-Hanger-Wire/1002920292) |
 |  12" x 3" | [4 oz Black Leather](https://leatherboxusa.com/products/tuscany-collection-soft-vegetable-tanned-vachetta-leather-3-5-4-0) |
 |         1 | [Bivar GLP1-188-F-54 Light Pipe](https://www.digikey.com/en/products/detail/bivar-inc/GLP1-188-F-54/26730936) |
 |         4 | [Würth Elektronik 6-Pin WR-WST REDFIT IDC](https://www.digikey.com/en/products/detail/w%C3%BCrth-elektronik/490107670612/7917217) |
 |        3' | [6 Conductor Ribbon Cable](https://www.digikey.com/en/products/detail/3m/3365-06-300/2766998) |
 |        1" | [2mm ID Silicone Tubing](https://www.dubro.com/products/super-blue-slicone-tubing?variant=39705737920596) |
-| 22" x 20" | [Tyvek 1460R](https://www.outdoorpaper.com/products/tyvek-soft-structure-style-1460c-uv-fabric) (preferred) or [1073D](https://www.etsy.com/listing/1057960283/1m-x-102m-tyvek-75-gsm-1073d-paper-style) |
-|           | Acrylic Paint (optional) |
-|           | [Liquitex Fabric Medium](https://www.dickblick.com/products/liquitex-effects-fabric-medium/) (optional) |
+| 24" x 20" | [Tyvek 1460R](https://www.outdoorpaper.com/products/tyvek-soft-structure-style-1460c-uv-fabric) (preferred) or [1073D](https://www.etsy.com/listing/1057960283/1m-x-102m-tyvek-75-gsm-1073d-paper-style) |
+|   4 fl oz | [Acrylic Paint](https://www.dickblick.com/items/liquitex-basics-mars-black-4-oz-tube/) (optional) |
+|   4 fl oz | [Liquitex Fabric Medium](https://www.dickblick.com/products/liquitex-effects-fabric-medium/) (optional) |
 | 16" x 20" | [2-Ply Museum Board](https://www.dickblick.com/items/rising-museum-board-32-x-40-x-2-ply-natural-sheet/) |
 |           | [PVA Glue](https://www.dickblick.com/products/gorilla-wood-glue/) |
 |           | [CA Glue](https://www.dickblick.com/products/gorilla-super-glue/) |
@@ -232,7 +232,27 @@ buckle prong should face the closer edge of the faceplate.
 ### Buttons
 ### Action Boards
 ### Controller Panel
+
 ### Bellows
+
+TODO: Cut tyvek
+TODO: Mark tyvek
+
+If you want your bellows to be any color other that white, apply acrylic paint
+to the show side. I prefer two coats of [Liquitex Basics](https://www.dickblick.com/items/liquitex-basics-mars-black-4-oz-tube/)
+mixed 1:1 with [Liquitex Fabric Medium](https://www.dickblick.com/products/liquitex-effects-fabric-medium/).
+
+Leave 10-12mm of the short reference edge unpainted to ensure good glue
+adhesion. This will be covered by the overlapping edge when the bellows are
+folded into a tube.
+
+TODO: Cut cards
+TODO: Glue cards
+TODO: Glue tube
+TODO: Fold
+TODO: Glue bellows frames
+
+
 ### Electronics
 ### Close the Box
 
