@@ -176,6 +176,9 @@ or less.
 Faceplates and the controller panel should be printed with "Only one wall on
 first layer" enabled.
 
+I prefer the way the controller panel button looks with the top surface pattern
+set to "Concentric".
+
 Parts that incorporate threaded inserts should use 4 wall loops:
 
 - Action boards
