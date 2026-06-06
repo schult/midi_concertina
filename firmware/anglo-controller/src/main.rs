@@ -20,13 +20,17 @@ use embassy_stm32::{bind_interrupts, dma, flash, gpio, i2c, peripherals, rcc, ti
 use embassy_sync::blocking_mutex::raw::{NoopRawMutex, ThreadModeRawMutex};
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::{Mutex, MutexGuard};
+use embassy_sync::signal::Signal;
 use embassy_sync::watch::{self, Watch};
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
+use i2c_proto::ControllerIo;
 use midi::util::FileDumpReceiver;
 use static_cell::StaticCell;
 use version::FirmwareVersion;
+
+use crate::bellows::BellowsState;
 
 mod bellows;
 mod file_dump_io;
@@ -47,7 +51,7 @@ struct I2cWrapper<'a> {
     i2c: &'a I2cMutex,
 }
 
-impl<'a> i2c_proto::ControllerIo for I2cWrapper<'a> {
+impl<'a> ControllerIo for I2cWrapper<'a> {
     type Error = i2c::Error;
 
     async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error> {
@@ -82,6 +86,8 @@ static MIDI_OUT_CHANNEL: MessageChannel = MessageChannel::new();
 static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
 
 static UPDATE_COMPLETE: Watch<ThreadModeRawMutex, bool, 1> = Watch::new_with(false);
+
+static BELLOWS_STATE: Signal<ThreadModeRawMutex, BellowsState> = Signal::new();
 
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
@@ -142,20 +148,19 @@ async fn main(spawner: embassy_executor::Spawner) {
     let tx_dma = p.DMA1_CH2;
     let rx_dma = p.DMA1_CH3;
     static I2C_MASTER: StaticCell<I2cMutex> = StaticCell::new();
-    let i2c_master = I2C_MASTER.init(Mutex::new(i2c::I2c::new(
+    let i2c_master: &'static I2cMutex = I2C_MASTER.init(Mutex::new(i2c::I2c::new(
         p.I2C1, scl_pin, sda_pin, tx_dma, rx_dma, Irqs, i2c_config,
     )));
+
+    spawner.spawn(bellows_task(&i2c_master).unwrap());
 
     let i2c_wrapper = I2cWrapper { i2c: i2c_master };
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
-    const BELLOWS_ADDR: u8 = 0x28;
     const LEFT_ADDR: u8 = 0x22;
     const RIGHT_ADDR: u8 = 0x23;
     let mut left_buttons: u16 = 0;
     let mut right_buttons: u16 = 0;
-
-    let mut bellows_state = bellows::BellowsState::default();
 
     const MIDI_CHANNEL: u8 = 0;
 
@@ -208,6 +213,8 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     UPDATE_COMPLETE.sender().send(true);
 
+    let mut bellows_state = bellows::BellowsState::default();
+
     loop {
         let left_notes = match bellows_state.direction {
             bellows::BellowsDirection::Push => &keymap::LEFT_PUSH[..],
@@ -255,8 +262,8 @@ async fn main(spawner: embassy_executor::Spawner) {
             right_buttons = new_state;
         }
 
-        if let Ok(new_state) = i2c_controller.get_bellows(BELLOWS_ADDR).await {
-            let new_bellows_state = bellows::BellowsState::new(new_state);
+        if BELLOWS_STATE.signaled() {
+            let new_bellows_state = BELLOWS_STATE.wait().await;
             if new_bellows_state.direction != bellows_state.direction {
                 for (i, note) in left_notes.iter().enumerate() {
                     if (left_buttons >> i) & 1 == 1 {
@@ -352,6 +359,52 @@ async fn control_panel_task(
             gpio::Level::Low => led.disable(),
         }
         Timer::after_millis(10).await;
+    }
+}
+
+#[embassy_executor::task]
+async fn bellows_task(i2c_master: &'static I2cMutex) {
+    let mut i2c = I2cWrapper { i2c: i2c_master };
+
+    const BELLOWS_ADDR: u8 = 0x28;
+    const CONTROL_REG: u8 = 0x30;
+    const DATA_REG: u8 = 0x06;
+
+    loop {
+        while i2c.write(BELLOWS_ADDR, &[CONTROL_REG, 0xA0]).await.is_err() {
+            Timer::after_micros(5).await;
+        }
+        loop {
+            let mut buffer = [0; 1];
+            while i2c
+                .write_read(BELLOWS_ADDR, &[CONTROL_REG], &mut buffer)
+                .await
+                .is_err()
+            {
+                Timer::after_micros(5).await;
+            }
+            if buffer[0] == 0x02 {
+                break;
+            }
+            Timer::after_micros(100).await;
+        }
+
+        let mut buffer = [0; 3];
+        while i2c
+            .write_read(BELLOWS_ADDR, &[DATA_REG], &mut buffer)
+            .await
+            .is_err()
+        {
+            Timer::after_micros(5).await;
+        }
+
+        let mut reading = buffer[2] as i32;
+        reading |= (buffer[1] as i32) << 8;
+        reading |= (buffer[0] as i32) << 16;
+
+        let pascals = 1.02f32 * ((reading as f32) / 8388.608f32);
+        // TODO: Communicate through task parameter instead
+        BELLOWS_STATE.signal(BellowsState::new(pascals));
     }
 }
 

@@ -18,15 +18,15 @@ impl BellowsState {
         }
     }
 
-    pub fn new(ratio: f32) -> Self {
-        const DEAD_ZONE: f32 = 0.01;
+    pub fn new(pascals: f32) -> Self {
+        const DEAD_ZONE: f32 = 70.0f32;
 
         // TODO: Apply mapping function to ratio.
         // let magnitude = (127.0 * ratio.abs()) as u8;
 
-        let direction = if ratio > DEAD_ZONE {
+        let direction = if pascals > DEAD_ZONE {
             BellowsDirection::Push
-        } else if ratio < -DEAD_ZONE {
+        } else if pascals < -DEAD_ZONE {
             BellowsDirection::Pull
         } else {
             BellowsDirection::None
