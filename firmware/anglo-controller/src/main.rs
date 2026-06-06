@@ -11,19 +11,21 @@ use panic_probe as _;
 use panic_reset as _;
 
 use circular_buffer::CircularBuffer;
+use core::ops::DerefMut;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
 use embassy_stm32::{bind_interrupts, dma, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
-use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
+use embassy_sync::blocking_mutex::raw::{NoopRawMutex, ThreadModeRawMutex};
 use embassy_sync::channel::{Channel, Receiver, Sender};
-use embassy_sync::mutex::Mutex;
+use embassy_sync::mutex::{Mutex, MutexGuard};
 use embassy_sync::watch::{self, Watch};
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
 use midi::util::FileDumpReceiver;
+use static_cell::StaticCell;
 use version::FirmwareVersion;
 
 mod bellows;
@@ -37,19 +39,27 @@ bind_interrupts!(struct Irqs {
     DMA1_CHANNEL2_3 => dma::InterruptHandler<peripherals::DMA1_CH2>, dma::InterruptHandler<peripherals::DMA1_CH3>;
 });
 
+pub type I2cMutex = Mutex<NoopRawMutex, i2c::I2c<'static, embassy_stm32::mode::Async, i2c::Master>>;
+pub type I2cMutexGuard<'a> =
+    MutexGuard<'a, NoopRawMutex, i2c::I2c<'static, embassy_stm32::mode::Async, i2c::Master>>;
+
 struct I2cWrapper<'a> {
-    i2c: i2c::I2c<'a, embassy_stm32::mode::Async, i2c::mode::Master>,
+    i2c: &'a I2cMutex,
 }
 
 impl<'a> i2c_proto::ControllerIo for I2cWrapper<'a> {
     type Error = i2c::Error;
 
     async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error> {
-        self.i2c.read(address, read).await
+        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
+        let i2c = guard.deref_mut();
+        i2c.read(address, read).await
     }
 
     async fn write(&mut self, address: u8, write: &[u8]) -> Result<(), Self::Error> {
-        self.i2c.write(address, write).await
+        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
+        let i2c = guard.deref_mut();
+        i2c.write(address, write).await
     }
 
     async fn write_read(
@@ -58,7 +68,9 @@ impl<'a> i2c_proto::ControllerIo for I2cWrapper<'a> {
         write: &[u8],
         read: &mut [u8],
     ) -> Result<(), Self::Error> {
-        self.i2c.write_read(address, write, read).await
+        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
+        let i2c = guard.deref_mut();
+        i2c.write_read(address, write, read).await
     }
 }
 
@@ -120,6 +132,8 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap(),
     );
 
+    let _i2c_power = gpio::Output::new(p.PA3, gpio::Level::Low, gpio::Speed::Low);
+
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = khz(100);
 
@@ -127,7 +141,11 @@ async fn main(spawner: embassy_executor::Spawner) {
     let sda_pin = p.PB9;
     let tx_dma = p.DMA1_CH2;
     let rx_dma = p.DMA1_CH3;
-    let i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, tx_dma, rx_dma, Irqs, i2c_config);
+    static I2C_MASTER: StaticCell<I2cMutex> = StaticCell::new();
+    let i2c_master = I2C_MASTER.init(Mutex::new(i2c::I2c::new(
+        p.I2C1, scl_pin, sda_pin, tx_dma, rx_dma, Irqs, i2c_config,
+    )));
+
     let i2c_wrapper = I2cWrapper { i2c: i2c_master };
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
@@ -145,7 +163,8 @@ async fn main(spawner: embassy_executor::Spawner) {
     // TODO: Check if this is still necessary on 192kb part
     // #[cfg(not(feature = "defmt"))]
     {
-        let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
+        // TODO: Bring keyboard_firmware back
+        // let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
         let mut transfer_sessions = [
             i2c_transfer::Session::new(LEFT_ADDR),
             i2c_transfer::Session::new(RIGHT_ADDR),
