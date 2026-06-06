@@ -163,7 +163,7 @@ be placed in the `exports` subdirectory.
 The cable guide should be printed with TPU. I also recommend setting the top and
 bottom surface patterns to "Concentric".
 
-Button flanges should be printed with TPU.
+Bellows gaskets and button flanges should be printed with TPU.
 
 Button caps should be printed with the smallest layer height possible. 0.08 mm
 is good. This helps to reduce noise when pressing buttons and produces a
