@@ -264,6 +264,7 @@ async fn main(spawner: embassy_executor::Spawner) {
 
         if BELLOWS_STATE.signaled() {
             let new_bellows_state = BELLOWS_STATE.wait().await;
+
             if new_bellows_state.direction != bellows_state.direction {
                 for (i, note) in left_notes.iter().enumerate() {
                     if (left_buttons >> i) & 1 == 1 {
@@ -284,9 +285,16 @@ async fn main(spawner: embassy_executor::Spawner) {
             }
 
             bellows_state = new_bellows_state;
+
+            let volume_msb: u8 = ((bellows_state.magnitude >> 7) & 0x7F).try_into().unwrap();
+            let volume_lsb: u8 = (bellows_state.magnitude & 0x7F).try_into().unwrap();
+            let msb_message = midi::Message::control_change(MIDI_CHANNEL, midi::cc::CHANNEL_VOLUME_MSB, volume_msb);
+            let lsb_message = midi::Message::control_change(MIDI_CHANNEL, midi::cc::CHANNEL_VOLUME_LSB, volume_lsb);
+            MIDI_OUT_CHANNEL.send(msb_message).await;
+            MIDI_OUT_CHANNEL.send(lsb_message).await;
         }
 
-        Timer::after_micros(1).await;
+        Timer::after_micros(100).await;
     }
 }
 
@@ -366,12 +374,12 @@ async fn control_panel_task(
 async fn bellows_task(i2c_master: &'static I2cMutex) {
     let mut i2c = I2cWrapper { i2c: i2c_master };
 
-    const BELLOWS_ADDR: u8 = 0x28;
+    const BELLOWS_ADDR: u8 = 0x7F;
     const CONTROL_REG: u8 = 0x30;
     const DATA_REG: u8 = 0x06;
 
     loop {
-        while i2c.write(BELLOWS_ADDR, &[CONTROL_REG, 0xA0]).await.is_err() {
+        while i2c.write(BELLOWS_ADDR, &[CONTROL_REG, 0x0A]).await.is_err() {
             Timer::after_micros(5).await;
         }
         loop {
@@ -401,8 +409,11 @@ async fn bellows_task(i2c_master: &'static I2cMutex) {
         let mut reading = buffer[2] as i32;
         reading |= (buffer[1] as i32) << 8;
         reading |= (buffer[0] as i32) << 16;
+        if reading & 0x00800000 != 0 {
+            reading -= 16777216;
+        }
 
-        let pascals = 1.02f32 * ((reading as f32) / 8388.608f32);
+        let pascals = 1.02f32 * ((reading as f32) / 838.8608f32);
         // TODO: Communicate through task parameter instead
         BELLOWS_STATE.signal(BellowsState::new(pascals));
     }
