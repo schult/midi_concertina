@@ -18,6 +18,7 @@ test:
 lint:
     cd bin2syx && cargo clippy --all-targets --all-features -- -D warnings
     cd anglo-bootloader && cargo clippy --all-features -- -D warnings
+    cd anglo-controller-bootloader && cargo clippy --all-features -- -D warnings
     cd anglo-keyboard && cargo clippy --all-features -- -D warnings
     cd anglo-controller && cargo clippy --all-features -- -D warnings
     cd lib/i2c-proto && cargo clippy --all-targets --all-features -- -D warnings
@@ -28,6 +29,7 @@ lint:
 format:
     cd bin2syx && cargo fmt
     cd anglo-bootloader && cargo fmt
+    cd anglo-controller-bootloader && cargo fmt
     cd anglo-keyboard && cargo fmt
     cd anglo-controller && cargo fmt
     cd lib/i2c-proto && cargo fmt
@@ -38,6 +40,7 @@ format:
 clean:
     cd bin2syx && cargo clean
     cd anglo-bootloader && cargo clean
+    cd anglo-controller-bootloader && cargo clean
     cd anglo-keyboard && cargo clean
     cd anglo-controller && cargo clean
     cd lib/i2c-proto && cargo clean
@@ -49,6 +52,7 @@ clean:
 update:
     cd bin2syx && cargo update
     cd anglo-bootloader && cargo update
+    cd anglo-controller-bootloader && cargo update
     cd anglo-keyboard && cargo update
     cd anglo-controller && cargo update
     cd lib/i2c-proto && cargo update
@@ -63,6 +67,7 @@ bin2syx:
 [private]
 bootloader:
     cd anglo-bootloader && cargo build -r
+    cd anglo-controller-bootloader && cargo build -r
 
 [private]
 keyboard:

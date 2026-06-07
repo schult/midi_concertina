@@ -1,0 +1,19 @@
+[package]
+name = "anglo-controller-bootloader"
+license = "GPL-3.0-only"
+edition = "2024"
+
+[dependencies]
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+cortex-m-rt = "0.7.5"
+embassy-boot = { version = "0.6.1", features = ["flash-erase-zero"] }
+embassy-boot-stm32 = "0.6.0"
+embassy-stm32 = { version = "0.4.0", features = ["stm32l072cz"] }
+embassy-sync = "0.7.2"
+embedded-storage = "0.3.1"
+panic-reset = "0.1.1"
+
+[profile.release]
+debug = 2
+opt-level = "z"
+lto = true
