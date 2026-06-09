@@ -20,7 +20,6 @@ use embassy_stm32::{flash, gpio, i2c, peripherals, rcc, time::khz, usb};
 use embassy_sync::blocking_mutex::raw::{NoopRawMutex, ThreadModeRawMutex};
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::{Mutex, MutexGuard};
-use embassy_sync::signal::Signal;
 use embassy_sync::watch::{self, Watch};
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
@@ -83,7 +82,7 @@ static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
 
 static UPDATE_COMPLETE: Watch<ThreadModeRawMutex, bool, 1> = Watch::new_with(false);
 
-static BELLOWS_STATE: Signal<ThreadModeRawMutex, BellowsState> = Signal::new();
+static BELLOWS_STATE: Watch<ThreadModeRawMutex, BellowsState, 1> = Watch::new_with(BellowsState::default());
 
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
@@ -145,7 +144,10 @@ async fn main(spawner: embassy_executor::Spawner) {
         r.i2c.i2c, r.i2c.scl, r.i2c.sda, r.i2c.tx_dma, r.i2c.rx_dma, Irqs, i2c_config,
     )));
 
-    spawner.spawn(bellows_task(&i2c_master).unwrap());
+    let bellows_sender = BELLOWS_STATE.dyn_sender();
+    let mut bellows_receiver = BELLOWS_STATE.dyn_receiver().unwrap();
+
+    spawner.spawn(bellows_task(&i2c_master, bellows_sender).unwrap());
 
     let i2c_wrapper = I2cWrapper { i2c: i2c_master };
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
@@ -255,9 +257,8 @@ async fn main(spawner: embassy_executor::Spawner) {
             right_buttons = new_state;
         }
 
-        if BELLOWS_STATE.signaled() {
-            let new_bellows_state = BELLOWS_STATE.wait().await;
-
+        let new_bellows_state = bellows_receiver.get().await;
+        if new_bellows_state != bellows_state {
             if new_bellows_state.direction != bellows_state.direction {
                 for (i, note) in left_notes.iter().enumerate() {
                     if (left_buttons >> i) & 1 == 1 {
@@ -362,9 +363,8 @@ async fn control_panel_task(
         Timer::after_millis(10).await;
     }
 }
-
 #[embassy_executor::task]
-async fn bellows_task(i2c_master: &'static I2cMutex) {
+async fn bellows_task(i2c_master: &'static I2cMutex, sender: watch::DynSender<'static, BellowsState>) {
     let mut i2c = I2cWrapper { i2c: i2c_master };
 
     const BELLOWS_ADDR: u8 = 0x7F;
@@ -407,8 +407,7 @@ async fn bellows_task(i2c_master: &'static I2cMutex) {
         }
 
         let pascals = 1.02f32 * ((reading as f32) / 838.8608f32);
-        // TODO: Communicate through task parameter instead
-        BELLOWS_STATE.signal(BellowsState::new(pascals));
+        sender.send(BellowsState::new(pascals));
     }
 }
 

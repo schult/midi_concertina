@@ -1,24 +1,25 @@
-#[derive(PartialEq)]
+#[derive(Clone, PartialEq)]
 pub enum BellowsDirection {
     Push,
     Pull,
     None,
 }
 
+#[derive(Clone, PartialEq)]
 pub struct BellowsState {
     pub direction: BellowsDirection,
     pub magnitude: u16,
 }
 
 impl BellowsState {
-    pub fn default() -> Self {
+    pub const fn default() -> Self {
         Self {
             direction: BellowsDirection::None,
             magnitude: 0,
         }
     }
 
-    pub fn new(pascals: f32) -> Self {
+    pub const fn new(pascals: f32) -> Self {
         const MIN_PA: f32 = 20.0;
         const MAX_PA: f32 = 1000.0;
 
