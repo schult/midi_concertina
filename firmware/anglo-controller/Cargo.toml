@@ -9,6 +9,7 @@ defmt-rtt = { version = "1.0.0", optional = true }
 panic-probe = { version = "1.0.0", optional = true }
 panic-reset = "0.1.1"
 
+assign-resources = "0.5.0"
 circular-buffer = { version = "1.2.0", default-features = false, features = ["embedded-io"] }
 cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
 cortex-m-rt = "0.7.5"

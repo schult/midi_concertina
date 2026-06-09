@@ -16,7 +16,7 @@ use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
-use embassy_stm32::{bind_interrupts, dma, flash, gpio, i2c, peripherals, rcc, time::khz, usb};
+use embassy_stm32::{flash, gpio, i2c, peripherals, rcc, time::khz, usb};
 use embassy_sync::blocking_mutex::raw::{NoopRawMutex, ThreadModeRawMutex};
 use embassy_sync::channel::{Channel, Receiver, Sender};
 use embassy_sync::mutex::{Mutex, MutexGuard};
@@ -31,17 +31,13 @@ use static_cell::StaticCell;
 use version::FirmwareVersion;
 
 use crate::bellows::BellowsState;
+use crate::resources::*;
 
 mod bellows;
 mod file_dump_io;
 mod i2c_transfer;
 mod keymap;
-
-bind_interrupts!(struct Irqs {
-    USB => usb::InterruptHandler<peripherals::USB>;
-    I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
-    DMA1_CHANNEL2_3 => dma::InterruptHandler<peripherals::DMA1_CH2>, dma::InterruptHandler<peripherals::DMA1_CH3>;
-});
+mod resources;
 
 pub type I2cMutex = Mutex<NoopRawMutex, i2c::I2c<'static, embassy_stm32::mode::Async, i2c::Master>>;
 pub type I2cMutexGuard<'a> =
@@ -99,6 +95,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     });
     config.rcc.mux.clk48sel = rcc::mux::Clk48sel::HSI48;
     let p = embassy_stm32::init(config);
+    let r = split_resources!(p);
 
     let controller_version = FirmwareVersion {
         major: env!("FIRMWARE_MAJOR_VERSION").parse().unwrap(),
@@ -109,14 +106,14 @@ async fn main(spawner: embassy_executor::Spawner) {
     #[cfg(feature = "defmt")]
     defmt::info!("Controller version: {}", controller_version);
 
-    let flash = Flash::new_blocking(p.FLASH);
+    let flash = Flash::new_blocking(r.dfu.flash);
     spawner.spawn(
         firmware_task(flash, MIDI_IN_CHANNEL.receiver(), MIDI_OUT_CHANNEL.sender()).unwrap(),
     );
 
-    let led_pin = PwmPin::new(p.PB4, gpio::OutputType::PushPull);
+    let led_pin = PwmPin::new(r.led.pin, gpio::OutputType::PushPull);
     let led_pwm = SimplePwm::new(
-        p.TIM3,
+        r.led.timer,
         Some(led_pin),
         None,
         None,
@@ -124,11 +121,11 @@ async fn main(spawner: embassy_executor::Spawner) {
         khz(30),
         Default::default(),
     );
-    let button = gpio::Input::new(p.PB5, gpio::Pull::Up);
+    let button = gpio::Input::new(r.button.pin, gpio::Pull::Up);
     spawner
         .spawn(control_panel_task(UPDATE_COMPLETE.receiver().unwrap(), led_pwm, button).unwrap());
 
-    let usb_driver = usb::Driver::new(p.USB, Irqs, p.PA12, p.PA11);
+    let usb_driver = usb::Driver::new(r.usb.usb, Irqs, r.usb.dp, r.usb.dm);
     spawner.spawn(
         usb_task(
             usb_driver,
@@ -138,18 +135,14 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap(),
     );
 
-    let _i2c_power = gpio::Output::new(p.PA3, gpio::Level::Low, gpio::Speed::Low);
+    let _i2c_power = gpio::Output::new(r.i2c.power, gpio::Level::Low, gpio::Speed::Low);
 
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = khz(100);
 
-    let scl_pin = p.PB8;
-    let sda_pin = p.PB9;
-    let tx_dma = p.DMA1_CH2;
-    let rx_dma = p.DMA1_CH3;
     static I2C_MASTER: StaticCell<I2cMutex> = StaticCell::new();
     let i2c_master: &'static I2cMutex = I2C_MASTER.init(Mutex::new(i2c::I2c::new(
-        p.I2C1, scl_pin, sda_pin, tx_dma, rx_dma, Irqs, i2c_config,
+        r.i2c.i2c, r.i2c.scl, r.i2c.sda, r.i2c.tx_dma, r.i2c.rx_dma, Irqs, i2c_config,
     )));
 
     spawner.spawn(bellows_task(&i2c_master).unwrap());
