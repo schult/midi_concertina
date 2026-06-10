@@ -11,22 +11,20 @@ use panic_probe as _;
 use panic_reset as _;
 
 use circular_buffer::CircularBuffer;
-use core::ops::DerefMut;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
 use embassy_stm32::flash::Flash;
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
-use embassy_stm32::{flash, gpio, i2c, peripherals, rcc, time::khz, usb};
-use embassy_sync::blocking_mutex::raw::{NoopRawMutex, ThreadModeRawMutex};
+use embassy_stm32::{flash, gpio, peripherals, rcc, time::khz, usb};
+use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::{Channel, Receiver, Sender};
-use embassy_sync::mutex::{Mutex, MutexGuard};
+use embassy_sync::mutex::Mutex;
 use embassy_sync::watch::{self, Watch};
 use embassy_time::Timer;
 use embassy_usb::class::midi::MidiClass;
 use embassy_usb::driver::EndpointError;
 use i2c_proto::ControllerIo;
 use midi::util::FileDumpReceiver;
-use static_cell::StaticCell;
 use version::FirmwareVersion;
 
 use crate::bellows::BellowsState;
@@ -34,44 +32,10 @@ use crate::resources::*;
 
 mod bellows;
 mod file_dump_io;
+mod i2c;
 mod i2c_transfer;
 mod keymap;
 mod resources;
-
-pub type I2cMutex = Mutex<NoopRawMutex, i2c::I2c<'static, embassy_stm32::mode::Async, i2c::Master>>;
-pub type I2cMutexGuard<'a> =
-    MutexGuard<'a, NoopRawMutex, i2c::I2c<'static, embassy_stm32::mode::Async, i2c::Master>>;
-
-struct I2cWrapper<'a> {
-    i2c: &'a I2cMutex,
-}
-
-impl<'a> ControllerIo for I2cWrapper<'a> {
-    type Error = i2c::Error;
-
-    async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error> {
-        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
-        let i2c = guard.deref_mut();
-        i2c.read(address, read).await
-    }
-
-    async fn write(&mut self, address: u8, write: &[u8]) -> Result<(), Self::Error> {
-        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
-        let i2c = guard.deref_mut();
-        i2c.write(address, write).await
-    }
-
-    async fn write_read(
-        &mut self,
-        address: u8,
-        write: &[u8],
-        read: &mut [u8],
-    ) -> Result<(), Self::Error> {
-        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
-        let i2c = guard.deref_mut();
-        i2c.write_read(address, write, read).await
-    }
-}
 
 type MessageChannel = Channel<ThreadModeRawMutex, midi::Message, 8>;
 type MessageSender = Sender<'static, ThreadModeRawMutex, midi::Message, 8>;
@@ -134,22 +98,14 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap(),
     );
 
-    let _i2c_power = gpio::Output::new(r.i2c.power, gpio::Level::Low, gpio::Speed::Low);
-
-    let mut i2c_config = i2c::Config::default();
-    i2c_config.frequency = khz(100);
-
-    static I2C_MASTER: StaticCell<I2cMutex> = StaticCell::new();
-    let i2c_master: &'static I2cMutex = I2C_MASTER.init(Mutex::new(i2c::I2c::new(
-        r.i2c.i2c, r.i2c.scl, r.i2c.sda, r.i2c.tx_dma, r.i2c.rx_dma, Irqs, i2c_config,
-    )));
+    let i2c_mutex = i2c::init(r.i2c);
 
     let bellows_sender = BELLOWS_STATE.dyn_sender();
     let mut bellows_receiver = BELLOWS_STATE.dyn_receiver().unwrap();
 
-    spawner.spawn(bellows_task(&i2c_master, bellows_sender).unwrap());
+    spawner.spawn(bellows_task(i2c_mutex, bellows_sender).unwrap());
 
-    let i2c_wrapper = I2cWrapper { i2c: i2c_master };
+    let i2c_wrapper = i2c::I2cWrapper::new(i2c_mutex);
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
     const LEFT_ADDR: u8 = 0x22;
@@ -363,9 +319,10 @@ async fn control_panel_task(
         Timer::after_millis(10).await;
     }
 }
+
 #[embassy_executor::task]
-async fn bellows_task(i2c_master: &'static I2cMutex, sender: watch::DynSender<'static, BellowsState>) {
-    let mut i2c = I2cWrapper { i2c: i2c_master };
+async fn bellows_task(i2c_mutex: &'static i2c::I2cMutex, sender: watch::DynSender<'static, BellowsState>) {
+    let mut i2c = i2c::I2cWrapper::new(i2c_mutex);
 
     const BELLOWS_ADDR: u8 = 0x7F;
     const CONTROL_REG: u8 = 0x30;
