@@ -10,17 +10,17 @@ use panic_probe as _;
 #[cfg(not(feature = "defmt"))]
 use panic_reset as _;
 
-use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
-use embassy_stm32::{gpio, peripherals, rcc, time::khz};
+use embassy_stm32::rcc;
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Channel;
-use embassy_sync::watch::{self, Watch};
+use embassy_sync::watch::Watch;
 use embassy_time::Timer;
 use version::FirmwareVersion;
 
 use crate::resources::*;
 
 mod bellows;
+mod control_panel;
 mod dfu;
 mod i2c;
 mod i2c_transfer;
@@ -68,19 +68,9 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap(),
     );
 
-    let led_pin = PwmPin::new(r.led.pin, gpio::OutputType::PushPull);
-    let led_pwm = SimplePwm::new(
-        r.led.timer,
-        Some(led_pin),
-        None,
-        None,
-        None,
-        khz(30),
-        Default::default(),
+    spawner.spawn(
+        control_panel::task(r.control_panel, UPDATE_COMPLETE.dyn_receiver().unwrap()).unwrap(),
     );
-    let button = gpio::Input::new(r.button.pin, gpio::Pull::Up);
-    spawner
-        .spawn(control_panel_task(UPDATE_COMPLETE.receiver().unwrap(), led_pwm, button).unwrap());
 
     spawner.spawn(
         usb::task(
@@ -243,48 +233,5 @@ async fn main(spawner: embassy_executor::Spawner) {
         }
 
         Timer::after_micros(100).await;
-    }
-}
-
-#[embassy_executor::task]
-async fn control_panel_task(
-    mut update_complete: watch::Receiver<'static, ThreadModeRawMutex, bool, 1>,
-    mut led_pwm: SimplePwm<'static, peripherals::TIM3>,
-    button: gpio::Input<'static>,
-) {
-    let mut led = led_pwm.ch1();
-    let led_max = led.max_duty_cycle() / 4;
-    let led_step = led_max / 64;
-    let mut led_duty = 0;
-    let mut inc = true;
-    led.enable();
-
-    // TODO: Hold button to enter wait for firmware update
-    // TODO: Indicate system state with LED
-
-    while !update_complete.get().await {
-        if inc && (led_max - led_duty < led_step) {
-            led_duty = led_max;
-            inc = !inc;
-        } else if !inc && (led_duty < led_step) {
-            led_duty = 0;
-            inc = !inc;
-        } else if inc {
-            led_duty = led_duty + led_step
-        } else {
-            led_duty = led_duty - led_step
-        }
-        led.set_duty_cycle(led_duty);
-
-        Timer::after_millis(10).await;
-    }
-
-    led.set_duty_cycle(led_max);
-    loop {
-        match button.get_level() {
-            gpio::Level::High => led.enable(),
-            gpio::Level::Low => led.disable(),
-        }
-        Timer::after_millis(10).await;
     }
 }

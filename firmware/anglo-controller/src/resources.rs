@@ -11,12 +11,10 @@ assign_resources! {
     dfu: DfuResources {
         flash: FLASH,
     }
-    led: LedResources {
-        pin: PB4,
+    control_panel: ControlPanelResources {
+        led: PB4,
+        button: PB5,
         timer: TIM3,
-    }
-    button: ButtonResources {
-        pin: PB5,
     }
     usb: UsbResources {
         usb: USB,
