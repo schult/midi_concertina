@@ -1,8 +1,8 @@
 #[cfg(feature = "defmt")]
 use defmt::panic;
 
-use core::slice::Chunks;
 use crate::i2c;
+use core::slice::Chunks;
 use embassy_futures::yield_now;
 use embassy_sync::watch;
 use embassy_time::Timer;
