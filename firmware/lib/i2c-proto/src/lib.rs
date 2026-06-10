@@ -45,7 +45,6 @@ mod command_code {
 #[derive(Debug, PartialEq)]
 pub enum ControllerError<CommError: Error> {
     CorruptMessage,
-    SensorFault,
     Communication(CommError),
 }
 
@@ -53,7 +52,6 @@ impl<E: Error> Display for ControllerError<E> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         let message = match self {
             ControllerError::CorruptMessage => "Corrupt Message",
-            ControllerError::SensorFault => "Sensor Fault",
             ControllerError::Communication(e) => return Display::fmt(&e, f),
         };
         write!(f, "{}", message)
@@ -98,22 +96,6 @@ impl<IO: ControllerIo> Controller<IO> {
         let mut buffer = [0; 2];
         self.io.read(address, &mut buffer).await?;
         Ok(u16::from_be_bytes(buffer))
-    }
-
-    pub async fn get_bellows(&mut self, address: u8) -> Result<f32, ControllerError<IO::Error>> {
-        let mut buffer = [0; 2];
-        self.io.read(address, &mut buffer).await?;
-        let raw = u16::from_be_bytes(buffer);
-
-        let flags = raw & 0xC000;
-        if flags == 0xC000 {
-            return Err(ControllerError::SensorFault);
-        }
-
-        let center = 0x2000;
-        let pressure = (raw & 0x3FFF) as i16 - center;
-        let ratio = (pressure as f32 / center as f32).clamp(-1.0, 1.0);
-        Ok(ratio)
     }
 
     pub async fn get_version(
