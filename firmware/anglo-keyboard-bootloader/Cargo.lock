@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "anglo-bootloader"
+name = "anglo-keyboard-bootloader"
 version = "0.0.0"
 dependencies = [
  "cortex-m",

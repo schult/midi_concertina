@@ -1,5 +1,5 @@
 [package]
-name = "anglo-bootloader"
+name = "anglo-keyboard-bootloader"
 license = "GPL-3.0-only"
 edition = "2024"
 
