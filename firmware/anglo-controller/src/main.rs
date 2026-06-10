@@ -2,19 +2,18 @@
 #![no_main]
 
 #[cfg(feature = "defmt")]
-use defmt::panic;
-#[cfg(feature = "defmt")]
 use defmt_rtt as _;
 #[cfg(feature = "defmt")]
 use panic_probe as _;
 #[cfg(not(feature = "defmt"))]
 use panic_reset as _;
 
-use embassy_stm32::rcc;
+use embassy_futures::join::join;
+use embassy_futures::yield_now;
+use embassy_stm32::{gpio, rcc};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_sync::watch::Watch;
-use embassy_time::Timer;
 use version::FirmwareVersion;
 
 use crate::resources::*;
@@ -24,6 +23,7 @@ mod control_panel;
 mod dfu;
 mod i2c;
 mod i2c_transfer;
+mod keyboard;
 mod keymap;
 mod resources;
 mod usb;
@@ -35,6 +35,8 @@ static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
 
 static UPDATE_COMPLETE: Watch<ThreadModeRawMutex, bool, 1> = Watch::new_with(false);
 
+static LEFT_KEYBOARD_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new_with(0);
+static RIGHT_KEYBOARD_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new_with(0);
 static BELLOWS_STATE: Watch<ThreadModeRawMutex, bellows::State, 1> =
     Watch::new_with(bellows::State::default());
 
@@ -81,119 +83,103 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap(),
     );
 
+    // Power on i2c-connected devices
+    let _i2c_power = gpio::Output::new(r.power.i2c, gpio::Level::Low, gpio::Speed::Low);
+
     let i2c_mutex = i2c::init(r.i2c);
 
-    let mut bellows_receiver = BELLOWS_STATE.dyn_receiver().unwrap();
+    const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
+    const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
+
+    /* TODO
+    const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
+    let left_keyboard_update = keyboard::update_firmware(
+        i2c_mutex,
+        LEFT_KEYBOARD_ADDRESS,
+        &controller_version,
+        KEYBOARD_FIRMWARE,
+    );
+    let right_keyboard_update = keyboard::update_firmware(
+        i2c_mutex,
+        RIGHT_KEYBOARD_ADDRESS,
+        &controller_version,
+        KEYBOARD_FIRMWARE,
+    );
+    join(left_keyboard_update, right_keyboard_update).await;
+    */
+    UPDATE_COMPLETE.sender().send(true);
+
+    spawner.spawn(
+        keyboard::task(
+            i2c_mutex,
+            LEFT_KEYBOARD_ADDRESS,
+            LEFT_KEYBOARD_STATE.dyn_sender(),
+        )
+        .unwrap(),
+    );
+    spawner.spawn(
+        keyboard::task(
+            i2c_mutex,
+            RIGHT_KEYBOARD_ADDRESS,
+            RIGHT_KEYBOARD_STATE.dyn_sender(),
+        )
+        .unwrap(),
+    );
 
     spawner.spawn(bellows::task(i2c_mutex, BELLOWS_STATE.dyn_sender()).unwrap());
 
-    let i2c_wrapper = i2c::I2cWrapper::new(i2c_mutex);
-    let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
-
-    const LEFT_ADDR: u8 = 0x22;
-    const RIGHT_ADDR: u8 = 0x23;
-    let mut left_buttons: u16 = 0;
-    let mut right_buttons: u16 = 0;
-
     const MIDI_CHANNEL: u8 = 0;
 
-    // Remove keyboard upgrade code/data when defmt is enabled to make more room in flash
-    // TODO: Check if this is still necessary on 192kb part
-    // #[cfg(not(feature = "defmt"))]
-    {
-        // TODO: Bring keyboard_firmware back
-        // let keyboard_firmware = include_bytes!("../../build/anglo-keyboard.bin");
-        let mut transfer_sessions = [
-            i2c_transfer::Session::new(LEFT_ADDR),
-            i2c_transfer::Session::new(RIGHT_ADDR),
-        ];
-        for session in &mut transfer_sessions {
-            const RETRY_COUNT: usize = 3;
-            for _ in 0..RETRY_COUNT {
-                if let Ok(keyboard_version) = i2c_controller.get_version(session.address()).await {
-                    #[cfg(feature = "defmt")]
-                    defmt::info!(
-                        "Keyboard({}) version: {}",
-                        session.address(),
-                        keyboard_version
-                    );
+    let mut left_keyboard_receiver = LEFT_KEYBOARD_STATE.receiver().unwrap();
+    let mut right_keyboard_receiver = RIGHT_KEYBOARD_STATE.receiver().unwrap();
+    let mut bellows_receiver = BELLOWS_STATE.receiver().unwrap();
 
-                    /*
-                    if keyboard_version != controller_version
-                        || keyboard_version.prerelease.is_some()
-                    {
-                        session.begin(keyboard_firmware);
-                    }
-                    */
-                    break;
-                }
-            }
-        }
-        /*
-        let mut transfer_in_progress = true;
-        while transfer_in_progress {
-            transfer_in_progress = false;
-            for session in &mut transfer_sessions {
-                transfer_in_progress |= match session.poll(&mut i2c_controller).await {
-                    Ok(i2c_transfer::Status::InProgress) => true,
-                    Err(_) => panic!("I2C communication error"),
-                    _ => false,
-                }
-            }
-        }
-        */
-    }
-
-    UPDATE_COMPLETE.sender().send(true);
-
+    let mut left_buttons: u16 = 0;
+    let mut right_buttons: u16 = 0;
     let mut bellows_state = bellows::State::default();
 
     loop {
         let left_notes = match bellows_state.direction() {
-            bellows::Direction::Push => &keymap::LEFT_PUSH[..],
-            bellows::Direction::Pull => &keymap::LEFT_PULL[..],
+            bellows::Direction::Push => keymap::LEFT_PUSH.as_slice(),
+            bellows::Direction::Pull => keymap::LEFT_PULL.as_slice(),
             bellows::Direction::None => &[],
         };
 
         let right_notes = match bellows_state.direction() {
-            bellows::Direction::Push => &keymap::RIGHT_PUSH[..],
-            bellows::Direction::Pull => &keymap::RIGHT_PULL[..],
+            bellows::Direction::Push => keymap::RIGHT_PUSH.as_slice(),
+            bellows::Direction::Pull => keymap::RIGHT_PULL.as_slice(),
             bellows::Direction::None => &[],
         };
 
-        if let Ok(new_state) = i2c_controller.get_buttons(LEFT_ADDR).await {
-            let changes = left_buttons ^ new_state;
-            for (i, note) in left_notes.iter().enumerate() {
-                if (changes >> i) & 1 == 1 {
-                    if (new_state >> i) & 1 == 1 {
-                        let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
-                        MIDI_OUT_CHANNEL.send(message).await;
-                    } else {
-                        let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                        MIDI_OUT_CHANNEL.send(message).await;
-                    }
+        let new_left_buttons = left_keyboard_receiver.get().await;
+        let changes = left_buttons ^ new_left_buttons;
+        for (i, note) in left_notes.iter().enumerate() {
+            if (changes >> i) & 1 == 1 {
+                if (new_left_buttons >> i) & 1 == 1 {
+                    let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
+                    MIDI_OUT_CHANNEL.send(message).await;
+                } else {
+                    let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
+                    MIDI_OUT_CHANNEL.send(message).await;
                 }
             }
-
-            left_buttons = new_state;
         }
+        left_buttons = new_left_buttons;
 
-        if let Ok(new_state) = i2c_controller.get_buttons(RIGHT_ADDR).await {
-            let changes = right_buttons ^ new_state;
-            for (i, note) in right_notes.iter().enumerate() {
-                if (changes >> i) & 1 == 1 {
-                    if (new_state >> i) & 1 == 1 {
-                        let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
-                        MIDI_OUT_CHANNEL.send(message).await;
-                    } else {
-                        let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                        MIDI_OUT_CHANNEL.send(message).await;
-                    }
+        let new_right_buttons = right_keyboard_receiver.get().await;
+        let changes = right_buttons ^ new_right_buttons;
+        for (i, note) in right_notes.iter().enumerate() {
+            if (changes >> i) & 1 == 1 {
+                if (new_right_buttons >> i) & 1 == 1 {
+                    let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
+                    MIDI_OUT_CHANNEL.send(message).await;
+                } else {
+                    let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
+                    MIDI_OUT_CHANNEL.send(message).await;
                 }
             }
-
-            right_buttons = new_state;
         }
+        right_buttons = new_right_buttons;
 
         let new_bellows_state = bellows_receiver.get().await;
         if new_bellows_state != bellows_state {
@@ -232,6 +218,6 @@ async fn main(spawner: embassy_executor::Spawner) {
             MIDI_OUT_CHANNEL.send(lsb_message).await;
         }
 
-        Timer::after_micros(100).await;
+        yield_now().await;
     }
 }

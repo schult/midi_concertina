@@ -1,10 +1,10 @@
 use crate::resources::{I2cResources, Irqs};
 use core::ops::DerefMut;
-use embassy_stm32::gpio;
 use embassy_stm32::i2c::{Config, I2c, Master};
 use embassy_stm32::time::khz;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::mutex::{Mutex, MutexGuard};
+use embassy_time::Duration;
 use i2c_proto::ControllerIo;
 use static_cell::StaticCell;
 
@@ -17,9 +17,7 @@ pub type I2cMutexGuard<'a> =
 pub fn init(r: I2cResources) -> &'static mut I2cMutex {
     let mut config = Config::default();
     config.frequency = khz(100);
-
-    // Power on i2c-connected devices
-    let _i2c_power = gpio::Output::new(r.power, gpio::Level::Low, gpio::Speed::Low);
+    config.timeout = Duration::from_millis(25);
 
     static I2C: StaticCell<I2cMutex> = StaticCell::new();
     I2C.init(Mutex::new(I2c::new(

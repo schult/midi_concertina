@@ -1,4 +1,5 @@
 use crate::i2c;
+use embassy_futures::yield_now;
 use embassy_sync::watch;
 use embassy_time::Timer;
 use i2c_proto::ControllerIo;
@@ -96,6 +97,8 @@ pub async fn task(i2c_mutex: &'static i2c::I2cMutex, sender: watch::DynSender<'s
 
         let pascals = 1.02f32 * ((reading as f32) / 838.8608f32);
         sender.send(State::new(pascals));
+
+        yield_now().await;
     }
 }
 
@@ -120,8 +123,8 @@ const fn generate_volume_table() -> [TableEntry; TABLE_POINTS] {
 
     let mut table = [0 as TableEntry; TABLE_POINTS];
     let (segment1, segment2) = table.split_at_mut(N1);
-    segment1.copy_from_slice(bezier::<N1, P1>(&X1, &Y1).as_slice());
-    segment2.copy_from_slice(bezier::<N2, P2>(&X2, &Y2).as_slice());
+    segment1.copy_from_slice(&bezier::<N1, P1>(&X1, &Y1));
+    segment2.copy_from_slice(&bezier::<N2, P2>(&X2, &Y2));
 
     table
 }

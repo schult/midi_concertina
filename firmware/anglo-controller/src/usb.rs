@@ -1,3 +1,6 @@
+#[cfg(feature = "defmt")]
+use defmt::panic;
+
 use crate::resources::{Irqs, UsbResources};
 use circular_buffer::CircularBuffer;
 use embassy_futures::join::join3;

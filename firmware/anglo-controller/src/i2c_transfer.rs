@@ -28,10 +28,6 @@ impl<'a> Session<'a> {
         }
     }
 
-    pub fn address(&self) -> u8 {
-        self.address
-    }
-
     pub fn begin(&mut self, data: &'a [u8]) {
         self.beginning = Some(data.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE));
         self.retries_remaining = 5;

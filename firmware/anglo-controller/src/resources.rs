@@ -8,6 +8,9 @@ bind_interrupts!(pub struct Irqs {
 });
 
 assign_resources! {
+    power: PowerResources {
+        i2c: PA3,
+    }
     dfu: DfuResources {
         flash: FLASH,
     }
@@ -16,17 +19,16 @@ assign_resources! {
         button: PB5,
         timer: TIM3,
     }
-    usb: UsbResources {
-        usb: USB,
-        dp: PA12,
-        dm: PA11,
-    }
     i2c: I2cResources {
-        power: PA3,
         i2c: I2C1,
         scl: PB8,
         sda: PB9,
         tx_dma: DMA1_CH2,
         rx_dma: DMA1_CH3,
+    }
+    usb: UsbResources {
+        usb: USB,
+        dp: PA12,
+        dm: PA11,
     }
 }
