@@ -10,23 +10,18 @@ use panic_probe as _;
 #[cfg(not(feature = "defmt"))]
 use panic_reset as _;
 
-use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
-use embassy_embedded_hal::adapter::BlockingAsync;
-use embassy_stm32::flash::Flash;
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
-use embassy_stm32::{flash, gpio, peripherals, rcc, time::khz};
+use embassy_stm32::{gpio, peripherals, rcc, time::khz};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
-use embassy_sync::channel::{self, Channel};
-use embassy_sync::mutex::Mutex;
+use embassy_sync::channel::Channel;
 use embassy_sync::watch::{self, Watch};
 use embassy_time::Timer;
-use midi::util::FileDumpReceiver;
 use version::FirmwareVersion;
 
 use crate::resources::*;
 
 mod bellows;
-mod file_dump_io;
+mod dfu;
 mod i2c;
 mod i2c_transfer;
 mod keymap;
@@ -64,10 +59,9 @@ async fn main(spawner: embassy_executor::Spawner) {
     #[cfg(feature = "defmt")]
     defmt::info!("Controller version: {}", controller_version);
 
-    let flash = Flash::new_blocking(r.dfu.flash);
     spawner.spawn(
-        firmware_task(
-            flash,
+        dfu::task(
+            r.dfu,
             MIDI_IN_CHANNEL.dyn_receiver(),
             MIDI_OUT_CHANNEL.dyn_sender(),
         )
@@ -250,35 +244,6 @@ async fn main(spawner: embassy_executor::Spawner) {
         }
 
         Timer::after_micros(100).await;
-    }
-}
-
-#[embassy_executor::task]
-async fn firmware_task(
-    flash: Flash<'static, flash::Blocking>,
-    midi_in_channel: channel::DynamicReceiver<'static, midi::Message>,
-    midi_out_channel: channel::DynamicSender<'static, midi::Message>,
-) {
-    let flash = Mutex::new(BlockingAsync::new(flash));
-    let updater_config = FirmwareUpdaterConfig::from_linkerfile(&flash, &flash);
-
-    let mut aligned_buffer = AlignedBuffer([0; flash::WRITE_SIZE]);
-    let mut updater = FirmwareUpdater::new(updater_config, aligned_buffer.as_mut());
-    updater.mark_booted().await.unwrap();
-
-    const SYSEX_DEVICE_ID: u8 = 0x01;
-    let mut dfu_writer = file_dump_io::DfuWriter::new(updater);
-    let mut message_adapter = file_dump_io::MessageChannelAdapter::new(midi_out_channel);
-    let mut receiver = FileDumpReceiver::new(
-        &mut dfu_writer,
-        &mut message_adapter,
-        SYSEX_DEVICE_ID,
-        "BIN ",
-    );
-
-    loop {
-        let message = midi_in_channel.receive().await;
-        receiver.process(message).await;
     }
 }
 

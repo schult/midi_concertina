@@ -8,7 +8,7 @@ bind_interrupts!(pub struct Irqs {
 });
 
 assign_resources! {
-    dfu: FlashResources {
+    dfu: DfuResources {
         flash: FLASH,
     }
     led: LedResources {
