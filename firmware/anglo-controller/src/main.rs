@@ -26,7 +26,6 @@ use embassy_usb::driver::EndpointError;
 use midi::util::FileDumpReceiver;
 use version::FirmwareVersion;
 
-use crate::bellows::BellowsState;
 use crate::resources::*;
 
 mod bellows;
@@ -45,8 +44,8 @@ static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
 
 static UPDATE_COMPLETE: Watch<ThreadModeRawMutex, bool, 1> = Watch::new_with(false);
 
-static BELLOWS_STATE: Watch<ThreadModeRawMutex, BellowsState, 1> =
-    Watch::new_with(BellowsState::default());
+static BELLOWS_STATE: Watch<ThreadModeRawMutex, bellows::State, 1> =
+    Watch::new_with(bellows::State::default());
 
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
@@ -164,19 +163,19 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     UPDATE_COMPLETE.sender().send(true);
 
-    let mut bellows_state = bellows::BellowsState::default();
+    let mut bellows_state = bellows::State::default();
 
     loop {
-        let left_notes = match bellows_state.direction {
-            bellows::BellowsDirection::Push => &keymap::LEFT_PUSH[..],
-            bellows::BellowsDirection::Pull => &keymap::LEFT_PULL[..],
-            bellows::BellowsDirection::None => &[],
+        let left_notes = match bellows_state.direction() {
+            bellows::Direction::Push => &keymap::LEFT_PUSH[..],
+            bellows::Direction::Pull => &keymap::LEFT_PULL[..],
+            bellows::Direction::None => &[],
         };
 
-        let right_notes = match bellows_state.direction {
-            bellows::BellowsDirection::Push => &keymap::RIGHT_PUSH[..],
-            bellows::BellowsDirection::Pull => &keymap::RIGHT_PULL[..],
-            bellows::BellowsDirection::None => &[],
+        let right_notes = match bellows_state.direction() {
+            bellows::Direction::Push => &keymap::RIGHT_PUSH[..],
+            bellows::Direction::Pull => &keymap::RIGHT_PULL[..],
+            bellows::Direction::None => &[],
         };
 
         if let Ok(new_state) = i2c_controller.get_buttons(LEFT_ADDR).await {
@@ -215,7 +214,7 @@ async fn main(spawner: embassy_executor::Spawner) {
 
         let new_bellows_state = bellows_receiver.get().await;
         if new_bellows_state != bellows_state {
-            if new_bellows_state.direction != bellows_state.direction {
+            if new_bellows_state.direction() != bellows_state.direction() {
                 for (i, note) in left_notes.iter().enumerate() {
                     if (left_buttons >> i) & 1 == 1 {
                         let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
@@ -236,17 +235,15 @@ async fn main(spawner: embassy_executor::Spawner) {
 
             bellows_state = new_bellows_state;
 
-            let volume_msb: u8 = ((bellows_state.magnitude >> 7) & 0x7F).try_into().unwrap();
-            let volume_lsb: u8 = (bellows_state.magnitude & 0x7F).try_into().unwrap();
             let msb_message = midi::Message::control_change(
                 MIDI_CHANNEL,
                 midi::cc::CHANNEL_VOLUME_MSB,
-                volume_msb,
+                bellows_state.magnitude_msb(),
             );
             let lsb_message = midi::Message::control_change(
                 MIDI_CHANNEL,
                 midi::cc::CHANNEL_VOLUME_LSB,
-                volume_lsb,
+                bellows_state.magnitude_lsb(),
             );
             MIDI_OUT_CHANNEL.send(msb_message).await;
             MIDI_OUT_CHANNEL.send(lsb_message).await;

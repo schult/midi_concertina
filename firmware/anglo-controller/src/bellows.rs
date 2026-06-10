@@ -4,24 +4,20 @@ use embassy_time::Timer;
 use i2c_proto::ControllerIo;
 
 #[derive(Clone, PartialEq)]
-pub enum BellowsDirection {
+pub enum Direction {
     Push,
     Pull,
     None,
 }
 
 #[derive(Clone, PartialEq)]
-pub struct BellowsState {
-    pub direction: BellowsDirection,
-    pub magnitude: u16,
+pub struct State {
+    value: i16,
 }
 
-impl BellowsState {
+impl State {
     pub const fn default() -> Self {
-        Self {
-            direction: BellowsDirection::None,
-            magnitude: 0,
-        }
+        Self { value: 0 }
     }
 
     pub const fn new(pascals: f32) -> Self {
@@ -31,42 +27,46 @@ impl BellowsState {
         let ratio = (pascals.abs() - MIN_PA) / (MAX_PA - MIN_PA);
         let ratio = ratio.clamp(0.0, 1.0);
         let index = round(ratio * (TABLE_POINTS - 1) as f32) as usize;
-        let magnitude = BELLOWS_CURVE[index];
+        let value = MAGNITUDE_TABLE[index] * pascals.signum() as i16;
 
-        let direction = if magnitude == 0 {
-            BellowsDirection::None
-        } else if pascals > 0.0 {
-            BellowsDirection::Push
+        Self { value }
+    }
+
+    pub const fn direction(&self) -> Direction {
+        if self.value > 0 {
+            Direction::Push
+        } else if self.value < 0 {
+            Direction::Pull
         } else {
-            BellowsDirection::Pull
-        };
-
-        Self {
-            direction,
-            magnitude,
+            Direction::None
         }
+    }
+
+    pub const fn magnitude_msb(&self) -> u8 {
+        ((self.value.abs() >> 7) & 0x7F) as u8
+    }
+
+    pub const fn magnitude_lsb(&self) -> u8 {
+        (self.value.abs() & 0x7F) as u8
     }
 }
 
 #[embassy_executor::task]
-pub async fn task(
-    i2c_mutex: &'static i2c::I2cMutex,
-    sender: watch::DynSender<'static, BellowsState>,
-) {
+pub async fn task(i2c_mutex: &'static i2c::I2cMutex, sender: watch::DynSender<'static, State>) {
     let mut i2c = i2c::I2cWrapper::new(i2c_mutex);
 
-    const BELLOWS_ADDR: u8 = 0x7F;
+    const ADDRESS: u8 = 0x7F;
     const CONTROL_REG: u8 = 0x30;
     const DATA_REG: u8 = 0x06;
 
     loop {
-        while i2c.write(BELLOWS_ADDR, &[CONTROL_REG, 0x0A]).await.is_err() {
+        while i2c.write(ADDRESS, &[CONTROL_REG, 0x0A]).await.is_err() {
             Timer::after_micros(5).await;
         }
         loop {
             let mut buffer = [0; 1];
             while i2c
-                .write_read(BELLOWS_ADDR, &[CONTROL_REG], &mut buffer)
+                .write_read(ADDRESS, &[CONTROL_REG], &mut buffer)
                 .await
                 .is_err()
             {
@@ -80,7 +80,7 @@ pub async fn task(
 
         let mut buffer = [0; 3];
         while i2c
-            .write_read(BELLOWS_ADDR, &[DATA_REG], &mut buffer)
+            .write_read(ADDRESS, &[DATA_REG], &mut buffer)
             .await
             .is_err()
         {
@@ -95,16 +95,15 @@ pub async fn task(
         }
 
         let pascals = 1.02f32 * ((reading as f32) / 838.8608f32);
-        sender.send(BellowsState::new(pascals));
+        sender.send(State::new(pascals));
     }
 }
 
-type TableEntry = u16;
+type TableEntry = i16;
 const TABLE_POINTS: usize = 256;
+const MAGNITUDE_TABLE: [TableEntry; TABLE_POINTS] = generate_volume_table();
 
-const BELLOWS_CURVE: [TableEntry; TABLE_POINTS] = generate_bellows_curve();
-
-const fn generate_bellows_curve() -> [TableEntry; TABLE_POINTS] {
+const fn generate_volume_table() -> [TableEntry; TABLE_POINTS] {
     const VOLUME_MIN: f32 = 0.0;
     const VOLUME_BREAK: f32 = 3840.0;
     const VOLUME_MAX: f32 = 16383.0;
