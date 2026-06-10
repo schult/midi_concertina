@@ -1,3 +1,8 @@
+use crate::i2c;
+use embassy_sync::watch;
+use embassy_time::Timer;
+use i2c_proto::ControllerIo;
+
 #[derive(Clone, PartialEq)]
 pub enum BellowsDirection {
     Push,
@@ -40,6 +45,57 @@ impl BellowsState {
             direction,
             magnitude,
         }
+    }
+}
+
+#[embassy_executor::task]
+pub async fn task(
+    i2c_mutex: &'static i2c::I2cMutex,
+    sender: watch::DynSender<'static, BellowsState>,
+) {
+    let mut i2c = i2c::I2cWrapper::new(i2c_mutex);
+
+    const BELLOWS_ADDR: u8 = 0x7F;
+    const CONTROL_REG: u8 = 0x30;
+    const DATA_REG: u8 = 0x06;
+
+    loop {
+        while i2c.write(BELLOWS_ADDR, &[CONTROL_REG, 0x0A]).await.is_err() {
+            Timer::after_micros(5).await;
+        }
+        loop {
+            let mut buffer = [0; 1];
+            while i2c
+                .write_read(BELLOWS_ADDR, &[CONTROL_REG], &mut buffer)
+                .await
+                .is_err()
+            {
+                Timer::after_micros(5).await;
+            }
+            if buffer[0] == 0x02 {
+                break;
+            }
+            Timer::after_micros(100).await;
+        }
+
+        let mut buffer = [0; 3];
+        while i2c
+            .write_read(BELLOWS_ADDR, &[DATA_REG], &mut buffer)
+            .await
+            .is_err()
+        {
+            Timer::after_micros(5).await;
+        }
+
+        let mut reading = buffer[2] as i32;
+        reading |= (buffer[1] as i32) << 8;
+        reading |= (buffer[0] as i32) << 16;
+        if reading & 0x00800000 != 0 {
+            reading -= 16777216;
+        }
+
+        let pascals = 1.02f32 * ((reading as f32) / 838.8608f32);
+        sender.send(BellowsState::new(pascals));
     }
 }
 
