@@ -43,7 +43,6 @@ impl BellowsState {
     }
 }
 
-
 type TableEntry = u16;
 const TABLE_POINTS: usize = 256;
 
@@ -72,7 +71,10 @@ const fn generate_bellows_curve() -> [TableEntry; TABLE_POINTS] {
     table
 }
 
-const fn bezier<const N: usize, const CURVE_POINTS: usize>(x: &[f32; 4], y: &[f32; 4]) -> [TableEntry; N] {
+const fn bezier<const N: usize, const CURVE_POINTS: usize>(
+    x: &[f32; 4],
+    y: &[f32; 4],
+) -> [TableEntry; N] {
     let mut table = [0 as TableEntry; N];
 
     let mut curve_x = [0.0f32; CURVE_POINTS];
@@ -89,16 +91,10 @@ const fn bezier<const N: usize, const CURVE_POINTS: usize>(x: &[f32; 4], y: &[f3
         let nt_3 = nt_2 * nt;
 
         curve_x[i] =
-            (nt_3 * x[0]) +
-            (3.0 * nt_2 * t * x[1]) +
-            (3.0 * nt * t_2 * x[2]) +
-            (t_3 * x[3]);
+            (nt_3 * x[0]) + (3.0 * nt_2 * t * x[1]) + (3.0 * nt * t_2 * x[2]) + (t_3 * x[3]);
 
         curve_y[i] =
-            (nt_3 * y[0]) +
-            (3.0 * nt_2 * t * y[1]) +
-            (3.0 * nt * t_2 * y[2]) +
-            (t_3 * y[3]);
+            (nt_3 * y[0]) + (3.0 * nt_2 * t * y[1]) + (3.0 * nt * t_2 * y[2]) + (t_3 * y[3]);
 
         i += 1;
     }

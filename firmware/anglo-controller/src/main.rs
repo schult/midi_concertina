@@ -46,7 +46,8 @@ static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
 
 static UPDATE_COMPLETE: Watch<ThreadModeRawMutex, bool, 1> = Watch::new_with(false);
 
-static BELLOWS_STATE: Watch<ThreadModeRawMutex, BellowsState, 1> = Watch::new_with(BellowsState::default());
+static BELLOWS_STATE: Watch<ThreadModeRawMutex, BellowsState, 1> =
+    Watch::new_with(BellowsState::default());
 
 #[embassy_executor::main]
 async fn main(spawner: embassy_executor::Spawner) {
@@ -238,8 +239,16 @@ async fn main(spawner: embassy_executor::Spawner) {
 
             let volume_msb: u8 = ((bellows_state.magnitude >> 7) & 0x7F).try_into().unwrap();
             let volume_lsb: u8 = (bellows_state.magnitude & 0x7F).try_into().unwrap();
-            let msb_message = midi::Message::control_change(MIDI_CHANNEL, midi::cc::CHANNEL_VOLUME_MSB, volume_msb);
-            let lsb_message = midi::Message::control_change(MIDI_CHANNEL, midi::cc::CHANNEL_VOLUME_LSB, volume_lsb);
+            let msb_message = midi::Message::control_change(
+                MIDI_CHANNEL,
+                midi::cc::CHANNEL_VOLUME_MSB,
+                volume_msb,
+            );
+            let lsb_message = midi::Message::control_change(
+                MIDI_CHANNEL,
+                midi::cc::CHANNEL_VOLUME_LSB,
+                volume_lsb,
+            );
             MIDI_OUT_CHANNEL.send(msb_message).await;
             MIDI_OUT_CHANNEL.send(lsb_message).await;
         }
@@ -321,7 +330,10 @@ async fn control_panel_task(
 }
 
 #[embassy_executor::task]
-async fn bellows_task(i2c_mutex: &'static i2c::I2cMutex, sender: watch::DynSender<'static, BellowsState>) {
+async fn bellows_task(
+    i2c_mutex: &'static i2c::I2cMutex,
+    sender: watch::DynSender<'static, BellowsState>,
+) {
     let mut i2c = i2c::I2cWrapper::new(i2c_mutex);
 
     const BELLOWS_ADDR: u8 = 0x7F;
