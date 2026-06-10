@@ -14,7 +14,7 @@ pub async fn update_firmware<'a>(
     version: &FirmwareVersion<'a>,
     firmware: &[u8],
 ) {
-    let i2c_wrapper = i2c::I2cWrapper::new(i2c_mutex); // TODO: Rename I2cWrapper to Wrapper
+    let i2c_wrapper = i2c::Wrapper::new(i2c_mutex);
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
     let mut session = i2c_transfer::Session::new(address);
@@ -51,7 +51,7 @@ pub async fn task(
     address: u8,
     buttons: watch::DynSender<'static, u16>,
 ) {
-    let i2c_wrapper = i2c::I2cWrapper::new(i2c_mutex);
+    let i2c_wrapper = i2c::Wrapper::new(i2c_mutex);
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
     loop {

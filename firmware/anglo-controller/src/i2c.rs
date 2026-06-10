@@ -25,17 +25,17 @@ pub fn init(r: I2cResources) -> &'static mut I2cMutex {
     )))
 }
 
-pub struct I2cWrapper<'a> {
+pub struct Wrapper<'a> {
     i2c: &'a I2cMutex,
 }
 
-impl<'a> I2cWrapper<'a> {
+impl<'a> Wrapper<'a> {
     pub fn new(i2c: &'a I2cMutex) -> Self {
-        I2cWrapper { i2c }
+        Wrapper { i2c }
     }
 }
 
-impl<'a> ControllerIo for I2cWrapper<'a> {
+impl<'a> ControllerIo for Wrapper<'a> {
     type Error = Error;
 
     async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error> {

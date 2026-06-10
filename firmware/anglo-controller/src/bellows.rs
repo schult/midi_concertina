@@ -54,7 +54,7 @@ impl State {
 
 #[embassy_executor::task]
 pub async fn task(i2c_mutex: &'static i2c::I2cMutex, sender: watch::DynSender<'static, State>) {
-    let mut i2c = i2c::I2cWrapper::new(i2c_mutex);
+    let mut i2c = i2c::Wrapper::new(i2c_mutex);
 
     const ADDRESS: u8 = 0x7F;
     const CONTROL_REG: u8 = 0x30;

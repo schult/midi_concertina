@@ -36,7 +36,7 @@ impl<'a> Session<'a> {
 
     pub async fn poll(
         &mut self,
-        i2c: &mut i2c_proto::Controller<crate::i2c::I2cWrapper<'a>>,
+        i2c: &mut i2c_proto::Controller<crate::i2c::Wrapper<'a>>,
     ) -> Result<Status, i2c_proto::ControllerError<i2c::Error>> {
         if self.status != Status::InProgress {
             match i2c.get_write_status(self.address).await {
