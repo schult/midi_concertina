@@ -22,7 +22,6 @@ mod bellows;
 mod control_panel;
 mod dfu;
 mod i2c;
-mod i2c_transfer;
 mod keyboard;
 mod keymap;
 mod resources;
