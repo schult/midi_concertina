@@ -1,16 +1,13 @@
-use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
-use embassy_sync::channel::Sender;
+use embassy_sync::channel;
 
 pub use util::DfuWriter;
 
-type MessageSender = Sender<'static, ThreadModeRawMutex, midi::Message, 8>;
-
 pub struct MessageChannelAdapter {
-    sender: MessageSender,
+    sender: channel::DynamicSender<'static, midi::Message>,
 }
 
 impl MessageChannelAdapter {
-    pub fn new(sender: MessageSender) -> Self {
+    pub fn new(sender: channel::DynamicSender<'static, midi::Message>) -> Self {
         MessageChannelAdapter { sender }
     }
 }
