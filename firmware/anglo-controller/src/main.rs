@@ -93,10 +93,9 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     let i2c_mutex = i2c::init(r.i2c);
 
-    let bellows_sender = BELLOWS_STATE.dyn_sender();
     let mut bellows_receiver = BELLOWS_STATE.dyn_receiver().unwrap();
 
-    spawner.spawn(bellows::task(i2c_mutex, bellows_sender).unwrap());
+    spawner.spawn(bellows::task(i2c_mutex, BELLOWS_STATE.dyn_sender()).unwrap());
 
     let i2c_wrapper = i2c::I2cWrapper::new(i2c_mutex);
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
