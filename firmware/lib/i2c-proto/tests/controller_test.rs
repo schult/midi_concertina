@@ -1,4 +1,3 @@
-use assert_float_eq::*;
 use i2c_proto::*;
 use mockall::mock;
 use mockall::predicate::*;

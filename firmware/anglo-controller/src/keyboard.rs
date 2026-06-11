@@ -24,7 +24,7 @@ pub async fn update_firmware<'a>(
     for _ in 0..RETRY_COUNT {
         if let Ok(keyboard_version) = i2c_controller.get_version(address).await {
             #[cfg(feature = "defmt")]
-            defmt::info!("Keyboard({}) version: {}", address, keyboard_version);
+            defmt::info!("Keyboard({:02X}) version: {}", address, keyboard_version);
 
             if keyboard_version != *version || keyboard_version.prerelease.is_some() {
                 session.begin(firmware);
@@ -98,7 +98,7 @@ impl<'a> TransferSession<'a> {
         &mut self,
         i2c: &mut i2c_proto::Controller<crate::i2c::Wrapper<'a>>,
     ) -> Result<TransferStatus, i2c_proto::ControllerError<i2c::Error>> {
-        if self.status != TransferStatus::InProgress {
+        if self.status == TransferStatus::InProgress {
             match i2c.get_write_status(self.address).await {
                 Ok(i2c_proto::WriteStatus::Ready) => {
                     if let Some(chunk) = self.iter.as_mut().unwrap().next() {
@@ -108,7 +108,7 @@ impl<'a> TransferSession<'a> {
                         self.status = TransferStatus::Finished;
                     }
                 }
-                Ok(i2c_proto::WriteStatus::Cancel) => {
+                Ok(i2c_proto::WriteStatus::Cancel) | Err(_) => {
                     if self.retries_remaining > 0 {
                         self.iter = self.beginning.clone();
                         self.retries_remaining -= 1;

@@ -90,7 +90,6 @@ async fn main(spawner: embassy_executor::Spawner) {
     const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
     const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
 
-    /* TODO
     const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
     let left_keyboard_update = keyboard::update_firmware(
         i2c_mutex,
@@ -105,7 +104,6 @@ async fn main(spawner: embassy_executor::Spawner) {
         KEYBOARD_FIRMWARE,
     );
     join(left_keyboard_update, right_keyboard_update).await;
-    */
     UPDATE_COMPLETE.sender().send(true);
 
     spawner.spawn(

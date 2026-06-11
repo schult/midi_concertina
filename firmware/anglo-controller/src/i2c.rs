@@ -17,7 +17,7 @@ pub type I2cMutexGuard<'a> =
 pub fn init(r: I2cResources) -> &'static mut I2cMutex {
     let mut config = Config::default();
     config.frequency = khz(100);
-    config.timeout = Duration::from_millis(25);
+    config.timeout = Duration::from_millis(500);
 
     static I2C: StaticCell<I2cMutex> = StaticCell::new();
     I2C.init(Mutex::new(I2c::new(
