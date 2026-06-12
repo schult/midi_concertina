@@ -120,6 +120,6 @@ impl<'a> TransferSession<'a> {
                 _ => (),
             }
         }
-        return Ok(self.status.clone());
+        Ok(self.status.clone())
     }
 }

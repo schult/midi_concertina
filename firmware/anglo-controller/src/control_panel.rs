@@ -39,9 +39,9 @@ pub async fn task(
             led_duty = 0;
             inc = !inc;
         } else if inc {
-            led_duty = led_duty + led_step
+            led_duty += led_step
         } else {
-            led_duty = led_duty - led_step
+            led_duty -= led_step
         }
         led.set_duty_cycle(led_duty);
 

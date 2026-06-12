@@ -8,6 +8,7 @@ use version::FirmwareVersion;
 const PACKET_MAX_SIZE: usize = 255;
 pub const PACKET_MAX_PAYLOAD_SIZE: usize = PACKET_MAX_SIZE - 3;
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, PartialEq)]
 pub enum Command {
     GetVersion,
@@ -156,7 +157,7 @@ impl<IO: ControllerIo> Controller<IO> {
         address: u8,
         data: &[u8],
     ) -> Result<(), ControllerError<IO::Error>> {
-        assert!(data.len() > 0);
+        assert!(!data.is_empty());
         assert!(data.len() <= PACKET_MAX_PAYLOAD_SIZE);
 
         let mut message = [0u8; PACKET_MAX_SIZE];
@@ -166,7 +167,7 @@ impl<IO: ControllerIo> Controller<IO> {
         let message_length = check_idx + 1;
         message[0] = command;
         message[1] = !command;
-        message[data_idx..check_idx].copy_from_slice(&data);
+        message[data_idx..check_idx].copy_from_slice(data);
         message[check_idx] = message[data_idx..check_idx]
             .iter()
             .fold(0, |acc, e| acc.wrapping_add(*e));
@@ -265,7 +266,7 @@ impl<IO: DeviceIo> Device<IO> {
         version: &FirmwareVersion<'b>,
     ) -> Result<IO::SendStatus, DeviceError<IO::Error>> {
         let prerelease = match version.prerelease {
-            Some(_) => '*' as u8,
+            Some(_) => b'*',
             None => 0,
         };
 
@@ -311,9 +312,9 @@ impl<IO: DeviceIo> Device<IO> {
                 }
 
                 match message[0] {
-                    command_code::GET_VERSION => return Ok(Command::GetVersion),
-                    command_code::GET_WRITE_STATUS => return Ok(Command::GetWriteStatus),
-                    command_code::WRITE_BEGIN => return Ok(Command::WriteBegin),
+                    command_code::GET_VERSION => Ok(Command::GetVersion),
+                    command_code::GET_WRITE_STATUS => Ok(Command::GetWriteStatus),
+                    command_code::WRITE_BEGIN => Ok(Command::WriteBegin),
                     command_code::WRITE_PACKET => {
                         if message.len() < 4 {
                             return Err(DeviceError::EmptyPacket);
@@ -327,14 +328,14 @@ impl<IO: DeviceIo> Device<IO> {
                         let length = payload.len();
                         let mut data = [0; PACKET_MAX_PAYLOAD_SIZE];
                         data[..length].copy_from_slice(payload);
-                        return Ok(Command::WritePacket { data, length });
+                        Ok(Command::WritePacket { data, length })
                     }
-                    command_code::WRITE_END => return Ok(Command::WriteEnd),
-                    unknown_code => return Err(DeviceError::UnknownCommand(unknown_code)),
+                    command_code::WRITE_END => Ok(Command::WriteEnd),
+                    unknown_code => Err(DeviceError::UnknownCommand(unknown_code)),
                 }
             }
             Err(e) => {
-                return Err(DeviceError::Communication(e));
+                Err(DeviceError::Communication(e))
             }
         }
     }

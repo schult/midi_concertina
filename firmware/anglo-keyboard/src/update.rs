@@ -6,6 +6,7 @@ use embassy_sync::channel;
 use embassy_sync::mutex::Mutex;
 use embassy_sync::watch;
 
+#[allow(clippy::large_enum_variant)]
 pub enum Command {
     Begin,
     Write {
@@ -47,17 +48,17 @@ pub async fn update_task(
                 }
             }
             Command::Write { data, length } => {
-                if status_sender.try_get() != Some(Status::Error) {
-                    if dfu_writer.write(&data[..length]).await.is_err() {
-                        status_sender.send(Status::Error);
-                    }
+                if status_sender.try_get() != Some(Status::Error)
+                    && dfu_writer.write(&data[..length]).await.is_err()
+                {
+                    status_sender.send(Status::Error);
                 }
             }
             Command::End => {
-                if status_sender.try_get() != Some(Status::Error) {
-                    if dfu_writer.close().await.is_err() {
-                        status_sender.send(Status::Error);
-                    }
+                if status_sender.try_get() != Some(Status::Error)
+                    && dfu_writer.close().await.is_err()
+                {
+                    status_sender.send(Status::Error);
                 }
             }
         }

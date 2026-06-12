@@ -119,7 +119,7 @@ async fn send_version_encodes_release_payload() {
 async fn send_version_encodes_prerelease_payload() {
     let mut io = MockDeviceIo::new();
     io.expect_respond_to_read()
-        .withf(|d| d.starts_with(&[1, 2, 3, '*' as u8]))
+        .withf(|d| d.starts_with(&[1, 2, 3, b'*']))
         .returning(|_| Ok(0))
         .times(1);
 
