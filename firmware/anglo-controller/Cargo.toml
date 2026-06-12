@@ -22,7 +22,6 @@ embassy-stm32 = { git = "https://github.com/embassy-rs/embassy.git", features = 
 embassy-sync = { git = "https://github.com/embassy-rs/embassy.git" }
 embassy-time = { git = "https://github.com/embassy-rs/embassy.git", features = ["tick-hz-32_768"] }
 embassy-usb = { git = "https://github.com/embassy-rs/embassy.git" }
-embedded-storage-async = "0.4.1"
 portable-atomic = { version = "1.11.1", features = ["unsafe-assume-single-core"] }
 static_cell = "2.1.1"
 

@@ -51,7 +51,6 @@ dependencies = [
  "embassy-sync",
  "embassy-time",
  "embassy-usb",
- "embedded-storage-async",
  "i2c-proto",
  "midi",
  "panic-probe",
