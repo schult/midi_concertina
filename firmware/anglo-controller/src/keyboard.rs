@@ -1,5 +1,5 @@
 #[cfg(feature = "defmt")]
-use defmt::panic;
+use defmt::{error, info, panic};
 
 use crate::i2c;
 use core::slice::Chunks;
@@ -7,6 +7,19 @@ use embassy_futures::yield_now;
 use embassy_sync::watch;
 use embassy_time::Timer;
 use version::FirmwareVersion;
+
+async fn get_keyboard_version<'a>(i2c_controller: &mut i2c_proto::Controller<i2c::Wrapper<'a>>, address: u8) -> Result<FirmwareVersion<'static>, ()> {
+    // Retry count and delay chosen to allow > 2 minutes for keyboard to finish applying update.
+    const RETRY_COUNT: usize = 1200;
+    for _ in 0..RETRY_COUNT {
+        if let Ok(keyboard_version) = i2c_controller.get_version(address).await {
+            return Ok(keyboard_version);
+        }
+
+        Timer::after_millis(100).await;
+    }
+    Err(())
+}
 
 pub async fn update_firmware<'a>(
     i2c_mutex: &'a i2c::I2cMutex,
@@ -19,29 +32,37 @@ pub async fn update_firmware<'a>(
 
     let mut session = TransferSession::new(address);
 
-    // Retry with a short delay in case keyboard is still starting up.
-    const RETRY_COUNT: usize = 3;
-    for _ in 0..RETRY_COUNT {
-        if let Ok(keyboard_version) = i2c_controller.get_version(address).await {
+    if let Ok(keyboard_version) = get_keyboard_version(&mut i2c_controller, address).await {
+        #[cfg(feature = "defmt")]
+        info!("Keyboard({:02X}) version: {}", address, keyboard_version);
+        if keyboard_version != *version || keyboard_version.prerelease.is_some() {
             #[cfg(feature = "defmt")]
-            defmt::info!("Keyboard({:02X}) version: {}", address, keyboard_version);
-
-            if keyboard_version != *version || keyboard_version.prerelease.is_some() {
-                session.begin(firmware);
+            info!("Keyboard({:02X}) receiving update...", address);
+            session.begin(firmware);
+            loop {
+                match session.poll(&mut i2c_controller).await {
+                    Ok(TransferStatus::InProgress) => (),
+                    Err(_) => panic!("I2C communication error"),
+                    _ => break,
+                }
+                yield_now().await;
             }
-            break;
         }
-
-        Timer::after_millis(10).await;
+    } else {
+        #[cfg(feature = "defmt")]
+        error!("Keyboard({:02X}) not responding at startup", address);
+        return;
     }
 
-    loop {
-        match session.poll(&mut i2c_controller).await {
-            Ok(TransferStatus::InProgress) => (),
-            Err(_) => panic!("I2C communication error"),
-            _ => break,
-        }
-        yield_now().await;
+    #[cfg(feature = "defmt")]
+    info!("Keyboard({:02X}) applying update...", address);
+    let _new_version = get_keyboard_version(&mut i2c_controller, address).await;
+    #[cfg(feature = "defmt")]
+    if let Ok(keyboard_version) = _new_version {
+        info!("Keyboard({:02X}) update complete", address);
+        info!("Keyboard({:02X}) version: {}", address, keyboard_version);
+    } else {
+        error!("Keyboard({:02X}) not responding after update", address);
     }
 }
 
