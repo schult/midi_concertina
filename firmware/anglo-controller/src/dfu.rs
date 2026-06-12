@@ -32,6 +32,7 @@ pub async fn task(
     );
 
     loop {
+        // TODO: Check and update MODE
         let message = midi_in_channel.receive().await;
         receiver.process(message).await;
     }

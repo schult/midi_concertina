@@ -61,6 +61,8 @@ pub async fn task(i2c_mutex: &'static i2c::I2cMutex, sender: watch::DynSender<'s
     const DATA_REG: u8 = 0x06;
 
     loop {
+        // TODO: Send zero and pause if MODE != Mode::Ready
+
         while i2c.write(ADDRESS, &[CONTROL_REG, 0x0A]).await.is_err() {
             Timer::after_micros(5).await;
         }

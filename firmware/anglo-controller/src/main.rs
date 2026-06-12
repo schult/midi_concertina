@@ -1,6 +1,16 @@
 #![no_std]
 #![no_main]
 
+mod bellows;
+mod control_panel;
+mod dfu;
+mod i2c;
+mod keyboard;
+mod keymap;
+mod mode;
+mod resources;
+mod usb;
+
 #[cfg(feature = "defmt")]
 use defmt_rtt as _;
 #[cfg(feature = "defmt")]
@@ -8,6 +18,8 @@ use panic_probe as _;
 #[cfg(not(feature = "defmt"))]
 use panic_reset as _;
 
+use crate::mode::Mode;
+use crate::resources::*;
 use embassy_futures::join::join;
 use embassy_futures::yield_now;
 use embassy_stm32::{gpio, rcc};
@@ -16,23 +28,13 @@ use embassy_sync::channel::Channel;
 use embassy_sync::watch::Watch;
 use version::FirmwareVersion;
 
-use crate::resources::*;
-
-mod bellows;
-mod control_panel;
-mod dfu;
-mod i2c;
-mod keyboard;
-mod keymap;
-mod resources;
-mod usb;
-
 type MessageChannel = Channel<ThreadModeRawMutex, midi::Message, 8>;
 
 static MIDI_OUT_CHANNEL: MessageChannel = MessageChannel::new();
 static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
 
-static UPDATE_COMPLETE: Watch<ThreadModeRawMutex, bool, 1> = Watch::new_with(false);
+static MODE: Watch<ThreadModeRawMutex, Mode, 1> = Watch::new();
+static MODE_REQUEST: Channel<ThreadModeRawMutex, Mode, 1> = Channel::new();
 
 static LEFT_KEYBOARD_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new_with(0);
 static RIGHT_KEYBOARD_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new_with(0);
@@ -60,6 +62,10 @@ async fn main(spawner: embassy_executor::Spawner) {
     #[cfg(feature = "defmt")]
     defmt::info!("Controller version: {}", controller_version);
 
+    spawner.spawn(mode::task(MODE_REQUEST.dyn_receiver(), MODE.dyn_sender()).unwrap());
+
+    spawner.spawn(control_panel::task(r.control_panel, MODE.dyn_receiver().unwrap()).unwrap());
+
     spawner.spawn(
         dfu::task(
             r.dfu,
@@ -67,10 +73,6 @@ async fn main(spawner: embassy_executor::Spawner) {
             MIDI_OUT_CHANNEL.dyn_sender(),
         )
         .unwrap(),
-    );
-
-    spawner.spawn(
-        control_panel::task(r.control_panel, UPDATE_COMPLETE.dyn_receiver().unwrap()).unwrap(),
     );
 
     spawner.spawn(
@@ -90,6 +92,8 @@ async fn main(spawner: embassy_executor::Spawner) {
     const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
     const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
 
+    MODE_REQUEST.send(Mode::KeyboardInit).await;
+
     const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
     let left_keyboard_update = keyboard::update_firmware(
         i2c_mutex,
@@ -104,7 +108,8 @@ async fn main(spawner: embassy_executor::Spawner) {
         KEYBOARD_FIRMWARE,
     );
     join(left_keyboard_update, right_keyboard_update).await;
-    UPDATE_COMPLETE.sender().send(true);
+
+    MODE_REQUEST.send(Mode::Ready).await;
 
     spawner.spawn(
         keyboard::task(

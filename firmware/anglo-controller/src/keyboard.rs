@@ -8,7 +8,10 @@ use embassy_sync::watch;
 use embassy_time::Timer;
 use version::FirmwareVersion;
 
-async fn get_keyboard_version<'a>(i2c_controller: &mut i2c_proto::Controller<i2c::Wrapper<'a>>, address: u8) -> Result<FirmwareVersion<'static>, ()> {
+async fn get_keyboard_version<'a>(
+    i2c_controller: &mut i2c_proto::Controller<i2c::Wrapper<'a>>,
+    address: u8,
+) -> Result<FirmwareVersion<'static>, ()> {
     // Retry count and delay chosen to allow > 2 minutes for keyboard to finish applying update.
     const RETRY_COUNT: usize = 1200;
     for _ in 0..RETRY_COUNT {
@@ -76,6 +79,7 @@ pub async fn task(
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
     loop {
+        // TODO: Send zero and pause if MODE != Mode::Ready
         if let Ok(new_state) = i2c_controller.get_buttons(address).await {
             buttons.send(new_state);
         }
