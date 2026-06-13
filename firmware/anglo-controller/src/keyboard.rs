@@ -1,5 +1,5 @@
 #[cfg(feature = "defmt")]
-use defmt::{error, info, panic};
+use defmt::{error, info};
 
 use crate::i2c;
 use core::slice::Chunks;
@@ -21,6 +21,8 @@ async fn get_keyboard_version<'a>(
 
         Timer::after_millis(100).await;
     }
+    #[cfg(feature = "defmt")]
+    error!("Keyboard({:02X}) not responding", address);
     Err(())
 }
 
@@ -29,44 +31,41 @@ pub async fn update_firmware<'a>(
     address: u8,
     version: &FirmwareVersion<'a>,
     firmware: &[u8],
-) {
+) -> Result<FirmwareVersion<'static>, ()> {
     let i2c_wrapper = i2c::Wrapper::new(i2c_mutex);
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
 
-    let mut session = TransferSession::new(address);
+    let keyboard_version = get_keyboard_version(&mut i2c_controller, address).await?;
+    #[cfg(feature = "defmt")]
+    info!("Keyboard({:02X}) version: {}", address, keyboard_version);
+    if keyboard_version == *version {
+        return Ok(keyboard_version);
+    }
 
-    if let Ok(keyboard_version) = get_keyboard_version(&mut i2c_controller, address).await {
-        #[cfg(feature = "defmt")]
-        info!("Keyboard({:02X}) version: {}", address, keyboard_version);
-        if keyboard_version != *version || keyboard_version.prerelease.is_some() {
-            #[cfg(feature = "defmt")]
-            info!("Keyboard({:02X}) receiving update...", address);
-            session.begin(firmware);
-            loop {
-                match session.poll(&mut i2c_controller).await {
-                    Ok(TransferStatus::InProgress) => (),
-                    Err(_) => panic!("I2C communication error"),
-                    _ => break,
-                }
-                yield_now().await;
+    #[cfg(feature = "defmt")]
+    info!("Keyboard({:02X}) receiving update...", address);
+    let mut session = TransferSession::new(address, firmware);
+    loop {
+        match session.poll(&mut i2c_controller).await {
+            Ok(TransferStatus::Finished) => break,
+            Ok(TransferStatus::InProgress) => (),
+            Ok(TransferStatus::Failed) | Err(_) => {
+                #[cfg(feature = "defmt")]
+                error!("Keyboard({:02X}) update transfer failed", address);
+                return Err(());
             }
         }
-    } else {
-        #[cfg(feature = "defmt")]
-        error!("Keyboard({:02X}) not responding at startup", address);
-        return;
+        yield_now().await;
     }
 
     #[cfg(feature = "defmt")]
     info!("Keyboard({:02X}) applying update...", address);
-    let _new_version = get_keyboard_version(&mut i2c_controller, address).await;
+    let keyboard_version = get_keyboard_version(&mut i2c_controller, address).await?;
     #[cfg(feature = "defmt")]
-    if let Ok(keyboard_version) = _new_version {
-        info!("Keyboard({:02X}) update complete", address);
-        info!("Keyboard({:02X}) version: {}", address, keyboard_version);
-    } else {
-        error!("Keyboard({:02X}) not responding after update", address);
-    }
+    info!("Keyboard({:02X}) update complete", address);
+    #[cfg(feature = "defmt")]
+    info!("Keyboard({:02X}) version: {}", address, keyboard_version);
+    Ok(keyboard_version)
 }
 
 #[embassy_executor::task(pool_size = 2)]
@@ -103,48 +102,46 @@ struct TransferSession<'a> {
 }
 
 impl<'a> TransferSession<'a> {
-    fn new(address: u8) -> Self {
+    fn new(address: u8, data: &'a [u8]) -> Self {
+        let beginning = Some(data.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE));
         Self {
             address,
-            beginning: None,
-            iter: None,
-            retries_remaining: 0,
-            status: TransferStatus::Finished,
+            beginning: beginning.clone(),
+            iter: beginning.clone(),
+            retries_remaining: 5,
+            status: TransferStatus::InProgress,
         }
-    }
-
-    fn begin(&mut self, data: &'a [u8]) {
-        self.beginning = Some(data.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE));
-        self.retries_remaining = 5;
-        self.status = TransferStatus::InProgress;
     }
 
     async fn poll(
         &mut self,
         i2c: &mut i2c_proto::Controller<crate::i2c::Wrapper<'a>>,
     ) -> Result<TransferStatus, i2c_proto::ControllerError<i2c::Error>> {
-        if self.status == TransferStatus::InProgress {
-            match i2c.get_write_status(self.address).await {
-                Ok(i2c_proto::WriteStatus::Ready) => {
-                    if let Some(chunk) = self.iter.as_mut().unwrap().next() {
-                        i2c.write_packet(self.address, chunk).await?;
-                    } else {
-                        i2c.write_end(self.address).await?;
-                        self.status = TransferStatus::Finished;
-                    }
-                }
-                Ok(i2c_proto::WriteStatus::Cancel) | Err(_) => {
-                    if self.retries_remaining > 0 {
-                        self.iter = self.beginning.clone();
-                        self.retries_remaining -= 1;
-                        i2c.write_begin(self.address).await?;
-                    } else {
-                        self.status = TransferStatus::Failed;
-                    }
-                }
-                _ => (),
-            }
+        if self.status != TransferStatus::InProgress {
+            return Ok(self.status.clone());
         }
+
+        match i2c.get_write_status(self.address).await {
+            Ok(i2c_proto::WriteStatus::Ready) => {
+                if let Some(chunk) = self.iter.as_mut().unwrap().next() {
+                    i2c.write_packet(self.address, chunk).await?;
+                } else {
+                    i2c.write_end(self.address).await?;
+                    self.status = TransferStatus::Finished;
+                }
+            }
+            Ok(i2c_proto::WriteStatus::Cancel) | Err(_) => {
+                if self.retries_remaining > 0 {
+                    self.iter = self.beginning.clone();
+                    self.retries_remaining -= 1;
+                    i2c.write_begin(self.address).await?;
+                } else {
+                    self.status = TransferStatus::Failed;
+                }
+            }
+            _ => (),
+        }
+
         Ok(self.status.clone())
     }
 }

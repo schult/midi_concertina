@@ -13,6 +13,8 @@ mod resources;
 mod usb;
 
 #[cfg(feature = "defmt")]
+use defmt::info;
+#[cfg(feature = "defmt")]
 use defmt_rtt as _;
 #[cfg(feature = "defmt")]
 use panic_probe as _;
@@ -27,6 +29,7 @@ use embassy_stm32::{gpio, rcc};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_sync::watch::Watch;
+use embassy_time::Timer;
 use version::FirmwareVersion;
 
 type MessageChannel = Channel<ThreadModeRawMutex, midi::Message, 8>;
@@ -103,9 +106,6 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap(),
     );
 
-    // Power on i2c-connected devices
-    let _i2c_power = gpio::Output::new(r.power.i2c, gpio::Level::Low, gpio::Speed::Low);
-
     let i2c_mutex = i2c::init(r.i2c);
 
     const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
@@ -113,20 +113,35 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     MODE_REQUEST.send(Mode::KeyboardInit).await;
 
-    const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
-    let left_keyboard_update = keyboard::update_firmware(
-        i2c_mutex,
-        LEFT_KEYBOARD_ADDRESS,
-        &controller_version,
-        KEYBOARD_FIRMWARE,
-    );
-    let right_keyboard_update = keyboard::update_firmware(
-        i2c_mutex,
-        RIGHT_KEYBOARD_ADDRESS,
-        &controller_version,
-        KEYBOARD_FIRMWARE,
-    );
-    join(left_keyboard_update, right_keyboard_update).await;
+    let mut i2c_power = gpio::Output::new(r.power.i2c, gpio::Level::High, gpio::Speed::Low);
+
+    loop {
+        #[cfg(feature = "defmt")]
+        info!("I2C power on");
+        i2c_power.set_low();
+
+        const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
+        let left_keyboard_update = keyboard::update_firmware(
+            i2c_mutex,
+            LEFT_KEYBOARD_ADDRESS,
+            &controller_version,
+            KEYBOARD_FIRMWARE,
+        );
+        let right_keyboard_update = keyboard::update_firmware(
+            i2c_mutex,
+            RIGHT_KEYBOARD_ADDRESS,
+            &controller_version,
+            KEYBOARD_FIRMWARE,
+        );
+        if let (Ok(_), Ok(_)) = join(left_keyboard_update, right_keyboard_update).await {
+            break;
+        }
+
+        #[cfg(feature = "defmt")]
+        info!("I2C power off");
+        i2c_power.set_high();
+        Timer::after_millis(100).await;
+    }
 
     MODE_REQUEST.send(Mode::Ready).await;
 
