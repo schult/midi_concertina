@@ -1,10 +1,12 @@
+use core::f32::consts;
 use crate::mode::Mode;
 use crate::resources::LedResources;
 use embassy_stm32::timer::GeneralInstance4Channel;
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm, SimplePwmChannel};
 use embassy_stm32::{gpio, time::khz};
 use embassy_sync::watch;
-use embassy_time::Timer;
+use embassy_time::{Instant, Timer};
+use micromath::F32Ext;
 
 #[embassy_executor::task]
 pub async fn task(r: LedResources, mut mode: watch::DynReceiver<'static, Mode>) {
@@ -20,10 +22,8 @@ pub async fn task(r: LedResources, mut mode: watch::DynReceiver<'static, Mode>) 
     );
 
     let mut led = led_pwm.ch1();
-    let led_max = led.max_duty_cycle() / 4;
-    let led_step = led_max / 64;
-    let mut led_duty = 0;
-    let mut inc = true;
+    let led_max = led.max_duty_cycle() / 2;
+    let led_min = led.max_duty_cycle() / 64;
     led.enable();
 
     loop {
@@ -48,10 +48,15 @@ pub async fn task(r: LedResources, mut mode: watch::DynReceiver<'static, Mode>) 
                 blink(&mut led, 1).await;
             }
             Mode::Ready => {
-                // TODO: Breath
-                led.set_duty_cycle(led_max);
+                const INTERVAL: u64 = 4000; // milliseconds
+                let t = (Instant::now().as_millis() % INTERVAL) as f32;
+                let x = (t / INTERVAL as f32) * 2.0 * consts::PI;
+                let y = x.sin().exp();
+                let y_norm = (y - (1.0 / consts::E)) / (consts::E - (1.0 / consts::E));
+                let brightness = (y_norm * (led_max - led_min) as f32) as u32 + led_min;
+                led.set_duty_cycle(brightness);
                 led.enable();
-                Timer::after_secs(1).await;
+                Timer::after_millis(30).await;
             }
         }
     }
@@ -62,6 +67,6 @@ async fn blink<'a, T: GeneralInstance4Channel>(led: &mut SimplePwmChannel<'a, T>
         led.enable();
         Timer::after_millis(100).await;
         led.disable();
-        Timer::after_millis(100).await;
+        Timer::after_millis(200).await;
     }
 }
