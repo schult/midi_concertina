@@ -37,6 +37,8 @@ static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
 static MODE: Watch<ThreadModeRawMutex, Mode, 1> = Watch::new();
 static MODE_REQUEST: Channel<ThreadModeRawMutex, Mode, 1> = Channel::new();
 
+static BUTTON_HELD: Watch<ThreadModeRawMutex, bool, 1> = Watch::new();
+
 static LEFT_KEYBOARD_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new_with(0);
 static RIGHT_KEYBOARD_STATE: Watch<ThreadModeRawMutex, u16, 1> = Watch::new_with(0);
 static BELLOWS_STATE: Watch<ThreadModeRawMutex, bellows::State, 1> =
@@ -65,9 +67,23 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     spawner.spawn(mode::task(MODE_REQUEST.dyn_receiver(), MODE.dyn_sender()).unwrap());
 
-    spawner.spawn(led::task(r.led, MODE.dyn_receiver().unwrap()).unwrap());
+    spawner.spawn(
+        led::task(
+            r.led,
+            MODE.dyn_receiver().unwrap(),
+            BUTTON_HELD.dyn_receiver().unwrap(),
+        )
+        .unwrap(),
+    );
 
-    spawner.spawn(button::task(r.button, MODE_REQUEST.dyn_sender()).unwrap());
+    spawner.spawn(
+        button::task(
+            r.button,
+            MODE_REQUEST.dyn_sender(),
+            BUTTON_HELD.dyn_sender(),
+        )
+        .unwrap(),
+    );
 
     spawner.spawn(
         dfu::task(
