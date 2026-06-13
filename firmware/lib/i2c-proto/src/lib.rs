@@ -334,9 +334,7 @@ impl<IO: DeviceIo> Device<IO> {
                     unknown_code => Err(DeviceError::UnknownCommand(unknown_code)),
                 }
             }
-            Err(e) => {
-                Err(DeviceError::Communication(e))
-            }
+            Err(e) => Err(DeviceError::Communication(e)),
         }
     }
 }
