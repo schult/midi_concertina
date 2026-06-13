@@ -11,14 +11,14 @@ pub enum Mode {
 
 #[embassy_executor::task]
 pub async fn task(
-    request: channel::DynamicReceiver<'static, Mode>,
+    mode_request: channel::DynamicReceiver<'static, Mode>,
     mode: watch::DynSender<'static, Mode>,
 ) {
     let mut internal_mode = Mode::Startup;
     mode.send(internal_mode);
 
     loop {
-        let requested_mode = request.receive().await;
+        let requested_mode = mode_request.receive().await;
         let accept_request = match internal_mode {
             Mode::Startup => requested_mode == Mode::KeyboardInit,
             Mode::KeyboardInit => requested_mode == Mode::Ready,

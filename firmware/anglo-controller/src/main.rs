@@ -2,11 +2,12 @@
 #![no_main]
 
 mod bellows;
-mod control_panel;
+mod button;
 mod dfu;
 mod i2c;
 mod keyboard;
 mod keymap;
+mod led;
 mod mode;
 mod resources;
 mod usb;
@@ -64,7 +65,9 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     spawner.spawn(mode::task(MODE_REQUEST.dyn_receiver(), MODE.dyn_sender()).unwrap());
 
-    spawner.spawn(control_panel::task(r.control_panel, MODE.dyn_receiver().unwrap()).unwrap());
+    spawner.spawn(led::task(r.led, MODE.dyn_receiver().unwrap()).unwrap());
+
+    spawner.spawn(button::task(r.button, MODE_REQUEST.dyn_sender()).unwrap());
 
     spawner.spawn(
         dfu::task(
