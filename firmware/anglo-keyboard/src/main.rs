@@ -2,6 +2,7 @@
 #![no_main]
 
 mod buttons;
+mod resources;
 mod state;
 mod update;
 
@@ -12,20 +13,15 @@ use panic_probe as _;
 #[cfg(not(feature = "defmt"))]
 use panic_reset as _;
 
+use crate::resources::*;
 use embassy_stm32::adc::AdcChannel;
 use embassy_stm32::flash::Flash;
-use embassy_stm32::{adc, bind_interrupts, dma, gpio, i2c, peripherals, rcc, time::khz};
+use embassy_stm32::{adc, gpio, i2c, rcc, time::khz};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_sync::watch::Watch;
 use state::Mode;
 use version::FirmwareVersion;
-
-bind_interrupts!(struct Irqs {
-    ADC1_COMP => adc::InterruptHandler<peripherals::ADC1>;
-    I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
-    DMA1_CHANNEL2_3 => dma::InterruptHandler<peripherals::DMA1_CH2>, dma::InterruptHandler<peripherals::DMA1_CH3>;
-});
 
 enum Chirality {
     Left,
@@ -65,6 +61,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     config.rcc.hsi = true;
     config.rcc.sys = rcc::Sysclk::HSI;
     let p = embassy_stm32::init(config);
+    let r = split_resources!(p);
 
     let version = FirmwareVersion {
         major: env!("FIRMWARE_MAJOR_VERSION").parse().unwrap(),
@@ -141,7 +138,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         .unwrap(),
     );
 
-    let flash = Flash::new_blocking(p.FLASH);
+    let flash = Flash::new_blocking(r.dfu.flash);
 
     spawner.spawn(
         update::update_task(UPDATE_COMMANDS.receiver(), UPDATE_STATUS.sender(), flash).unwrap(),
@@ -150,11 +147,13 @@ async fn main(spawner: embassy_executor::Spawner) {
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = khz(100);
 
-    let scl_pin = p.PB8;
-    let sda_pin = p.PB9;
-    let tx_dma = p.DMA1_CH2;
-    let rx_dma = p.DMA1_CH3;
-    let i2c_master = i2c::I2c::new(p.I2C1, scl_pin, sda_pin, tx_dma, rx_dma, Irqs, i2c_config);
+    let scl_pin = r.i2c.scl;
+    let sda_pin = r.i2c.sda;
+    let tx_dma = r.i2c.tx_dma;
+    let rx_dma = r.i2c.rx_dma;
+    let i2c_master = i2c::I2c::new(
+        r.i2c.i2c, scl_pin, sda_pin, tx_dma, rx_dma, Irqs, i2c_config,
+    );
 
     let i2c_addr = match chirality {
         Chirality::Left => 0x22,
