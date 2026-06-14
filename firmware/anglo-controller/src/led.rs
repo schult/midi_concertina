@@ -35,17 +35,17 @@ pub async fn task(
             Mode::Startup => {
                 led.set_duty_cycle(led_max);
                 blink(&mut led, 2).await;
-                Timer::after_secs(1).await;
+                Timer::after_millis(800).await;
             }
             Mode::KeyboardInit => {
                 led.set_duty_cycle(led_max);
                 blink(&mut led, 3).await;
-                Timer::after_secs(1).await;
+                Timer::after_millis(800).await;
             }
             Mode::WaitingForFirmware => {
                 led.set_duty_cycle(led_max);
                 blink(&mut led, 4).await;
-                Timer::after_secs(1).await;
+                Timer::after_millis(800).await;
             }
             Mode::ReceivingFirmware => {
                 led.set_duty_cycle(led_max);
