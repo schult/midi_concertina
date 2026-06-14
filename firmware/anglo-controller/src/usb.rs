@@ -12,8 +12,8 @@ use embassy_usb::driver::EndpointError;
 #[embassy_executor::task]
 pub async fn task(
     r: UsbResources,
-    midi_in_channel: channel::DynamicSender<'static, midi::Message>,
-    midi_out_channel: channel::DynamicReceiver<'static, midi::Message>,
+    midi_in: channel::DynamicSender<'static, midi::Message>,
+    midi_out: channel::DynamicReceiver<'static, midi::Message>,
 ) {
     let usb_driver = usb::Driver::new(r.usb, Irqs, r.dp, r.dm);
 
@@ -51,7 +51,7 @@ pub async fn task(
             midi_sender.wait_connection().await;
 
             'receive: loop {
-                let message = &midi_out_channel.receive().await;
+                let message = &midi_out.receive().await;
                 let event_packets = midi::usb::EventPacket::encode(USB_MIDI_CABLE, message);
                 for event_packet in event_packets {
                     usb_packet[..4].copy_from_slice(&event_packet.raw);
@@ -94,7 +94,7 @@ pub async fn task(
                                 Some(x) => x,
                                 None => continue,
                             };
-                            midi_in_channel.send(sysex).await;
+                            midi_in.send(sysex).await;
                         }
                     }
                 }

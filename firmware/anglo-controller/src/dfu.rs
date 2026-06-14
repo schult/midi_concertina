@@ -1,15 +1,18 @@
+use crate::mode::Mode;
 use crate::resources::DfuResources;
 use embassy_boot_stm32::{AlignedBuffer, FirmwareUpdater, FirmwareUpdaterConfig};
 use embassy_embedded_hal::adapter::BlockingAsync;
-use embassy_sync::channel;
 use embassy_sync::mutex::Mutex;
+use embassy_sync::{channel, watch};
 use midi::util::FileDumpReceiver;
 
 #[embassy_executor::task]
 pub async fn task(
     r: DfuResources,
-    midi_in_channel: channel::DynamicReceiver<'static, midi::Message>,
-    midi_out_channel: channel::DynamicSender<'static, midi::Message>,
+    mut mode: watch::DynReceiver<'static, Mode>,
+    mode_request: channel::DynamicSender<'static, Mode>,
+    midi_in: channel::DynamicReceiver<'static, midi::Message>,
+    midi_out: channel::DynamicSender<'static, midi::Message>,
 ) {
     let flash = embassy_stm32::flash::Flash::new_blocking(r.flash);
     let flash = Mutex::new(BlockingAsync::new(flash));
@@ -21,9 +24,7 @@ pub async fn task(
 
     const SYSEX_DEVICE_ID: u8 = 0x01;
     let mut dfu_writer = util::DfuWriter::new(updater);
-    let mut message_adapter = MessageChannelAdapter {
-        sender: midi_out_channel,
-    };
+    let mut message_adapter = MessageChannelAdapter { sender: midi_out };
     let mut receiver = FileDumpReceiver::new(
         &mut dfu_writer,
         &mut message_adapter,
@@ -32,9 +33,23 @@ pub async fn task(
     );
 
     loop {
-        // TODO: Check and update MODE
-        let message = midi_in_channel.receive().await;
-        receiver.process(message).await;
+        let message = midi_in.receive().await;
+        match mode.get().await {
+            Mode::WaitingForFirmware => {
+                receiver.process(message).await;
+                if receiver.active() {
+                    mode_request.send(Mode::ReceivingFirmware).await;
+                }
+                // TODO: Return to Mode::Ready after timeout
+            }
+            Mode::ReceivingFirmware => {
+                receiver.process(message).await;
+                if !receiver.active() {
+                    mode_request.send(Mode::Ready).await;
+                }
+            }
+            _ => (),
+        }
     }
 }
 

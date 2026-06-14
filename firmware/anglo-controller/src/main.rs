@@ -34,10 +34,10 @@ use version::FirmwareVersion;
 
 type MessageChannel = Channel<ThreadModeRawMutex, midi::Message, 8>;
 
-static MIDI_OUT_CHANNEL: MessageChannel = MessageChannel::new();
-static MIDI_IN_CHANNEL: MessageChannel = MessageChannel::new();
+static MIDI_OUT: MessageChannel = MessageChannel::new();
+static MIDI_IN: MessageChannel = MessageChannel::new();
 
-static MODE: Watch<ThreadModeRawMutex, Mode, 1> = Watch::new();
+static MODE: Watch<ThreadModeRawMutex, Mode, 5> = Watch::new();
 static MODE_REQUEST: Channel<ThreadModeRawMutex, Mode, 1> = Channel::new();
 
 static BUTTON_HELD: Watch<ThreadModeRawMutex, bool, 1> = Watch::new();
@@ -91,20 +91,15 @@ async fn main(spawner: embassy_executor::Spawner) {
     spawner.spawn(
         dfu::task(
             r.dfu,
-            MIDI_IN_CHANNEL.dyn_receiver(),
-            MIDI_OUT_CHANNEL.dyn_sender(),
+            MODE.dyn_receiver().unwrap(),
+            MODE_REQUEST.dyn_sender(),
+            MIDI_IN.dyn_receiver(),
+            MIDI_OUT.dyn_sender(),
         )
         .unwrap(),
     );
 
-    spawner.spawn(
-        usb::task(
-            r.usb,
-            MIDI_IN_CHANNEL.dyn_sender(),
-            MIDI_OUT_CHANNEL.dyn_receiver(),
-        )
-        .unwrap(),
-    );
+    spawner.spawn(usb::task(r.usb, MIDI_IN.dyn_sender(), MIDI_OUT.dyn_receiver()).unwrap());
 
     let i2c_mutex = i2c::init(r.i2c);
 
@@ -149,6 +144,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         keyboard::task(
             i2c_mutex,
             LEFT_KEYBOARD_ADDRESS,
+            MODE.dyn_receiver().unwrap(),
             LEFT_KEYBOARD_STATE.dyn_sender(),
         )
         .unwrap(),
@@ -157,12 +153,20 @@ async fn main(spawner: embassy_executor::Spawner) {
         keyboard::task(
             i2c_mutex,
             RIGHT_KEYBOARD_ADDRESS,
+            MODE.dyn_receiver().unwrap(),
             RIGHT_KEYBOARD_STATE.dyn_sender(),
         )
         .unwrap(),
     );
 
-    spawner.spawn(bellows::task(i2c_mutex, BELLOWS_STATE.dyn_sender()).unwrap());
+    spawner.spawn(
+        bellows::task(
+            i2c_mutex,
+            MODE.dyn_receiver().unwrap(),
+            BELLOWS_STATE.dyn_sender(),
+        )
+        .unwrap(),
+    );
 
     const MIDI_CHANNEL: u8 = 0;
 
@@ -193,10 +197,10 @@ async fn main(spawner: embassy_executor::Spawner) {
             if (changes >> i) & 1 == 1 {
                 if (new_left_buttons >> i) & 1 == 1 {
                     let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
-                    MIDI_OUT_CHANNEL.send(message).await;
+                    MIDI_OUT.send(message).await;
                 } else {
                     let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                    MIDI_OUT_CHANNEL.send(message).await;
+                    MIDI_OUT.send(message).await;
                 }
             }
         }
@@ -208,10 +212,10 @@ async fn main(spawner: embassy_executor::Spawner) {
             if (changes >> i) & 1 == 1 {
                 if (new_right_buttons >> i) & 1 == 1 {
                     let message = midi::Message::note_on(MIDI_CHANNEL, *note, 127);
-                    MIDI_OUT_CHANNEL.send(message).await;
+                    MIDI_OUT.send(message).await;
                 } else {
                     let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                    MIDI_OUT_CHANNEL.send(message).await;
+                    MIDI_OUT.send(message).await;
                 }
             }
         }
@@ -223,14 +227,14 @@ async fn main(spawner: embassy_executor::Spawner) {
                 for (i, note) in left_notes.iter().enumerate() {
                     if (left_buttons >> i) & 1 == 1 {
                         let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                        MIDI_OUT_CHANNEL.send(message).await;
+                        MIDI_OUT.send(message).await;
                     }
                 }
 
                 for (i, note) in right_notes.iter().enumerate() {
                     if (right_buttons >> i) & 1 == 1 {
                         let message = midi::Message::note_off(MIDI_CHANNEL, *note, 127);
-                        MIDI_OUT_CHANNEL.send(message).await;
+                        MIDI_OUT.send(message).await;
                     }
                 }
 
@@ -250,8 +254,8 @@ async fn main(spawner: embassy_executor::Spawner) {
                 midi::cc::CHANNEL_VOLUME_LSB,
                 bellows_state.magnitude_lsb(),
             );
-            MIDI_OUT_CHANNEL.send(msb_message).await;
-            MIDI_OUT_CHANNEL.send(lsb_message).await;
+            MIDI_OUT.send(msb_message).await;
+            MIDI_OUT.send(lsb_message).await;
         }
 
         yield_now().await;

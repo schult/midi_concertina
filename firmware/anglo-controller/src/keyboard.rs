@@ -2,6 +2,7 @@
 use defmt::{error, info};
 
 use crate::i2c;
+use crate::mode::Mode;
 use core::slice::Chunks;
 use embassy_futures::yield_now;
 use embassy_sync::watch;
@@ -71,12 +72,17 @@ pub async fn update_firmware<'a>(
 pub async fn task(
     i2c_mutex: &'static i2c::I2cMutex,
     address: u8,
+    mut mode: watch::DynReceiver<'static, Mode>,
     buttons: watch::DynSender<'static, u16>,
 ) {
     let i2c_wrapper = i2c::Wrapper::new(i2c_mutex);
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
     loop {
-        // TODO: Send zero and pause if MODE != Mode::Ready
+        if mode.get().await != Mode::Ready {
+            buttons.send(0);
+            mode.get_and(|x| *x == Mode::Ready).await;
+        }
+
         if let Ok(new_state) = i2c_controller.get_buttons(address).await {
             buttons.send(new_state);
         }

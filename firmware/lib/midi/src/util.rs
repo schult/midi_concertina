@@ -50,6 +50,10 @@ impl<'a, T: FileWriter, U: MessageSender> FileDumpReceiver<'a, T, U> {
         }
     }
 
+    pub fn active(&self) -> bool {
+        self.progress.is_some()
+    }
+
     async fn cancel(&mut self) {
         if let Some(progress) = &mut self.progress {
             self.message

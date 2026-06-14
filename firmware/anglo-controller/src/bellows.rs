@@ -1,4 +1,5 @@
 use crate::i2c;
+use crate::mode::Mode;
 use embassy_futures::yield_now;
 use embassy_sync::watch;
 use embassy_time::Timer;
@@ -53,7 +54,11 @@ impl State {
 }
 
 #[embassy_executor::task]
-pub async fn task(i2c_mutex: &'static i2c::I2cMutex, sender: watch::DynSender<'static, State>) {
+pub async fn task(
+    i2c_mutex: &'static i2c::I2cMutex,
+    mut mode: watch::DynReceiver<'static, Mode>,
+    sender: watch::DynSender<'static, State>,
+) {
     let mut i2c = i2c::Wrapper::new(i2c_mutex);
 
     const ADDRESS: u8 = 0x7F;
@@ -61,7 +66,10 @@ pub async fn task(i2c_mutex: &'static i2c::I2cMutex, sender: watch::DynSender<'s
     const DATA_REG: u8 = 0x06;
 
     loop {
-        // TODO: Send zero and pause if MODE != Mode::Ready
+        if mode.get().await != Mode::Ready {
+            sender.send(State::default());
+            mode.get_and(|x| *x == Mode::Ready).await;
+        }
 
         while i2c.write(ADDRESS, &[CONTROL_REG, 0x0A]).await.is_err() {
             Timer::after_micros(5).await;
