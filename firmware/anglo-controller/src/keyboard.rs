@@ -6,7 +6,7 @@ use crate::mode::Mode;
 use core::slice::Chunks;
 use embassy_futures::yield_now;
 use embassy_sync::watch;
-use embassy_time::Timer;
+use embassy_time::{Duration, Ticker, Timer};
 use version::FirmwareVersion;
 
 async fn get_keyboard_version<'a>(
@@ -77,6 +77,7 @@ pub async fn task(
 ) {
     let i2c_wrapper = i2c::Wrapper::new(i2c_mutex);
     let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
+    let mut ticker = Ticker::every(Duration::from_millis(2));
     loop {
         if mode.get().await != Mode::Ready {
             buttons.send(0);
@@ -86,7 +87,7 @@ pub async fn task(
         if let Ok(new_state) = i2c_controller.get_buttons(address).await {
             buttons.send(new_state);
         }
-        yield_now().await;
+        ticker.next().await;
     }
 }
 

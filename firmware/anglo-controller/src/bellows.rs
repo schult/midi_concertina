@@ -1,8 +1,7 @@
 use crate::i2c;
 use crate::mode::Mode;
-use embassy_futures::yield_now;
 use embassy_sync::watch;
-use embassy_time::Timer;
+use embassy_time::{Duration, Ticker, Timer};
 use i2c_proto::ControllerIo;
 
 #[derive(Clone, PartialEq)]
@@ -60,6 +59,7 @@ pub async fn task(
     sender: watch::DynSender<'static, State>,
 ) {
     let mut i2c = i2c::Wrapper::new(i2c_mutex);
+    let mut ticker = Ticker::every(Duration::from_millis(1));
 
     const ADDRESS: u8 = 0x7F;
     const CONTROL_REG: u8 = 0x30;
@@ -108,7 +108,7 @@ pub async fn task(
         let pascals = 1.02f32 * ((reading as f32) / 838.8608f32);
         sender.send(State::new(pascals));
 
-        yield_now().await;
+        ticker.next().await;
     }
 }
 
