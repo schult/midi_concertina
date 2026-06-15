@@ -1,4 +1,4 @@
-use crate::resources::{I2cResources, Irqs};
+use crate::resources::I2cResources;
 use core::ops::DerefMut;
 use embassy_stm32::i2c::{Config, I2c, Master};
 use embassy_stm32::time::khz;
@@ -10,9 +10,9 @@ use static_cell::StaticCell;
 
 pub use embassy_stm32::i2c::Error;
 
-pub type I2cMutex = Mutex<NoopRawMutex, I2c<'static, embassy_stm32::mode::Async, Master>>;
+pub type I2cMutex = Mutex<NoopRawMutex, I2c<'static, embassy_stm32::mode::Blocking, Master>>;
 pub type I2cMutexGuard<'a> =
-    MutexGuard<'a, NoopRawMutex, I2c<'static, embassy_stm32::mode::Async, Master>>;
+    MutexGuard<'a, NoopRawMutex, I2c<'static, embassy_stm32::mode::Blocking, Master>>;
 
 pub fn init(r: I2cResources) -> &'static mut I2cMutex {
     let mut config = Config::default();
@@ -20,8 +20,8 @@ pub fn init(r: I2cResources) -> &'static mut I2cMutex {
     config.timeout = Duration::from_millis(500);
 
     static I2C: StaticCell<I2cMutex> = StaticCell::new();
-    I2C.init(Mutex::new(I2c::new(
-        r.i2c, r.scl, r.sda, r.tx_dma, r.rx_dma, Irqs, config,
+    I2C.init(Mutex::new(I2c::new_blocking(
+        r.i2c, r.scl, r.sda, config,
     )))
 }
 
@@ -41,13 +41,13 @@ impl<'a> ControllerIo for Wrapper<'a> {
     async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error> {
         let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
         let i2c = guard.deref_mut();
-        i2c.read(address, read).await
+        i2c.blocking_read(address, read)
     }
 
     async fn write(&mut self, address: u8, write: &[u8]) -> Result<(), Self::Error> {
         let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
         let i2c = guard.deref_mut();
-        i2c.write(address, write).await
+        i2c.blocking_write(address, write)
     }
 
     async fn write_read(
@@ -58,6 +58,6 @@ impl<'a> ControllerIo for Wrapper<'a> {
     ) -> Result<(), Self::Error> {
         let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
         let i2c = guard.deref_mut();
-        i2c.write_read(address, write, read).await
+        i2c.blocking_write_read(address, write, read)
     }
 }
