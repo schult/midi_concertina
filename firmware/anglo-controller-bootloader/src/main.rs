@@ -14,14 +14,14 @@ use panic_reset as _;
 fn main() -> ! {
     let mut config = embassy_stm32::Config::default();
     config.rcc.hsi = true;
-    config.rcc.sys = rcc::Sysclk::HSI;
+    config.rcc.sys = rcc::Sysclk::Hsi;
     let p = embassy_stm32::init(config);
 
     let flash = Flash::new_blocking(p.FLASH);
     let flash = Mutex::new(RefCell::new(flash));
 
     let config = BootLoaderConfig::from_linkerfile_blocking(&flash, &flash, &flash);
-    let boot_address = flash::BANK1_REGION.base + config.active.offset();
+    let boot_address = flash::BANK1_REGION.base() + config.active.offset();
     const PAGE_SIZE: usize = flash::MAX_ERASE_SIZE;
     let bl = BootLoader::prepare::<_, _, _, PAGE_SIZE>(config);
 
