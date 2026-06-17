@@ -17,13 +17,15 @@ pub type I2cMutexGuard<'a> =
 pub fn init(r: I2cResources) -> &'static mut I2cMutex {
     let mut config = Config::default();
     config.frequency = khz(100);
-    config.timeout = Duration::from_millis(500);
+    config.timeout = Duration::from_millis(25);
 
     static I2C: StaticCell<I2cMutex> = StaticCell::new();
     I2C.init(Mutex::new(I2c::new_blocking(
         r.i2c, r.scl, r.sda, config,
     )))
 }
+
+const RETRY_COUNT: usize = 20;
 
 pub struct Wrapper<'a> {
     i2c: &'a I2cMutex,
@@ -39,15 +41,29 @@ impl<'a> ControllerIo for Wrapper<'a> {
     type Error = Error;
 
     async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error> {
-        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
-        let i2c = guard.deref_mut();
-        i2c.blocking_read(address, read)
+        let mut result = Ok(());
+        for _ in 0..RETRY_COUNT {
+            let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
+            let i2c = guard.deref_mut();
+            result = i2c.blocking_read(address, read);
+            if result.is_ok() {
+                return result;
+            }
+        }
+        result
     }
 
     async fn write(&mut self, address: u8, write: &[u8]) -> Result<(), Self::Error> {
-        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
-        let i2c = guard.deref_mut();
-        i2c.blocking_write(address, write)
+        let mut result = Ok(());
+        for _ in 0..RETRY_COUNT {
+            let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
+            let i2c = guard.deref_mut();
+            result = i2c.blocking_write(address, write);
+            if result.is_ok() {
+                return result;
+            }
+        }
+        result
     }
 
     async fn write_read(
@@ -56,8 +72,15 @@ impl<'a> ControllerIo for Wrapper<'a> {
         write: &[u8],
         read: &mut [u8],
     ) -> Result<(), Self::Error> {
-        let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
-        let i2c = guard.deref_mut();
-        i2c.blocking_write_read(address, write, read)
+        let mut result = Ok(());
+        for _ in 0..RETRY_COUNT {
+            let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
+            let i2c = guard.deref_mut();
+            result = i2c.blocking_write_read(address, write, read);
+            if result.is_ok() {
+                return result;
+            }
+        }
+        result
     }
 }
