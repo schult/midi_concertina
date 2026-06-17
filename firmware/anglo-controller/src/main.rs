@@ -141,28 +141,11 @@ async fn main(spawner: embassy_executor::Spawner) {
     MODE_REQUEST.send(Mode::Ready).await;
 
     spawner.spawn(
-        keyboard::task(
+        i2c::task(
             i2c_mutex,
-            LEFT_KEYBOARD_ADDRESS,
             MODE.dyn_receiver().unwrap(),
             LEFT_KEYBOARD_STATE.dyn_sender(),
-        )
-        .unwrap(),
-    );
-    spawner.spawn(
-        keyboard::task(
-            i2c_mutex,
-            RIGHT_KEYBOARD_ADDRESS,
-            MODE.dyn_receiver().unwrap(),
             RIGHT_KEYBOARD_STATE.dyn_sender(),
-        )
-        .unwrap(),
-    );
-
-    spawner.spawn(
-        bellows::task(
-            i2c_mutex,
-            MODE.dyn_receiver().unwrap(),
             BELLOWS_STATE.dyn_sender(),
         )
         .unwrap(),

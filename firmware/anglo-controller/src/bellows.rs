@@ -21,7 +21,7 @@ impl State {
         Self { value: 0 }
     }
 
-    pub const fn new(pascals: f32) -> Self {
+    pub const fn from_pascals(pascals: f32) -> Self {
         const MIN_PA: f32 = 20.0;
         const MAX_PA: f32 = 1000.0;
 
@@ -31,6 +31,48 @@ impl State {
         let value = MAGNITUDE_TABLE[index] * pascals.signum() as i16;
 
         Self { value }
+    }
+
+    // TODO: try_read with timeout?
+    pub async fn read(i2c: &mut impl ControllerIo, address: u8) -> Self {
+        const CONTROL_REG: u8 = 0x30;
+        const DATA_REG: u8 = 0x06;
+
+        while i2c.write(address, &[CONTROL_REG, 0x0A]).await.is_err() {
+            Timer::after_micros(5).await;
+        }
+        loop {
+            let mut buffer = [0; 1];
+            while i2c
+                .write_read(address, &[CONTROL_REG], &mut buffer)
+                .await
+                .is_err()
+            {
+                Timer::after_micros(5).await;
+            }
+            if buffer[0] == 0x02 {
+                break;
+            }
+            Timer::after_micros(100).await;
+        }
+
+        let mut buffer = [0; 3];
+        while i2c
+            .write_read(address, &[DATA_REG], &mut buffer)
+            .await
+            .is_err()
+        {
+            Timer::after_micros(5).await;
+        }
+
+        let mut reading = buffer[2] as i32;
+        reading |= (buffer[1] as i32) << 8;
+        reading |= (buffer[0] as i32) << 16;
+        if reading & 0x00800000 != 0 {
+            reading -= 16777216;
+        }
+
+        Self::from_pascals(1.02f32 * ((reading as f32) / 838.8608f32))
     }
 
     pub const fn direction(&self) -> Direction {
@@ -49,66 +91,6 @@ impl State {
 
     pub const fn magnitude_lsb(&self) -> u8 {
         (self.value.abs() & 0x7F) as u8
-    }
-}
-
-#[embassy_executor::task]
-pub async fn task(
-    i2c_mutex: &'static i2c::I2cMutex,
-    mut mode: watch::DynReceiver<'static, Mode>,
-    sender: watch::DynSender<'static, State>,
-) {
-    let mut i2c = i2c::Wrapper::new(i2c_mutex);
-    let mut ticker = Ticker::every(Duration::from_millis(1));
-
-    const ADDRESS: u8 = 0x7F;
-    const CONTROL_REG: u8 = 0x30;
-    const DATA_REG: u8 = 0x06;
-
-    loop {
-        if mode.get().await != Mode::Ready {
-            sender.send(State::default());
-            mode.get_and(|x| *x == Mode::Ready).await;
-        }
-
-        while i2c.write(ADDRESS, &[CONTROL_REG, 0x0A]).await.is_err() {
-            Timer::after_micros(5).await;
-        }
-        loop {
-            let mut buffer = [0; 1];
-            while i2c
-                .write_read(ADDRESS, &[CONTROL_REG], &mut buffer)
-                .await
-                .is_err()
-            {
-                Timer::after_micros(5).await;
-            }
-            if buffer[0] == 0x02 {
-                break;
-            }
-            Timer::after_micros(100).await;
-        }
-
-        let mut buffer = [0; 3];
-        while i2c
-            .write_read(ADDRESS, &[DATA_REG], &mut buffer)
-            .await
-            .is_err()
-        {
-            Timer::after_micros(5).await;
-        }
-
-        let mut reading = buffer[2] as i32;
-        reading |= (buffer[1] as i32) << 8;
-        reading |= (buffer[0] as i32) << 16;
-        if reading & 0x00800000 != 0 {
-            reading -= 16777216;
-        }
-
-        let pascals = 1.02f32 * ((reading as f32) / 838.8608f32);
-        sender.send(State::new(pascals));
-
-        ticker.next().await;
     }
 }
 

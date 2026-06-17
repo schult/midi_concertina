@@ -20,6 +20,7 @@ pub async fn task(
 
     let mut aligned_buffer = AlignedBuffer([0; embassy_stm32::flash::WRITE_SIZE]);
     let mut updater = FirmwareUpdater::new(updater_config, aligned_buffer.as_mut());
+    // TODO: Wait for State::Ready?
     updater.mark_booted().await.unwrap();
 
     const SYSEX_DEVICE_ID: u8 = 0x01;

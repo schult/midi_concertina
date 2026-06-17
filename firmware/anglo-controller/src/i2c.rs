@@ -1,14 +1,22 @@
 use crate::resources::I2cResources;
+use crate::bellows;
+use crate::mode::Mode;
 use core::ops::DerefMut;
+use embassy_futures::yield_now;
 use embassy_stm32::i2c::{Config, I2c, Master};
 use embassy_stm32::time::khz;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::mutex::{Mutex, MutexGuard};
+use embassy_sync::watch;
 use embassy_time::Duration;
 use i2c_proto::ControllerIo;
 use static_cell::StaticCell;
 
 pub use embassy_stm32::i2c::Error;
+
+const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
+const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
+const BELLOWS_ADDRESS: u8 = 0x7F;
 
 pub type I2cMutex = Mutex<NoopRawMutex, I2c<'static, embassy_stm32::mode::Blocking, Master>>;
 pub type I2cMutexGuard<'a> =
@@ -23,6 +31,41 @@ pub fn init(r: I2cResources) -> &'static mut I2cMutex {
     I2C.init(Mutex::new(I2c::new_blocking(
         r.i2c, r.scl, r.sda, config,
     )))
+
+    // TODO: Keyboard init?
+}
+
+#[embassy_executor::task(pool_size = 2)]
+pub async fn task(
+    i2c_mutex: &'static I2cMutex,
+    mut mode: watch::DynReceiver<'static, Mode>,
+    left_buttons: watch::DynSender<'static, u16>,
+    right_buttons: watch::DynSender<'static, u16>,
+    bellows: watch::DynSender<'static, bellows::State>,
+) {
+    let i2c_wrapper = Wrapper::new(i2c_mutex);
+    let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
+
+    loop {
+        if mode.get().await != Mode::Ready {
+            left_buttons.send(0);
+            right_buttons.send(0);
+            bellows.send(bellows::State::default());
+            mode.get_and(|x| *x == Mode::Ready).await;
+        }
+
+        if let Ok(new_state) = i2c_controller.get_buttons(LEFT_KEYBOARD_ADDRESS).await {
+            left_buttons.send(new_state);
+        }
+
+        if let Ok(new_state) = i2c_controller.get_buttons(RIGHT_KEYBOARD_ADDRESS).await {
+            right_buttons.send(new_state);
+        }
+
+        bellows.send(bellows::State::read(&mut i2c_controller.io, BELLOWS_ADDRESS).await);
+
+        yield_now().await;
+    }
 }
 
 const RETRY_COUNT: usize = 20;

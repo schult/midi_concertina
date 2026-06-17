@@ -2,11 +2,9 @@
 use defmt::{error, info};
 
 use crate::i2c;
-use crate::mode::Mode;
 use core::slice::Chunks;
 use embassy_futures::yield_now;
-use embassy_sync::watch;
-use embassy_time::{Duration, Ticker, Timer};
+use embassy_time::Timer;
 use version::FirmwareVersion;
 
 async fn get_keyboard_version<'a>(
@@ -66,29 +64,6 @@ pub async fn update_firmware<'a>(
     #[cfg(feature = "defmt")]
     info!("Keyboard({:02X}) version: {}", address, keyboard_version);
     Ok(keyboard_version)
-}
-
-#[embassy_executor::task(pool_size = 2)]
-pub async fn task(
-    i2c_mutex: &'static i2c::I2cMutex,
-    address: u8,
-    mut mode: watch::DynReceiver<'static, Mode>,
-    buttons: watch::DynSender<'static, u16>,
-) {
-    let i2c_wrapper = i2c::Wrapper::new(i2c_mutex);
-    let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
-    let mut ticker = Ticker::every(Duration::from_millis(2));
-    loop {
-        if mode.get().await != Mode::Ready {
-            buttons.send(0);
-            mode.get_and(|x| *x == Mode::Ready).await;
-        }
-
-        if let Ok(new_state) = i2c_controller.get_buttons(address).await {
-            buttons.send(new_state);
-        }
-        ticker.next().await;
-    }
 }
 
 #[derive(Clone, PartialEq)]
