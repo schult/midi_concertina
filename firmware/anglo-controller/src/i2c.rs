@@ -89,9 +89,11 @@ impl<'a> ControllerIo for Wrapper<'a> {
             let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
             let i2c = guard.deref_mut();
             result = i2c.blocking_read(address, read);
+            drop(guard);
             if result.is_ok() {
                 return result;
             }
+            yield_now().await;
         }
         result
     }
@@ -102,9 +104,11 @@ impl<'a> ControllerIo for Wrapper<'a> {
             let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
             let i2c = guard.deref_mut();
             result = i2c.blocking_write(address, write);
+            drop(guard);
             if result.is_ok() {
                 return result;
             }
+            yield_now().await;
         }
         result
     }
@@ -120,9 +124,11 @@ impl<'a> ControllerIo for Wrapper<'a> {
             let mut guard: I2cMutexGuard<'_> = self.i2c.lock().await;
             let i2c = guard.deref_mut();
             result = i2c.blocking_write_read(address, write, read);
+            drop(guard);
             if result.is_ok() {
                 return result;
             }
+            yield_now().await;
         }
         result
     }
