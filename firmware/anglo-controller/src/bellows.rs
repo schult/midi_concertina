@@ -33,23 +33,16 @@ impl State {
         Self { value }
     }
 
-    // TODO: try_read with timeout?
-    pub async fn read(i2c: &mut impl ControllerIo, address: u8) -> Self {
+    pub async fn read<'a>(i2c: &mut i2c::Wrapper<'a>, address: u8) -> Result<Self, i2c::Error> {
         const CONTROL_REG: u8 = 0x30;
         const DATA_REG: u8 = 0x06;
 
-        while i2c.write(address, &[CONTROL_REG, 0x0A]).await.is_err() {
-            Timer::after_micros(5).await;
-        }
-        loop {
+        i2c.write(address, &[CONTROL_REG, 0x0A]).await?;
+        // Wait for flag indicating the data register has a new value. If we don't get a new value
+        // within 1ms, we can accept the old value and catch the new value next time.
+        for _ in 0..10 {
             let mut buffer = [0; 1];
-            while i2c
-                .write_read(address, &[CONTROL_REG], &mut buffer)
-                .await
-                .is_err()
-            {
-                Timer::after_micros(5).await;
-            }
+            i2c.write_read(address, &[CONTROL_REG], &mut buffer).await?;
             if buffer[0] == 0x02 {
                 break;
             }
@@ -57,13 +50,7 @@ impl State {
         }
 
         let mut buffer = [0; 3];
-        while i2c
-            .write_read(address, &[DATA_REG], &mut buffer)
-            .await
-            .is_err()
-        {
-            Timer::after_micros(5).await;
-        }
+        i2c.write_read(address, &[DATA_REG], &mut buffer).await?;
 
         let mut reading = buffer[2] as i32;
         reading |= (buffer[1] as i32) << 8;
@@ -72,7 +59,7 @@ impl State {
             reading -= 16777216;
         }
 
-        Self::from_pascals(1.02f32 * ((reading as f32) / 838.8608f32))
+        Ok(Self::from_pascals(1.02f32 * ((reading as f32) / 838.8608f32)))
     }
 
     pub const fn direction(&self) -> Direction {

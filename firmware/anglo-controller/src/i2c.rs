@@ -56,13 +56,21 @@ pub async fn task(
 
         if let Ok(new_state) = i2c_controller.get_buttons(LEFT_KEYBOARD_ADDRESS).await {
             left_buttons.send(new_state);
+        } else {
+            // TODO: power cycle
         }
 
         if let Ok(new_state) = i2c_controller.get_buttons(RIGHT_KEYBOARD_ADDRESS).await {
             right_buttons.send(new_state);
+        } else {
+            // TODO: power cycle
         }
 
-        bellows.send(bellows::State::read(&mut i2c_controller.io, BELLOWS_ADDRESS).await);
+        if let Ok(new_state) = bellows::State::read(&mut i2c_controller.io, BELLOWS_ADDRESS).await {
+            bellows.send(new_state);
+        } else {
+            // TODO: power cycle
+        }
 
         yield_now().await;
     }
