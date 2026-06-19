@@ -11,6 +11,7 @@ use embassy_sync::watch;
 use embassy_time::Duration;
 use i2c_proto::ControllerIo;
 use static_cell::StaticCell;
+use version::FirmwareVersion;
 
 pub use embassy_stm32::i2c::Error;
 
@@ -22,17 +23,53 @@ pub type I2cMutex = Mutex<NoopRawMutex, I2c<'static, embassy_stm32::mode::Blocki
 pub type I2cMutexGuard<'a> =
     MutexGuard<'a, NoopRawMutex, I2c<'static, embassy_stm32::mode::Blocking, Master>>;
 
-pub fn init(r: I2cResources) -> &'static mut I2cMutex {
+// TODO:
+// - Make this a Wrapper constructor instead
+// - Move firmware update to a new Wrapper method.
+// - Add power control to Wrapper
+// - Switch back to async i2c
+pub fn init(r: I2cResources, controller_version: FirmwareVersion) -> &'static mut I2cMutex {
     let mut config = Config::default();
     config.frequency = khz(100);
     config.timeout = Duration::from_millis(25);
 
     static I2C: StaticCell<I2cMutex> = StaticCell::new();
-    I2C.init(Mutex::new(I2c::new_blocking(
+    let i2c = I2C.init(Mutex::new(I2c::new_blocking(
         r.i2c, r.scl, r.sda, config,
-    )))
+    )));
 
-    // TODO: Keyboard init?
+    // TODO: Don't split i2c across futures
+    /*
+    loop {
+        #[cfg(feature = "defmt")]
+        info!("I2C power on");
+        i2c_power.set_low();
+
+        const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
+        let left_keyboard_update = keyboard::update_firmware(
+            i2c,
+            LEFT_KEYBOARD_ADDRESS,
+            &controller_version,
+            KEYBOARD_FIRMWARE,
+        );
+        let right_keyboard_update = keyboard::update_firmware(
+            i2c,
+            RIGHT_KEYBOARD_ADDRESS,
+            &controller_version,
+            KEYBOARD_FIRMWARE,
+        );
+        if let (Ok(_), Ok(_)) = join(left_keyboard_update, right_keyboard_update).await {
+            break;
+        }
+
+        #[cfg(feature = "defmt")]
+        info!("I2C power off");
+        i2c_power.set_high();
+        Timer::after_millis(100).await;
+    }
+    */
+
+    i2c
 }
 
 #[embassy_executor::task(pool_size = 2)]

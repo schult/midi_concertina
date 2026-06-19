@@ -23,13 +23,11 @@ use panic_reset as _;
 
 use crate::mode::Mode;
 use crate::resources::*;
-use embassy_futures::join::join;
 use embassy_futures::yield_now;
 use embassy_stm32::{gpio, rcc};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_sync::watch::Watch;
-use embassy_time::Timer;
 use version::FirmwareVersion;
 
 type MessageChannel = Channel<ThreadModeRawMutex, midi::Message, 8>;
@@ -101,48 +99,15 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     spawner.spawn(usb::task(r.usb, MIDI_IN.dyn_sender(), MIDI_OUT.dyn_receiver()).unwrap());
 
-    let i2c_mutex = i2c::init(r.i2c);
-
-    const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
-    const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
-
     MODE_REQUEST.send(Mode::KeyboardInit).await;
-
     let mut i2c_power = gpio::Output::new(r.power.i2c, gpio::Level::High, gpio::Speed::Low);
-
-    loop {
-        #[cfg(feature = "defmt")]
-        info!("I2C power on");
-        i2c_power.set_low();
-
-        const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
-        let left_keyboard_update = keyboard::update_firmware(
-            i2c_mutex,
-            LEFT_KEYBOARD_ADDRESS,
-            &controller_version,
-            KEYBOARD_FIRMWARE,
-        );
-        let right_keyboard_update = keyboard::update_firmware(
-            i2c_mutex,
-            RIGHT_KEYBOARD_ADDRESS,
-            &controller_version,
-            KEYBOARD_FIRMWARE,
-        );
-        if let (Ok(_), Ok(_)) = join(left_keyboard_update, right_keyboard_update).await {
-            break;
-        }
-
-        #[cfg(feature = "defmt")]
-        info!("I2C power off");
-        i2c_power.set_high();
-        Timer::after_millis(100).await;
-    }
-
+    i2c_power.set_low(); // TODO: Temporary
+    let i2c = i2c::init(r.i2c, controller_version);
     MODE_REQUEST.send(Mode::Ready).await;
 
     spawner.spawn(
         i2c::task(
-            i2c_mutex,
+            i2c,
             MODE.dyn_receiver().unwrap(),
             LEFT_KEYBOARD_STATE.dyn_sender(),
             RIGHT_KEYBOARD_STATE.dyn_sender(),
