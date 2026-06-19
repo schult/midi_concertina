@@ -83,7 +83,7 @@ pub trait ControllerIo {
 /*******************/
 
 pub struct Controller<IO: ControllerIo> {
-    io: IO,
+    pub io: IO,
 }
 
 impl<IO: ControllerIo> Controller<IO> {
