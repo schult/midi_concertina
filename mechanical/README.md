@@ -23,12 +23,11 @@
 |         4 | [Würth Elektronik 6-Pin WR-WST REDFIT IDC](https://www.digikey.com/en/products/detail/w%C3%BCrth-elektronik/490107670612/7917217) |
 |        3' | [6 Conductor Ribbon Cable](https://www.digikey.com/en/products/detail/3m/3365-06-300/2766998) |
 |        1" | [2mm ID Silicone Tubing](https://www.dubro.com/products/super-blue-slicone-tubing?variant=39705737920596) |
-| 24" x 20" | [Tyvek 1460R](https://www.outdoorpaper.com/products/tyvek-soft-structure-style-1460c-uv-fabric) (preferred) or [1073D](https://www.etsy.com/listing/1057960283/1m-x-102m-tyvek-75-gsm-1073d-paper-style) |
-|   4 fl oz | [Acrylic Paint](https://www.dickblick.com/items/liquitex-basics-mars-black-4-oz-tube/) (optional) |
-|   4 fl oz | [Liquitex Fabric Medium](https://www.dickblick.com/products/liquitex-effects-fabric-medium/) (optional) |
+| 24" x 20" | [Tyvek 1073D](https://www.etsy.com/listing/1759067642/75-grams-025mm-thickness-kraft-paper) |
 | 16" x 20" | [2-Ply Museum Board](https://www.dickblick.com/items/rising-museum-board-32-x-40-x-2-ply-natural-sheet/) |
 |           | [PVA Glue](https://www.dickblick.com/products/gorilla-wood-glue/) |
 |           | [CA Glue](https://www.dickblick.com/products/gorilla-super-glue/) |
+|           | [1.5mm Elastic Cord](https://www.beadtin.com/products/black-1-5mm-round-elastic-cord-22m) |
 |         1 | Controller PCBA |
 |         1 | Left Keyboard PCBA |
 |         1 | Right Keyboard PCBA |
@@ -241,22 +240,41 @@ buckle prong should face the closer edge of the faceplate.
 
 ### Bellows
 
-TODO: Cut tyvek
-TODO: Mark tyvek
+Cut a 516mm x 488mm piece of Tyvek. Also cut 42 25mm Tyvek squares.
 
-If you want your bellows to be any color other that white, apply acrylic paint
-to the show side. I prefer two coats of [Liquitex Basics](https://www.dickblick.com/items/liquitex-basics-mars-black-4-oz-tube/)
-mixed 1:1 with [Liquitex Fabric Medium](https://www.dickblick.com/products/liquitex-effects-fabric-medium/).
+Mark the card locations on the back side of the Tyvek. Cards should be on a 84mm
+x 32mm grid. The first set of cards should hang about halfway off the edge of
+the Tyvek, so that when the Tyvek is glued into a tube, the seam falls in the
+middle of the cards instead of on the corners. A template to help quickly mark
+card locations is included as a layer in [](BellowsCards.dxf).
 
-Leave 10-12mm of the short reference edge unpainted to ensure good glue
-adhesion. This will be covered by the overlapping edge when the bellows are
-folded into a tube.
+Cut 84 cards in the shape found in layer `0` of [](BellowsCards.dxf).
 
-TODO: Cut cards
-TODO: Glue cards
-TODO: Glue tube
-TODO: Fold
-TODO: Glue bellows frames
+Glue the cards down to the Tyvek using PVA glue. Use enough glue that you see a
+little squeeze-out when you press each card down. Allow the glue to dry before
+continuing.
+
+Fold the Tyvek along the bellows peaks and valleys. Glue 25mm Tyvek squares
+across the cards that meet at the bellows valleys to act as a hinge. Allow the
+glue to dry before continuing.
+
+Flatten the Tyvek back out, then fold along two sets of corners so that the seam
+lines up. Check that the card corners line up. Place a piece of waxed paper
+inside the bellows under the seam to prevent gluing it to the opposite side.
+Apply glue to the exposed cards and glue the entire seam closed. Allow the glue
+to dry before continuing.
+
+Open the bellows into a hexagonal tube, but do not fold the peaks and valleys
+yet. Press the bellows frames into each end, pushing them past their final
+position. Apply CA glue to the Tyvek where the frames will go. Pull the frames
+out to their final position, and fold the Tyvek around them, being careful not
+to block or clog the screw inserts. Allow the glue to dry before continuing.
+
+Fold the valleys in and the peaks out. Adjust the gussets so they fold
+symmetrically.
+
+Tie seven loops of elastic cord about 270mm in circumference, and place one
+around each bellows valley. Align the knots with the seam in the Tyvek.
 
 
 ### Electronics
