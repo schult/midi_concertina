@@ -102,7 +102,11 @@ impl Bus {
         Timer::after_millis(1000).await;
     }
 
-    pub async fn update_keyboards<'a>(&mut self, controller_version: FirmwareVersion<'a>, firmware: &[u8]) {
+    pub async fn update_keyboards<'a>(
+        &mut self,
+        controller_version: FirmwareVersion<'a>,
+        firmware: &[u8],
+    ) {
         // TODO: Don't split i2c across futures
         /*
         loop {

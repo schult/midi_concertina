@@ -57,7 +57,9 @@ impl State {
             reading -= 16777216;
         }
 
-        Ok(Self::from_pascals(1.02f32 * ((reading as f32) / 838.8608f32)))
+        Ok(Self::from_pascals(
+            1.02f32 * ((reading as f32) / 838.8608f32),
+        ))
     }
 
     pub const fn direction(&self) -> Direction {

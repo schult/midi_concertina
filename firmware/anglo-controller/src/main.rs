@@ -103,7 +103,8 @@ async fn main(spawner: embassy_executor::Spawner) {
     let mut i2c = i2c::Bus::new(r.i2c);
     i2c.power_on();
     const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
-    i2c.update_keyboards(controller_version, KEYBOARD_FIRMWARE).await;
+    i2c.update_keyboards(controller_version, KEYBOARD_FIRMWARE)
+        .await;
     MODE_REQUEST.send(Mode::Ready).await;
 
     spawner.spawn(
