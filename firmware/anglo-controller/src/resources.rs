@@ -8,9 +8,6 @@ bind_interrupts!(pub struct Irqs {
 });
 
 assign_resources! {
-    power: PowerResources {
-        i2c: PA3,
-    }
     dfu: DfuResources {
         flash: FLASH,
     }
@@ -26,6 +23,7 @@ assign_resources! {
         i2c: I2C1,
         scl: PB8,
         sda: PB9,
+        power: PA3,
     }
     usb: UsbResources {
         usb: USB,

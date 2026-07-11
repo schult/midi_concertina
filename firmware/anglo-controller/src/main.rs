@@ -24,7 +24,7 @@ use panic_reset as _;
 use crate::mode::Mode;
 use crate::resources::*;
 use embassy_futures::yield_now;
-use embassy_stm32::{gpio, rcc};
+use embassy_stm32::rcc;
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_sync::watch::Watch;
@@ -100,9 +100,10 @@ async fn main(spawner: embassy_executor::Spawner) {
     spawner.spawn(usb::task(r.usb, MIDI_IN.dyn_sender(), MIDI_OUT.dyn_receiver()).unwrap());
 
     MODE_REQUEST.send(Mode::KeyboardInit).await;
-    let mut i2c_power = gpio::Output::new(r.power.i2c, gpio::Level::High, gpio::Speed::Low);
-    i2c_power.set_low(); // TODO: Temporary
-    let i2c = i2c::init(r.i2c, controller_version);
+    let mut i2c = i2c::Bus::new(r.i2c);
+    i2c.power_on();
+    const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
+    i2c.update_keyboards(controller_version, KEYBOARD_FIRMWARE).await;
     MODE_REQUEST.send(Mode::Ready).await;
 
     spawner.spawn(

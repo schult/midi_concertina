@@ -1,7 +1,5 @@
 use crate::i2c;
-use crate::mode::Mode;
-use embassy_sync::watch;
-use embassy_time::{Duration, Ticker, Timer};
+use embassy_time::Timer;
 use i2c_proto::ControllerIo;
 
 #[derive(Clone, PartialEq)]
@@ -33,7 +31,7 @@ impl State {
         Self { value }
     }
 
-    pub async fn read<'a>(i2c: &mut i2c::Wrapper<'a>, address: u8) -> Result<Self, i2c::Error> {
+    pub async fn read<'a>(i2c: &mut i2c::Wrapper, address: u8) -> Result<Self, i2c::Error> {
         const CONTROL_REG: u8 = 0x30;
         const DATA_REG: u8 = 0x06;
 

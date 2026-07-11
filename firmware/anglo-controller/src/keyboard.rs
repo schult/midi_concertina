@@ -7,8 +7,8 @@ use embassy_futures::yield_now;
 use embassy_time::Timer;
 use version::FirmwareVersion;
 
-async fn get_keyboard_version<'a>(
-    i2c_controller: &mut i2c_proto::Controller<i2c::Wrapper<'a>>,
+async fn get_keyboard_version(
+    i2c_controller: &mut i2c_proto::Controller<i2c::Wrapper>,
     address: u8,
 ) -> Result<FirmwareVersion<'static>, ()> {
     // Retry count and delay chosen to allow > 2 minutes for keyboard to finish applying update.
@@ -25,15 +25,12 @@ async fn get_keyboard_version<'a>(
 }
 
 pub async fn update_firmware<'a>(
-    i2c_mutex: &'a i2c::I2cMutex,
+    i2c_controller: &mut i2c_proto::Controller<i2c::Wrapper>,
     address: u8,
     version: &FirmwareVersion<'a>,
     firmware: &[u8],
 ) -> Result<FirmwareVersion<'static>, ()> {
-    let i2c_wrapper = i2c::Wrapper::new(i2c_mutex);
-    let mut i2c_controller = i2c_proto::Controller::new(i2c_wrapper);
-
-    let keyboard_version = get_keyboard_version(&mut i2c_controller, address).await?;
+    let keyboard_version = get_keyboard_version(i2c_controller, address).await?;
     #[cfg(feature = "defmt")]
     info!("Keyboard({:02X}) version: {}", address, keyboard_version);
     if keyboard_version == *version {
@@ -44,7 +41,7 @@ pub async fn update_firmware<'a>(
     info!("Keyboard({:02X}) receiving update...", address);
     let mut transfer = Transfer::new(address, firmware);
     loop {
-        match transfer.poll(&mut i2c_controller).await {
+        match transfer.poll(i2c_controller).await {
             Ok(TransferStatus::InProgress) => (),
             Ok(TransferStatus::Finished) => break,
             Err(_) => {
@@ -58,7 +55,7 @@ pub async fn update_firmware<'a>(
 
     #[cfg(feature = "defmt")]
     info!("Keyboard({:02X}) applying update...", address);
-    let keyboard_version = get_keyboard_version(&mut i2c_controller, address).await?;
+    let keyboard_version = get_keyboard_version(i2c_controller, address).await?;
     #[cfg(feature = "defmt")]
     info!("Keyboard({:02X}) update complete", address);
     #[cfg(feature = "defmt")]
@@ -87,17 +84,17 @@ struct Transfer<'a> {
 }
 
 impl<'a> Transfer<'a> {
-    fn new(address: u8, data: &'a [u8]) -> Self {
+    fn new(address: u8, firmware: &'a [u8]) -> Self {
         Self {
             started: false,
             address,
-            chunks: data.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE),
+            chunks: firmware.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE),
         }
     }
 
     async fn poll(
         &mut self,
-        i2c: &mut i2c_proto::Controller<crate::i2c::Wrapper<'a>>,
+        i2c: &mut i2c_proto::Controller<crate::i2c::Wrapper>,
     ) -> Result<TransferStatus, TransferError> {
         if !self.started {
             i2c.write_begin(self.address).await?;
