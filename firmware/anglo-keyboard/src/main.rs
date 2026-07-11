@@ -20,6 +20,7 @@ use embassy_stm32::{adc, gpio, i2c, rcc, time::khz};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_sync::watch::Watch;
+use embassy_time::Timer;
 use state::Mode;
 use version::FirmwareVersion;
 
@@ -82,6 +83,11 @@ async fn main(spawner: embassy_executor::Spawner) {
         defmt::info!("Right keyboard");
         Chirality::Right
     };
+
+    Timer::after_millis(match chirality {
+        Chirality::Left => 10,
+        Chirality::Right => 20,
+    }).await;
 
     // Right hand mapping
     let buttons = match chirality {
