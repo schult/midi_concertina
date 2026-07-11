@@ -1,7 +1,7 @@
-use crate::resources::I2cResources;
 use crate::bellows;
 use crate::keyboard;
 use crate::mode::Mode;
+use crate::resources::{I2cResources, Irqs};
 use embassy_futures::yield_now;
 use embassy_stm32::i2c::{Config, I2c, Master};
 use embassy_stm32::{gpio, time::khz};
@@ -18,8 +18,7 @@ const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
 const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
 const BELLOWS_ADDRESS: u8 = 0x7F;
 
-// TODO: Switch back to async i2c
-pub struct Wrapper(I2c<'static, embassy_stm32::mode::Blocking, Master>);
+pub struct Wrapper(I2c<'static, embassy_stm32::mode::Async, Master>);
 
 impl ControllerIo for Wrapper {
     type Error = Error;
@@ -27,7 +26,7 @@ impl ControllerIo for Wrapper {
     async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), Self::Error> {
         let mut result = Ok(());
         for _ in 0..RETRY_COUNT {
-            result = self.0.blocking_read(address, read);
+            result = self.0.read(address, read).await;
             if result.is_ok() {
                 return result;
             }
@@ -39,7 +38,7 @@ impl ControllerIo for Wrapper {
     async fn write(&mut self, address: u8, write: &[u8]) -> Result<(), Self::Error> {
         let mut result = Ok(());
         for _ in 0..RETRY_COUNT {
-            result = self.0.blocking_write(address, write);
+            result = self.0.write(address, write).await;
             if result.is_ok() {
                 return result;
             }
@@ -56,7 +55,7 @@ impl ControllerIo for Wrapper {
     ) -> Result<(), Self::Error> {
         let mut result = Ok(());
         for _ in 0..RETRY_COUNT {
-            result = self.0.blocking_write_read(address, write, read);
+            result = self.0.write_read(address, write, read).await;
             if result.is_ok() {
                 return result;
             }
@@ -76,7 +75,7 @@ impl Bus {
         let mut config = Config::default();
         config.frequency = khz(100);
         config.timeout = Duration::from_millis(25);
-        let i2c = I2c::new_blocking(r.i2c, r.scl, r.sda, config);
+        let i2c = I2c::new(r.i2c, r.scl, r.sda, r.tx_dma, r.rx_dma, Irqs, config);
 
         Bus {
             controller: i2c_proto::Controller::new(Wrapper(i2c)),
