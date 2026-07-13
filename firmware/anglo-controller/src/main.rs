@@ -64,7 +64,7 @@ async fn main(spawner: embassy_executor::Spawner) {
         prerelease: option_env!("FIRMWARE_PRERELEASE_VERSION"),
     };
     #[cfg(feature = "defmt")]
-    defmt::info!("Controller version: {}", controller_version);
+    info!("Controller version: {}", controller_version);
 
     spawner.spawn(mode::task(MODE_REQUEST.dyn_receiver(), MODE.dyn_sender()).unwrap());
 

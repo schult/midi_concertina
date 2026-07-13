@@ -107,27 +107,23 @@ impl Bus {
         controller_version: FirmwareVersion<'a>,
         firmware: &[u8],
     ) {
-        // TODO: Don't split i2c across futures
-        /*
+        let mut left_keyboard_update = keyboard::Transfer::new(
+            LEFT_KEYBOARD_ADDRESS,
+            &controller_version,
+            firmware,
+        );
+        let mut right_keyboard_update = keyboard::Transfer::new(
+            RIGHT_KEYBOARD_ADDRESS,
+            &controller_version,
+            firmware,
+        );
         loop {
-            let left_keyboard_update = keyboard::update_firmware(
-                &mut self.controller,
-                LEFT_KEYBOARD_ADDRESS,
-                &controller_version,
-                firmware,
-            );
-            let right_keyboard_update = keyboard::update_firmware(
-                &mut self.controller,
-                RIGHT_KEYBOARD_ADDRESS,
-                &controller_version,
-                firmware,
-            );
-            if let (Ok(_), Ok(_)) = join(left_keyboard_update, right_keyboard_update).await {
+            let left_result = left_keyboard_update.poll(&mut self.controller).await;
+            let right_result = right_keyboard_update.poll(&mut self.controller).await;
+            if left_result.and(right_result).is_ok() {
                 break;
             }
-            self.reset().await;
         }
-        */
     }
 }
 
