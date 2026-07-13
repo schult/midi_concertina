@@ -109,12 +109,12 @@ impl Bus {
     ) {
         let mut left_keyboard_update = keyboard::Transfer::new(
             LEFT_KEYBOARD_ADDRESS,
-            &controller_version,
+            controller_version,
             firmware,
         );
         let mut right_keyboard_update = keyboard::Transfer::new(
             RIGHT_KEYBOARD_ADDRESS,
-            &controller_version,
+            controller_version,
             firmware,
         );
         loop {

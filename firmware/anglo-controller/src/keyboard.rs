@@ -16,13 +16,13 @@ pub enum TransferState {
 pub struct Transfer<'a> {
     state: TransferState,
     address: u8,
-    version: &'a FirmwareVersion<'a>, // TODO: Not a reference
+    version: FirmwareVersion<'a>,
     firmware: &'a [u8],
     chunks: Chunks<'a, u8>,
 }
 
 impl<'a> Transfer<'a> {
-    pub fn new(address: u8, version: &'a FirmwareVersion<'a>, firmware: &'a [u8]) -> Self {
+    pub fn new(address: u8, version: FirmwareVersion<'a>, firmware: &'a [u8]) -> Self {
         Self {
             state: TransferState::Begin,
             address,
@@ -57,7 +57,7 @@ impl<'a> Transfer<'a> {
         };
         #[cfg(feature = "defmt")]
         info!("Keyboard({:02X}) version: {}", self.address, keyboard_version);
-        if keyboard_version != *self.version {
+        if keyboard_version != self.version {
             self.chunks = self.firmware.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE);
             #[cfg(feature = "defmt")]
             info!("Keyboard({:02X}) receiving update...", self.address);

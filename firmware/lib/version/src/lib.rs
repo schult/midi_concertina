@@ -2,7 +2,7 @@
 
 use core::num::ParseIntError;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct FirmwareVersion<'a> {
     pub major: u8,
     pub minor: u8,
