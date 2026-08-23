@@ -16,7 +16,8 @@ const RETRY_COUNT: usize = 20;
 
 const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
 const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
-const BELLOWS_ADDRESS: u8 = 0x7F;
+// const BELLOWS_ADDRESS: u8 = 0x6D; // For WF200DPZ 0.1BG S16 DT
+const BELLOWS_ADDRESS: u8 = 0x7F; // For Consensic CPS610DSD010DH01
 
 pub struct Wrapper(I2c<'static, embassy_stm32::mode::Async, Master>);
 
@@ -144,6 +145,12 @@ pub async fn task(
         }
 
         #[cfg(feature = "defmt")]
+        defmt::info!("Trigger Bellows");
+        if bellows::State::trigger_update(&mut bus.controller.io, BELLOWS_ADDRESS).await.is_err() {
+            bus.reset().await;
+        }
+
+        #[cfg(feature = "defmt")]
         defmt::info!("Left Keyboard");
         if let Ok(new_state) = bus.controller.get_buttons(LEFT_KEYBOARD_ADDRESS).await {
             left_buttons.send(new_state);
@@ -160,7 +167,7 @@ pub async fn task(
         }
 
         #[cfg(feature = "defmt")]
-        defmt::info!("Bellows");
+        defmt::info!("Read Bellows");
         if let Ok(new_state) = bellows::State::read(&mut bus.controller.io, BELLOWS_ADDRESS).await {
             bellows.send(new_state);
         } else {

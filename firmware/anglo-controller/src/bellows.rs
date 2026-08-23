@@ -2,6 +2,9 @@ use crate::i2c;
 use embassy_time::Timer;
 use i2c_proto::ControllerIo;
 
+const CONTROL_REG: u8 = 0x30;
+const DATA_REG: u8 = 0x06;
+
 #[derive(Clone, PartialEq)]
 pub enum Direction {
     Push,
@@ -31,11 +34,11 @@ impl State {
         Self { value }
     }
 
-    pub async fn read<'a>(i2c: &mut i2c::Wrapper, address: u8) -> Result<Self, i2c::Error> {
-        const CONTROL_REG: u8 = 0x30;
-        const DATA_REG: u8 = 0x06;
+    pub async fn trigger_update<'a>(i2c: &mut i2c::Wrapper, address: u8) -> Result<(), i2c::Error> {
+        i2c.write(address, &[CONTROL_REG, 0x0A]).await
+    }
 
-        i2c.write(address, &[CONTROL_REG, 0x0A]).await?;
+    pub async fn read<'a>(i2c: &mut i2c::Wrapper, address: u8) -> Result<Self, i2c::Error> {
         // Wait for flag indicating the data register has a new value. If we don't get a new value
         // within 1ms, we can accept the old value and catch the new value next time.
         for _ in 0..10 {
@@ -56,6 +59,9 @@ impl State {
         if reading & 0x00800000 != 0 {
             reading -= 16777216;
         }
+
+        // Only for WF200DPZ 0.1BG S16 DT
+        // reading -= 0x0005C000;
 
         Ok(Self::from_pascals(
             1.02f32 * ((reading as f32) / 838.8608f32),
