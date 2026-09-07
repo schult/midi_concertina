@@ -51,19 +51,22 @@ impl<'a> Transfer<'a> {
             Ok(version) => version,
             Err(_) => {
                 #[cfg(feature = "defmt")]
-                error!("Keyboard({:02X}) update transfer failed", self.address);
+                error!("Keyboard({:02X}) error getting version", self.address);
                 return Err(());
             }
         };
         #[cfg(feature = "defmt")]
-        info!("Keyboard({:02X}) version: {}", self.address, keyboard_version);
+        info!(
+            "Keyboard({:02X}) version: {}",
+            self.address, keyboard_version
+        );
         if keyboard_version != self.version {
             self.chunks = self.firmware.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE);
             #[cfg(feature = "defmt")]
             info!("Keyboard({:02X}) receiving update...", self.address);
             if i2c.write_begin(self.address).await.is_err() {
                 #[cfg(feature = "defmt")]
-                error!("Keyboard({:02X}) update transfer failed", self.address);
+                error!("Keyboard({:02X}) write begin failed", self.address);
                 return Err(());
             }
             self.state = TransferState::InProgress;
@@ -81,14 +84,14 @@ impl<'a> Transfer<'a> {
                 if let Some(chunk) = self.chunks.next() {
                     if i2c.write_packet(self.address, chunk).await.is_err() {
                         #[cfg(feature = "defmt")]
-                        error!("Keyboard({:02X}) update transfer failed", self.address);
+                        error!("Keyboard({:02X}) write packet failed", self.address);
                         self.state = TransferState::Begin;
                         return Err(());
                     }
                 } else {
                     if i2c.write_end(self.address).await.is_err() {
                         #[cfg(feature = "defmt")]
-                        error!("Keyboard({:02X}) update transfer failed", self.address);
+                        error!("Keyboard({:02X}) write end failed", self.address);
                         self.state = TransferState::Begin;
                         return Err(());
                     }
@@ -98,7 +101,7 @@ impl<'a> Transfer<'a> {
                         Ok(version) => version,
                         Err(_) => {
                             #[cfg(feature = "defmt")]
-                            error!("Keyboard({:02X}) update transfer failed", self.address);
+                            error!("Keyboard({:02X}) error verifying version", self.address);
                             self.state = TransferState::Begin;
                             return Err(());
                         }
@@ -106,14 +109,23 @@ impl<'a> Transfer<'a> {
                     #[cfg(feature = "defmt")]
                     info!("Keyboard({:02X}) update complete", self.address);
                     #[cfg(feature = "defmt")]
-                    info!("Keyboard({:02X}) version: {}", self.address, _keyboard_version);
+                    info!(
+                        "Keyboard({:02X}) version: {}",
+                        self.address, _keyboard_version
+                    );
                     self.state = TransferState::Done;
                 }
             }
             Ok(i2c_proto::WriteStatus::Busy) => (),
-            Ok(i2c_proto::WriteStatus::Cancel) | Err(_) => {
+            Ok(i2c_proto::WriteStatus::Cancel) => {
                 #[cfg(feature = "defmt")]
-                error!("Keyboard({:02X}) update transfer failed", self.address);
+                error!("Keyboard({:02X}) update transfer cancelled", self.address);
+                self.state = TransferState::Begin;
+                return Err(());
+            }
+            Err(_e) => {
+                #[cfg(feature = "defmt")]
+                error!("Keyboard({:02X}) update transfer error: {}", self.address, defmt::Debug2Format(&_e));
                 self.state = TransferState::Begin;
                 return Err(());
             }
