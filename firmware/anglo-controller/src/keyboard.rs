@@ -125,7 +125,11 @@ impl<'a> Transfer<'a> {
             }
             Err(_e) => {
                 #[cfg(feature = "defmt")]
-                error!("Keyboard({:02X}) update transfer error: {}", self.address, defmt::Debug2Format(&_e));
+                error!(
+                    "Keyboard({:02X}) update transfer error: {}",
+                    self.address,
+                    defmt::Debug2Format(&_e)
+                );
                 self.state = TransferState::Begin;
                 return Err(());
             }

@@ -6,7 +6,7 @@ use embassy_futures::yield_now;
 use embassy_stm32::i2c::{Config, I2c, Master};
 use embassy_stm32::{gpio, time::khz};
 use embassy_sync::watch;
-use embassy_time::{Duration, Timer};
+use embassy_time::Timer;
 use i2c_proto::ControllerIo;
 use version::FirmwareVersion;
 
@@ -75,7 +75,6 @@ impl Bus {
     pub fn new(r: I2cResources) -> Self {
         let mut config = Config::default();
         config.frequency = khz(100);
-        config.timeout = Duration::from_millis(25);
         let i2c = I2c::new(r.i2c, r.scl, r.sda, r.tx_dma, r.rx_dma, Irqs, config);
 
         Bus {
@@ -108,20 +107,16 @@ impl Bus {
         controller_version: FirmwareVersion<'a>,
         firmware: &[u8],
     ) {
-        let mut left_keyboard_update = keyboard::Transfer::new(
-            LEFT_KEYBOARD_ADDRESS,
-            controller_version,
-            firmware,
-        );
-        let mut right_keyboard_update = keyboard::Transfer::new(
-            RIGHT_KEYBOARD_ADDRESS,
-            controller_version,
-            firmware,
-        );
+        let mut left_keyboard_update =
+            keyboard::Transfer::new(LEFT_KEYBOARD_ADDRESS, controller_version, firmware);
+        let mut right_keyboard_update =
+            keyboard::Transfer::new(RIGHT_KEYBOARD_ADDRESS, controller_version, firmware);
         loop {
             let left_result = left_keyboard_update.poll(&mut self.controller).await;
             let right_result = right_keyboard_update.poll(&mut self.controller).await;
-            if left_result.and(right_result).is_ok() {
+            if left_result == Ok(keyboard::TransferState::Done)
+                && right_result == Ok(keyboard::TransferState::Done)
+            {
                 break;
             }
         }
@@ -146,7 +141,10 @@ pub async fn task(
 
         #[cfg(feature = "defmt")]
         defmt::info!("Trigger Bellows");
-        if bellows::State::trigger_update(&mut bus.controller.io, BELLOWS_ADDRESS).await.is_err() {
+        if bellows::State::trigger_update(&mut bus.controller.io, BELLOWS_ADDRESS)
+            .await
+            .is_err()
+        {
             bus.reset().await;
         }
 

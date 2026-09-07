@@ -99,9 +99,9 @@ async fn main(spawner: embassy_executor::Spawner) {
 
     spawner.spawn(usb::task(r.usb, MIDI_IN.dyn_sender(), MIDI_OUT.dyn_receiver()).unwrap());
 
-    MODE_REQUEST.send(Mode::KeyboardInit).await;
     let mut i2c = i2c::Bus::new(r.i2c);
     i2c.power_on();
+    MODE_REQUEST.send(Mode::KeyboardInit).await;
     const KEYBOARD_FIRMWARE: &[u8] = include_bytes!("../../build/anglo-keyboard.bin");
     i2c.update_keyboards(controller_version, KEYBOARD_FIRMWARE)
         .await;
