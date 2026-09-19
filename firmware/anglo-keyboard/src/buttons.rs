@@ -83,9 +83,9 @@ pub async fn scan_task(
         mux.select(buttons[i].index());
 
         let raw = adc.read(&mut adc_pin, adc::SampleTime::CYCLES160_5).await;
-        if raw < 600 {
+        if raw < 500 {
             button_state |= 1 << i;
-        } else if raw > 700 {
+        } else if raw > 600 {
             button_state &= !(1 << i);
         }
         button_state_sender.send(button_state);
