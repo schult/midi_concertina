@@ -6,8 +6,8 @@ use core::cell::RefCell;
 use cortex_m_rt::entry;
 use embassy_boot_stm32::{BootLoader, BootLoaderConfig};
 use embassy_stm32::flash::{self, Flash};
-use embassy_stm32::{gpio, rcc, time::hz};
 use embassy_stm32::timer::simple_pwm::{PwmPin, SimplePwm};
+use embassy_stm32::{gpio, rcc, time::hz};
 use embassy_sync::blocking_mutex::Mutex;
 use panic_reset as _;
 
