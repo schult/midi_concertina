@@ -12,12 +12,17 @@ use version::FirmwareVersion;
 
 pub use embassy_stm32::i2c::Error;
 
+#[cfg(all(feature = "bellows-a", feature = "bellows-b"))]
+compile_error!("features \"bellows-a\" and \"bellows-b\" are mutually exclusive");
+
 const RETRY_COUNT: usize = 20;
 
 const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
 const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
-// const BELLOWS_ADDRESS: u8 = 0x6D; // For WF200DPZ 0.1BG S16 DT
-const BELLOWS_ADDRESS: u8 = 0x7F; // For Consensic CPS610DSD010DH01
+#[cfg(feature = "bellows-a")]
+const BELLOWS_ADDRESS: u8 = 0x7F;
+#[cfg(feature = "bellows-b")]
+const BELLOWS_ADDRESS: u8 = 0x6D;
 
 pub struct Wrapper(I2c<'static, embassy_stm32::mode::Async, Master>);
 
@@ -74,7 +79,7 @@ pub struct Bus {
 impl Bus {
     pub fn new(r: I2cResources) -> Self {
         let mut config = Config::default();
-        config.frequency = khz(100);
+        config.frequency = khz(200);
         let i2c = I2c::new(r.i2c, r.scl, r.sda, r.tx_dma, r.rx_dma, Irqs, config);
 
         Bus {
