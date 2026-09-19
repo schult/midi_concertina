@@ -35,8 +35,6 @@ version = { path = "../lib/version" }
 version = { path = "../lib/version" }
 
 [features]
-bellows-a = [] # Consensic CPS610DSD010DH01
-bellows-b = [] # WF200DPZ 0.1BG S16 DT
 defmt = [
     "dep:defmt",
     "dep:defmt-rtt",

@@ -60,21 +60,9 @@ impl State {
             reading -= 16777216;
         }
 
-        // TODO: Perform tare on first boot and save to eeprom - tie to pressure sensor serial?
-
-        #[cfg(feature = "bellows-a")]
-        {
-            Ok(Self::from_pascals(
-                1.02f32 * ((reading as f32) / 838.8608f32),
-            ))
-        }
-
-        #[cfg(feature = "bellows-b")]
-        {
-            Ok(Self::from_pascals(
-                -1.166666f32 * ((reading as f32) / 838.8608f32) + 499.994,
-            ))
-        }
+        Ok(Self::from_pascals(
+            1.02f32 * ((reading as f32) / 838.8608f32),
+        ))
     }
 
     pub const fn direction(&self) -> Direction {

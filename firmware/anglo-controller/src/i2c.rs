@@ -12,17 +12,11 @@ use version::FirmwareVersion;
 
 pub use embassy_stm32::i2c::Error;
 
-#[cfg(all(feature = "bellows-a", feature = "bellows-b"))]
-compile_error!("features \"bellows-a\" and \"bellows-b\" are mutually exclusive");
-
 const RETRY_COUNT: usize = 20;
 
 const LEFT_KEYBOARD_ADDRESS: u8 = 0x22;
 const RIGHT_KEYBOARD_ADDRESS: u8 = 0x23;
-#[cfg(feature = "bellows-a")]
 const BELLOWS_ADDRESS: u8 = 0x7F;
-#[cfg(feature = "bellows-b")]
-const BELLOWS_ADDRESS: u8 = 0x6D;
 
 pub struct Wrapper(I2c<'static, embassy_stm32::mode::Async, Master>);
 
