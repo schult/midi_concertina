@@ -22,8 +22,7 @@ Install [rustup](https://rustup.rs/) and
 
     just build
 
-This will place `anglo-firmware.bin` and `anglo-firmware.bin.syx` in the
-project's base directory.
+This will create `build/anglo-firmware.bin` and `build/anglo-firmware.bin.syx`.
 
 ## License
 
