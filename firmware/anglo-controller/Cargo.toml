@@ -13,15 +13,15 @@ assign-resources = "0.5.0"
 circular-buffer = { version = "1.2.0", default-features = false, features = ["embedded-io"] }
 cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
 cortex-m-rt = "0.7.5"
-embassy-boot = { git = "https://github.com/embassy-rs/embassy.git", features = ["flash-erase-zero"] }
-embassy-boot-stm32 = { git = "https://github.com/embassy-rs/embassy.git" }
-embassy-embedded-hal = { git = "https://github.com/embassy-rs/embassy.git" }
-embassy-executor = { git = "https://github.com/embassy-rs/embassy.git", features = ["arch-cortex-m", "executor-thread"] }
-embassy-futures = { git = "https://github.com/embassy-rs/embassy.git" }
-embassy-stm32 = { git = "https://github.com/embassy-rs/embassy.git", features = ["stm32l072cz", "exti", "time-driver-any"] }
-embassy-sync = { git = "https://github.com/embassy-rs/embassy.git" }
-embassy-time = { git = "https://github.com/embassy-rs/embassy.git", features = ["tick-hz-32_768"] }
-embassy-usb = { git = "https://github.com/embassy-rs/embassy.git" }
+embassy-boot = { version = "0.7.0", features = ["flash-erase-zero"] }
+embassy-boot-stm32 = { version = "0.8.0" }
+embassy-embedded-hal = { version = "0.6.0" }
+embassy-executor = { version = "0.10.0", features = ["platform-cortex-m", "executor-thread"] }
+embassy-futures = { version = "0.1.2" }
+embassy-stm32 = { version = "0.6.0", features = ["stm32l072cz", "exti", "time-driver-any"] }
+embassy-sync = { version = "0.8.0" }
+embassy-time = { version = "0.5.1", features = ["tick-hz-32_768"] }
+embassy-usb = { version = "0.6.0" }
 micromath = "2.1.0"
 portable-atomic = { version = "1.11.1", features = ["unsafe-assume-single-core"] }
 static_cell = "2.1.1"

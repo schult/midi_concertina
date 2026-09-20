@@ -50,15 +50,15 @@ clean:
     rm -rf build
 
 update:
-    cd bin2syx && cargo update
-    cd anglo-keyboard-bootloader && cargo update
-    cd anglo-controller-bootloader && cargo update
-    cd anglo-keyboard && cargo update
-    cd anglo-controller && cargo update
-    cd lib/i2c-proto && cargo update
-    cd lib/midi && cargo update
-    cd lib/util && cargo update
-    cd lib/version && cargo update
+    cd bin2syx && cargo update --verbose
+    cd anglo-keyboard-bootloader && cargo update --verbose
+    cd anglo-controller-bootloader && cargo update --verbose
+    cd anglo-keyboard && cargo update --verbose
+    cd anglo-controller && cargo update --verbose
+    cd lib/i2c-proto && cargo update --verbose
+    cd lib/midi && cargo update --verbose
+    cd lib/util && cargo update --verbose
+    cd lib/version && cargo update --verbose
 
 [private]
 bin2syx:

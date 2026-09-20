@@ -14,7 +14,7 @@ use panic_reset as _;
 fn main() -> ! {
     let mut config = embassy_stm32::Config::default();
     config.rcc.hsi = true;
-    config.rcc.sys = rcc::Sysclk::Hsi;
+    config.rcc.sys = rcc::Sysclk::HSI;
     let p = embassy_stm32::init(config);
 
     let flash = Flash::new_blocking(p.FLASH);

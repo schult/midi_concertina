@@ -6,10 +6,10 @@ edition = "2024"
 [dependencies]
 cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
 cortex-m-rt = "0.7.5"
-embassy-boot = { git = "https://github.com/embassy-rs/embassy.git", features = ["flash-erase-zero"] }
-embassy-boot-stm32 = { git = "https://github.com/embassy-rs/embassy.git" }
-embassy-stm32 = { git = "https://github.com/embassy-rs/embassy.git", features = ["stm32l072cb"] }
-embassy-sync = { git = "https://github.com/embassy-rs/embassy.git" }
+embassy-boot = { version = "0.7.0", features = ["flash-erase-zero"] }
+embassy-boot-stm32 = { version = "0.8.0" }
+embassy-stm32 = { version = "0.6.0", features = ["stm32l072cb"] }
+embassy-sync = { version = "0.8.0" }
 panic-reset = "0.1.1"
 
 [profile.release]

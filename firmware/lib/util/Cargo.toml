@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 circular-buffer = { version = "1.2.0", default-features = false, features = ["embedded-io"] }
 cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
-embassy-boot = { git = "https://github.com/embassy-rs/embassy.git" }
+embassy-boot = { version = "0.7.0" }
 embedded-storage-async = "0.4.1"
 
 midi = { path = "../midi", optional = true }
