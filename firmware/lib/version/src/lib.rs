@@ -49,6 +49,15 @@ impl<'a> FirmwareVersion<'a> {
             prerelease,
         })
     }
+
+    pub fn release(&self) -> Self {
+        Self {
+            major: self.major,
+            minor: self.minor,
+            patch: self.patch,
+            prerelease: None,
+        }
+    }
 }
 
 #[cfg(feature = "defmt")]
@@ -154,5 +163,13 @@ mod tests {
     fn error_if_patch_not_numeric() {
         let result = FirmwareVersion::parse("1.2.c");
         assert_eq!(result, Err(ParseFirmwareError {}));
+    }
+
+    #[test]
+    fn release_drops_prerelease() {
+        let v1 = FirmwareVersion::parse("42.7.127").unwrap();
+        let v2 = FirmwareVersion::parse("42.7.127-extra-stuff").unwrap();
+        assert_ne!(v1, v2);
+        assert_eq!(v1, v2.release());
     }
 }

@@ -61,7 +61,7 @@ impl<'a> Transfer<'a> {
             self.address, keyboard_version
         );
 
-        if keyboard_version == self.version {
+        if keyboard_version.release() == self.version.release() {
             return Ok(TransferState::Done);
         }
 
