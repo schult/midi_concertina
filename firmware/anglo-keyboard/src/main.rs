@@ -85,8 +85,8 @@ async fn main(spawner: embassy_executor::Spawner) {
     };
 
     Timer::after_millis(match chirality {
-        Chirality::Left => 10,
-        Chirality::Right => 20,
+        Chirality::Left => 150,
+        Chirality::Right => 200,
     })
     .await;
 
