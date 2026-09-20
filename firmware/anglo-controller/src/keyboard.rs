@@ -60,18 +60,20 @@ impl<'a> Transfer<'a> {
             "Keyboard({:02X}) version: {}",
             self.address, keyboard_version
         );
-        if keyboard_version != self.version {
-            self.chunks = self.firmware.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE);
-            #[cfg(feature = "defmt")]
-            info!("Keyboard({:02X}) receiving update...", self.address);
-            if i2c.write_begin(self.address).await.is_err() {
-                #[cfg(feature = "defmt")]
-                error!("Keyboard({:02X}) write begin failed", self.address);
-                return Err(());
-            }
-            self.state = TransferState::InProgress;
+
+        if keyboard_version == self.version {
+            return Ok(TransferState::Done);
         }
 
+        self.chunks = self.firmware.chunks(i2c_proto::PACKET_MAX_PAYLOAD_SIZE);
+        #[cfg(feature = "defmt")]
+        info!("Keyboard({:02X}) receiving update...", self.address);
+        if i2c.write_begin(self.address).await.is_err() {
+            #[cfg(feature = "defmt")]
+            error!("Keyboard({:02X}) write begin failed", self.address);
+            return Err(());
+        }
+        self.state = TransferState::InProgress;
         Ok(self.state)
     }
 
