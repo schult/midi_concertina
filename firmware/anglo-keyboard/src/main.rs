@@ -152,7 +152,7 @@ async fn main(spawner: embassy_executor::Spawner) {
     );
 
     let mut i2c_config = i2c::Config::default();
-    i2c_config.frequency = khz(100);
+    i2c_config.frequency = khz(200);
 
     let scl_pin = r.i2c.scl;
     let sda_pin = r.i2c.sda;

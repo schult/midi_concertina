@@ -73,7 +73,7 @@ pub struct Bus {
 impl Bus {
     pub fn new(r: I2cResources) -> Self {
         let mut config = Config::default();
-        config.frequency = khz(100);
+        config.frequency = khz(200);
         let i2c = I2c::new(r.i2c, r.scl, r.sda, r.tx_dma, r.rx_dma, Irqs, config);
 
         Bus {
