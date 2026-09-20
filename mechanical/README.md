@@ -246,9 +246,10 @@ Mark the card locations on the back side of the Tyvek. Cards should be on a 84mm
 x 32mm grid. The first set of cards should hang about halfway off the edge of
 the Tyvek, so that when the Tyvek is glued into a tube, the seam falls in the
 middle of the cards instead of on the corners. A template to help quickly mark
-card locations is included as a layer in [](BellowsCards.dxf).
+card locations is included as a layer in [BellowsCards.dxf](BellowsCards.dxf).
 
-Cut 84 cards in the shape found in layer `0` of [](BellowsCards.dxf).
+Cut 84 cards in the shape found in layer `0` of
+[BellowsCards.dxf](BellowsCards.dxf).
 
 Glue the cards down to the Tyvek using PVA glue. Use enough glue that you see a
 little squeeze-out when you press each card down. Allow the glue to dry before
