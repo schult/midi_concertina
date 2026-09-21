@@ -1,0 +1,28 @@
+name: Mechanical
+
+on:
+  push:
+    paths: [ "mechanical/**" ]
+    branches: [ "main" ]
+  pull_request:
+    paths: [ "mechanical/**" ]
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./mechanical
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FreeCAD
+        run: |
+          sudo apt update
+          sudo apt install freecad
+      - name: Export
+        run: freecadcmd export_all.py
