@@ -1,0 +1,33 @@
+name: Firmware
+
+on:
+  push:
+    paths: [ "firmware/**" ]
+    branches: [ "main" ]
+  pull_request:
+    paths: [ "firmware/**" ]
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./firmware
+
+    steps:
+      - uses: extractions/setup-just@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Provision
+        run: just provision
+      - name: Build
+        run: just build
+      - name: Test
+        run: just test
+      - name: Lint
+        run: just lint
