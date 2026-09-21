@@ -406,9 +406,9 @@ fn write_file_dump_packet<T: Write>(
 
     let mut checksum = 0x7E ^ data.device_id ^ 0x07 ^ 0x02 ^ data.packet_num ^ byte_count;
 
-    let chunks = unencoded.chunks_exact(7);
-    let remainder = chunks.remainder();
-    for chunk in chunks {
+    let chunks = unencoded.as_chunks::<7>();
+    let remainder = chunks.1;
+    for chunk in chunks.0 {
         let mut encoded = [0; 8];
         for (i, byte) in chunk.iter().enumerate() {
             encoded[0] |= (byte & 0x80) >> (i + 1);

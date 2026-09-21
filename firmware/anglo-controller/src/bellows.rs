@@ -34,11 +34,11 @@ impl State {
         Self { value }
     }
 
-    pub async fn trigger_update<'a>(i2c: &mut i2c::Wrapper, address: u8) -> Result<(), i2c::Error> {
+    pub async fn trigger_update(i2c: &mut i2c::Wrapper, address: u8) -> Result<(), i2c::Error> {
         i2c.write(address, &[CONTROL_REG, 0x0A]).await
     }
 
-    pub async fn read<'a>(i2c: &mut i2c::Wrapper, address: u8) -> Result<Self, i2c::Error> {
+    pub async fn read(i2c: &mut i2c::Wrapper, address: u8) -> Result<Self, i2c::Error> {
         // Wait for flag indicating the data register has a new value. If we don't get a new value
         // within 1ms, we can accept the old value and catch the new value next time.
         for _ in 0..10 {

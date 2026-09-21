@@ -54,8 +54,8 @@ pub struct EventPacket {
 impl EventPacket {
     pub fn parse(buffer: &[u8]) -> impl Iterator<Item = Self> {
         const EVENT_PACKET_SIZE: usize = 4;
-        buffer.chunks_exact(EVENT_PACKET_SIZE).map(|x| EventPacket {
-            raw: x.try_into().unwrap(),
+        buffer.as_chunks::<EVENT_PACKET_SIZE>().0.iter().map(|x| EventPacket {
+            raw: *x,
         })
     }
 
