@@ -2,10 +2,10 @@ name: Firmware
 
 on:
   push:
-    paths: [ "firmware/**" ]
+    paths: [ "firmware/**", ".github/workflows/firmware.yml" ]
     branches: [ "main" ]
   pull_request:
-    paths: [ "firmware/**" ]
+    paths: [ "firmware/**", ".github/workflows/firmware.yml" ]
     branches: [ "main" ]
 
 env:

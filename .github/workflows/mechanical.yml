@@ -2,10 +2,10 @@ name: Mechanical
 
 on:
   push:
-    paths: [ "mechanical/**" ]
+    paths: [ "mechanical/**", ".github/workflows/mechanical.yml" ]
     branches: [ "main" ]
   pull_request:
-    paths: [ "mechanical/**" ]
+    paths: [ "mechanical/**", ".github/workflows/mechanical.yml" ]
     branches: [ "main" ]
 
 env:
