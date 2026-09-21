@@ -34,4 +34,9 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: anglo-firmware
-          path: firmware/build/anglo-firmware.bin.syx
+          path: |
+            firmware/anglo-controller-bootloader/target/thumbv6m-none-eabi/release/anglo-controller-bootloader
+            firmware/anglo-controller/target/thumbv6m-none-eabi/release/anglo-controller
+            firmware/anglo-keyboard-bootloader/target/thumbv6m-none-eabi/release/anglo-keyboard-bootloader
+            firmware/anglo-keyboard/target/thumbv6m-none-eabi/release/anglo-keyboard
+            firmware/build/anglo-firmware.bin.syx
