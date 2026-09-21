@@ -8,22 +8,17 @@ on:
     paths: [ "mechanical/**", ".github/workflows/mechanical.yml" ]
     branches: [ "main" ]
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
-  build:
+  export:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./mechanical
 
     steps:
-      - uses: actions/checkout@v4
       - name: Install FreeCAD
         run: |
           sudo snap install freecad
+      - uses: actions/checkout@v4
       - name: Export
+        working-directory: ./mechanical
         run: freecad.cmd export_all.py
       - uses: actions/upload-artifact@v7
         with:
