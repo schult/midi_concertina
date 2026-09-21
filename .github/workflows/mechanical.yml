@@ -22,7 +22,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install FreeCAD
         run: |
-          sudo apt update
-          sudo apt install freecad
+          sudo snap install freecad
       - name: Export
-        run: freecadcmd export_all.py
+        run: freecad.cmd export_all.py
