@@ -25,3 +25,7 @@ jobs:
           sudo snap install freecad
       - name: Export
         run: freecad.cmd export_all.py
+      - uses: actions/upload-artifact@v7
+        with:
+          name: anglo-mechanical
+          path: mechanical/exports/*

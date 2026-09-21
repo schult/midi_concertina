@@ -31,3 +31,7 @@ jobs:
         run: just test
       - name: Lint
         run: just lint
+      - uses: actions/upload-artifact@v7
+        with:
+          name: anglo-firmware
+          path: firmware/build/anglo-firmware.bin.syx
