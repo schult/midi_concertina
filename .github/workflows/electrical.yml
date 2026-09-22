@@ -38,33 +38,33 @@ jobs:
         run: python3 -m plugins.cli -t -f -e -nI -nB -p ${GITHUB_WORKSPACE}/electrical/Controller/Controller.kicad_pcb
       - uses: actions/upload-artifact@v7
         with:
-          name: anglo-left-keyboard
+          name: anglo-electrical_left-keyboard
           path: |
             electrical/AngloLeftKeyboard/production/*.zip
-            electrical/AngloLeftKeyboard/production/*_bom.csv
+            electrical/AngloLeftKeyboard/production/*bom.csv
             electrical/AngloLeftKeyboard/production/positions.csv
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:
-          name: anglo-right-keyboard
+          name: anglo-electrical_right-keyboard
           path: |
             electrical/AngloRightKeyboard/production/*.zip
-            electrical/AngloRightKeyboard/production/*_bom.csv
+            electrical/AngloRightKeyboard/production/*bom.csv
             electrical/AngloRightKeyboard/production/positions.csv
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:
-          name: bellows-sensor-a
+          name: anglo-electrical_bellows-sensor-a
           path: |
             electrical/BellowsSensorA/production/*.zip
-            electrical/BellowsSensorA/production/*_bom.csv
+            electrical/BellowsSensorA/production/*bom.csv
             electrical/BellowsSensorA/production/positions.csv
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:
-          name: anglo-controller
+          name: anglo-electrical_controller
           path: |
             electrical/Controller/production/*.zip
-            electrical/Controller/production/*_bom.csv
+            electrical/Controller/production/*bom.csv
             electrical/Controller/production/positions.csv
           if-no-files-found: error
