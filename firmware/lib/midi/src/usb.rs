@@ -54,9 +54,11 @@ pub struct EventPacket {
 impl EventPacket {
     pub fn parse(buffer: &[u8]) -> impl Iterator<Item = Self> {
         const EVENT_PACKET_SIZE: usize = 4;
-        buffer.as_chunks::<EVENT_PACKET_SIZE>().0.iter().map(|x| EventPacket {
-            raw: *x,
-        })
+        buffer
+            .as_chunks::<EVENT_PACKET_SIZE>()
+            .0
+            .iter()
+            .map(|x| EventPacket { raw: *x })
     }
 
     pub fn encode(cable: u8, message: &Message) -> Encode {
