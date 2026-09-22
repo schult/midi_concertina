@@ -24,3 +24,4 @@ jobs:
         with:
           name: anglo-mechanical
           path: mechanical/exports/*
+          if-no-files-found: error
