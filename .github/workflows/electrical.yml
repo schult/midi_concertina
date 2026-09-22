@@ -23,7 +23,7 @@ jobs:
         run: |
           curl -L https://github.com/bennymeg/Fabrication-Toolkit/releases/download/5.3.1/Fabrication-Toolkit-5.3.1.zip > fabrication-toolkit.zip
           unzip fabrication-toolkit.zip -d fabrication-toolkit
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Export AngloLeftKeyboard
         working-directory: ${{ runner.temp }}/fabrication-toolkit
         run: python3 -m plugins.cli -t -f -e -nI -nB -p ${GITHUB_WORKSPACE}/electrical/AngloLeftKeyboard/AngloLeftKeyboard.kicad_pcb

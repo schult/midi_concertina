@@ -16,7 +16,7 @@ jobs:
       - name: Install FreeCAD
         run: |
           sudo snap install freecad
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Export
         working-directory: ./mechanical
         run: freecad.cmd export_all.py
