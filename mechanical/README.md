@@ -45,7 +45,7 @@ assumed.
 #### FDM 3D Printer
 
 Any modern printer that can print PETG and TPU with a 0.4mm nozzle and a build
-volume greater than or equal to 180mm x 180mm x 30mm should be up to the task.
+volume of at least 180mm x 180mm x 30mm should be up to the task.
 
 
 #### Soldering Iron and [M3 Heat Set Installation Tip](https://cnckitchenus.store/collections/installation-tips-and-sets-1)
@@ -183,11 +183,14 @@ set to "Concentric".
 
 Parts that incorporate threaded inserts should use 4 wall loops:
 
-- Action boards
-- Bellows frame
-- Controller panel
+- ActionBoard\_Left
+- ActionBoard\_Right
+- BellowsFrame
+- ControllerPanel
 - Handrest
-- Valve blocks
+- PcbStandoff2
+- ValveBlock\_Left
+- ValveBlock\_Right
 
 
 ## Assembly Instructions
@@ -228,15 +231,44 @@ of the prong into the hole.
 
 ### Faceplates
 
-Install button bushings in all of the sockets.
+Install button bushings in all of the faceplate sockets.
 
 Use two M3 x 10mm screws to bolt a handrest assembly to each faceplate. The
 buckle prong should face the closer edge of the faceplate.
 
 
 ### Buttons
+
+[tools/ButtonWireJig.FCStd](tools/ButtonWireJig.FCStd) is a tool to help with
+measuring the button wires and seating them in button caps.
+
+Insert 16 gauge brass wire in the hole in the short edge of the jig until it
+stops. Place side cutters flush with the face of the jig and cut the wire. This
+should produce a ??mm (TODO) long section of wire. Repeat this for each button.
+
+For each button, insert a wire section in the hole in the long side of the jig.
+Press a button cap onto the exposed end of the wire until it is fully seated. To
+check that the wire is fully seated, place the wire in the exposed slot in the
+jig, with the button cap flush against the side of the jig. The end of the wire
+should come to the edge of the jig.
+
+Push a button flange onto each of the wires, with the concave side facing
+the button cap. Press it flush with the button cap.
+
+
 ### Action Boards
+
+For each button, place a spring on its wire. Insert the wire through the
+counterbored side of one of the holes in the action board. Press a magnet post
+onto the end of the wire protruding from the opposite side of the action board.
+
+Attach the action boards to their matching valve blocks with three M3 x ??mm
+(TODO) screws each.
+
+
 ### Controller Panel
+
+TODO
 
 ### Bellows
 
@@ -279,7 +311,29 @@ around each bellows valley. Align the knots with the seam in the Tyvek.
 
 
 ### Electronics
+
+TODO: Move these paragraphs to other sections?
+
+For all PCBAs, the side with components is the front, and the opposite side is
+the back. When viewing the back of a PCBA, its top and bottom edge can be found
+by orienting it so that its name and revision are right-side up.
+
+For each keyboard PCBA, insert two M3 x ??mm (TODO) screw through the holes in
+its back. Place the PCB standoffs on the screws. Standoff 1 is for the top
+corner and standoff 2 is for the bottom corner. Screw the PCBA to its matching
+action board, making sure the standoffs are oriented correctly.
+
+Cut a ??mm (TODO) length of 2mm ID silicone tubing
+TODO: Bellows sensor
+
+TODO: Flash controller
+TODO: Install Controller
+TODO: Connect cable (through bellows!)
+TODO: Flash keyboards
+
 ### Close the Box
+
+TODO
 
 ### Hand Straps
 
