@@ -18,11 +18,36 @@ Install [rustup](https://rustup.rs/) and
 
     just provision
 
-## Build SYX Firmware Package
+## Initial Flashing
+
+Build all firmware images:
 
     just build
 
-This will create `build/anglo-firmware.bin` and `build/anglo-firmware.bin.syx`.
+Flash the controller first. This is necessary for the keyboards to receive
+power.
+
+    (cd anglo-controller && cargo embed --release)
+    (cd anglo-controller-bootloader && cargo embed --release)
+
+Then flash each keyboard:
+
+    (cd anglo-keyboard && cargo embed --release)
+    (cd anglo-keyboard-bootloader && cargo embed --release)
+
+## Update Over MIDI
+
+Create the SYX firmware package:
+
+    just build
+
+The update package will be written to `build/anglo-firmware.bin.syx`.
+
+To update the firmware, press and hold the control panel button until the LED
+begins flashing. Then transmit the SYX file to the instrument with a ~90ms pause
+between messages using [SysEx Librarian](https://www.snoize.com/SysExLibrarian/),
+[MIDI-OX](http://www.midiox.com/), or similar software. When the LED returns to
+the breathing state, the update is complete.
 
 ## License
 
