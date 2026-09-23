@@ -1,10 +1,12 @@
 # MIDI Concertina - Firmware
 
-- [anglo-bootloader](anglo-bootloader/): Bootloader for both controller and
-  keyboards that handles power-fail-safe firmware updates.
 - [anglo-controller](anglo-controller/): Application firmware for the
   controller. Handles most of the instrument logic.
+- [anglo-controller-bootloader](anglo-controller-bootloader/): Bootloader for
+  the controller that handles power-fail-safe firmware updates.
 - [anglo-keyboard](anglo-keyboard/): Application firmware for the keyboards.
+- [anglo-keyboard-bootloader](anglo-keyboard-bootloader/): Bootloader for
+  keyboards that handles power-fail-safe firmware updates.
 - [bin2syx](bin2syx/): Utility for converting firmware (.bin) files to SysEx
   (.syx) files that can be used to update the controller firmware over MIDI with
   software such as [SysEx Librarian](https://www.snoize.com/SysExLibrarian/) or
