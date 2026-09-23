@@ -1,13 +1,15 @@
 build: bootloader firmware
 
-provision:
+provision-ci:
     rustup update
     rustup target add thumbv6m-none-eabi
     rustup component add clippy
     rustup component add rustfmt
     rustup component add llvm-tools
     cargo install cargo-binutils
-    # cargo install --locked probe-rs-tools
+
+provision: provision-ci
+    cargo install --locked probe-rs-tools
 
 test:
     cd bin2syx && cargo test -r

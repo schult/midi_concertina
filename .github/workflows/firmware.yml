@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Provision
-        run: just provision
+        run: just provision-ci
       - name: Build
         run: just build
       - name: Test
