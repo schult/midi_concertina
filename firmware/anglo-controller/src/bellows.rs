@@ -89,14 +89,15 @@ const TABLE_POINTS: usize = 256;
 const MAGNITUDE_TABLE: [TableEntry; TABLE_POINTS] = generate_volume_table();
 
 const fn generate_volume_table() -> [TableEntry; TABLE_POINTS] {
+    const VOLUME_MAX: TableEntry = 0x3FFF;
     const N: usize = TABLE_POINTS;
     const P: usize = N * 10;
     const X: [f32; 4] = [0.0, 0.040148286, 0.60391949, 1.0];
-    const Y: [f32; 4] = [0.0, 1139.0, 16383.0, 16383.0];
-    bezier::<N, P>(&X, &Y)
+    const Y: [f32; 4] = [0.0, 0.069538871, 1.0, 1.0];
+    bezier::<VOLUME_MAX, N, P>(&X, &Y)
 }
 
-const fn bezier<const N: usize, const CURVE_POINTS: usize>(
+const fn bezier<const SCALE: TableEntry, const N: usize, const CURVE_POINTS: usize>(
     x: &[f32; 4],
     y: &[f32; 4],
 ) -> [TableEntry; N] {
@@ -136,7 +137,7 @@ const fn bezier<const N: usize, const CURVE_POINTS: usize>(
                 let y1 = curve_y[j];
                 let y2 = curve_y[j + 1];
                 let y = y1 + t * (y2 - y1);
-                table[i] = round(y) as TableEntry;
+                table[i] = round(y * SCALE as f32) as TableEntry;
                 break;
             }
             j += 1;
