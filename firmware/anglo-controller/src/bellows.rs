@@ -89,26 +89,11 @@ const TABLE_POINTS: usize = 256;
 const MAGNITUDE_TABLE: [TableEntry; TABLE_POINTS] = generate_volume_table();
 
 const fn generate_volume_table() -> [TableEntry; TABLE_POINTS] {
-    const VOLUME_MIN: f32 = 0.0;
-    const VOLUME_BREAK: f32 = 3840.0;
-    const VOLUME_MAX: f32 = 16383.0;
-
-    const X1: [f32; 4] = [0.0, 0.125, 0.125, 1.0];
-    const Y1: [f32; 4] = [VOLUME_MIN, VOLUME_MIN, VOLUME_BREAK, VOLUME_BREAK];
-    const N1: usize = TABLE_POINTS / 10;
-    const P1: usize = N1 * 10;
-
-    const X2: [f32; 4] = [0.0, 0.1, 0.3, 1.0];
-    const Y2: [f32; 4] = [VOLUME_BREAK, VOLUME_BREAK, VOLUME_MAX, VOLUME_MAX];
-    const N2: usize = TABLE_POINTS - N1;
-    const P2: usize = N2 * 10;
-
-    let mut table = [0 as TableEntry; TABLE_POINTS];
-    let (segment1, segment2) = table.split_at_mut(N1);
-    segment1.copy_from_slice(&bezier::<N1, P1>(&X1, &Y1));
-    segment2.copy_from_slice(&bezier::<N2, P2>(&X2, &Y2));
-
-    table
+    const N: usize = TABLE_POINTS;
+    const P: usize = N * 10;
+    const X: [f32; 4] = [0.0, 0.040148286, 0.60391949, 1.0];
+    const Y: [f32; 4] = [0.0, 1139.0, 16383.0, 16383.0];
+    bezier::<N, P>(&X, &Y)
 }
 
 const fn bezier<const N: usize, const CURVE_POINTS: usize>(
