@@ -2,11 +2,15 @@ name: Mechanical
 
 on:
   push:
+    tags: [ "mechanical/v[0-9]+.[0-9]+.[0-9]+" ]
     paths: [ "mechanical/**", ".github/workflows/mechanical.yml" ]
     branches: [ "main" ]
   pull_request:
     paths: [ "mechanical/**", ".github/workflows/mechanical.yml" ]
     branches: [ "main" ]
+
+permissions:
+  contents: write
 
 jobs:
   export:
@@ -14,14 +18,41 @@ jobs:
 
     steps:
       - name: Install FreeCAD
-        run: |
-          sudo snap install freecad
+        run: sudo snap install freecad
+
       - uses: actions/checkout@v7
       - name: Export
         working-directory: ./mechanical
-        run: freecad.cmd export_all.py
+        run: |
+          freecad.cmd export_all.py
+          mv exports anglo-mechanical
+          zip -r anglo-mechanical anglo-mechanical
+      - name: Export Tools
+        working-directory: ./mechanical/tools
+        run: |
+          freecad.cmd ../export_all.py
+          mv exports tools
+          zip -r tools tools
       - uses: actions/upload-artifact@v7
         with:
-          name: anglo-mechanical
-          path: mechanical/exports/*
+          path: mechanical/anglo-mechanical.zip
           if-no-files-found: error
+          archive: false
+      - uses: actions/upload-artifact@v7
+        with:
+          path: mechanical/tools/tools.zip
+          if-no-files-found: error
+          archive: false
+
+      - name: Rename Release Artifacts
+        if: github.ref_type == 'tag'
+        run: |
+          mv mechanical/anglo-mechanical.zip anglo-mechanical-${GITHUB_REF_NAME#mechanical/v}.zip
+          mv mechanical/tools/tools.zip tools-${GITHUB_REF_NAME#mechanical/v}.zip
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
+        with:
+          files: |
+            anglo-mechanical-*.zip
+            tools-*.zip

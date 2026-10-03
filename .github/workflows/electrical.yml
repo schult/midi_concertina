@@ -2,14 +2,26 @@ name: Electrical
 
 on:
   push:
+    tags: [ "electrical/v[0-9]+.[0-9]+.[0-9]+" ]
     paths: [ "electrical/**", ".github/workflows/electrical.yml" ]
     branches: [ "main" ]
   pull_request:
     paths: [ "electrical/**", ".github/workflows/electrical.yml" ]
     branches: [ "main" ]
 
+permissions:
+  contents: write
+
 jobs:
   export:
+    strategy:
+      matrix:
+        board:
+          - AngloLeftKeyboard
+          - AngloRightKeyboard
+          - BellowsSensorA
+          - Controller
+
     runs-on: ubuntu-latest
 
     steps:
@@ -23,48 +35,45 @@ jobs:
         run: |
           curl -L https://github.com/bennymeg/Fabrication-Toolkit/releases/download/5.3.1/Fabrication-Toolkit-5.3.1.zip > fabrication-toolkit.zip
           unzip fabrication-toolkit.zip -d fabrication-toolkit
+
       - uses: actions/checkout@v7
-      - name: Export AngloLeftKeyboard
-        working-directory: ${{ runner.temp }}/fabrication-toolkit
-        run: python3 -m plugins.cli -t -f -e -nI -nB -p ${GITHUB_WORKSPACE}/electrical/AngloLeftKeyboard/AngloLeftKeyboard.kicad_pcb
-      - name: Export AngloRightKeyboard
-        working-directory: ${{ runner.temp }}/fabrication-toolkit
-        run: python3 -m plugins.cli -t -f -e -nI -nB -p ${GITHUB_WORKSPACE}/electrical/AngloRightKeyboard/AngloRightKeyboard.kicad_pcb
-      - name: Export BellowsSensorA
-        working-directory: ${{ runner.temp }}/fabrication-toolkit
-        run: python3 -m plugins.cli -t -f -e -nI -nB -p ${GITHUB_WORKSPACE}/electrical/BellowsSensorA/BellowsSensorA.kicad_pcb
-      - name: Export Controller
-        working-directory: ${{ runner.temp }}/fabrication-toolkit
-        run: python3 -m plugins.cli -t -f -e -nI -nB -p ${GITHUB_WORKSPACE}/electrical/Controller/Controller.kicad_pcb
+      - name: Export ${{ matrix.board }} Schematic
+        working-directory: electrical/${{ matrix.board }}
+        run: kicad-cli sch export pdf ${{ matrix.board }}.kicad_sch -o ${{ matrix.board }}-schematic.pdf
+      - name: Export ${{ matrix.board }} PCB
+        working-directory: electrical/${{ matrix.board }}
+        env:
+          PYTHONPATH: ${{ runner.temp }}/fabrication-toolkit
+        run: |
+          python3 -m plugins.cli -t -f -e -nI -nB -p ${{ matrix.board }}.kicad_pcb
+          mkdir ${{ matrix.board }}-pcb
+          cp production/*.zip ${{ matrix.board }}-pcb/
+          cp production/*bom.csv ${{ matrix.board }}-pcb/
+          cp production/positions.csv ${{ matrix.board }}-pcb/
+          zip -r ${{ matrix.board }}-pcb ${{ matrix.board }}-pcb
+
       - uses: actions/upload-artifact@v7
         with:
-          name: anglo-electrical_left-keyboard
-          path: |
-            electrical/AngloLeftKeyboard/production/*.zip
-            electrical/AngloLeftKeyboard/production/*bom.csv
-            electrical/AngloLeftKeyboard/production/positions.csv
+          path: electrical/${{ matrix.board }}/${{ matrix.board }}-schematic.pdf
           if-no-files-found: error
+          archive: false
       - uses: actions/upload-artifact@v7
         with:
-          name: anglo-electrical_right-keyboard
-          path: |
-            electrical/AngloRightKeyboard/production/*.zip
-            electrical/AngloRightKeyboard/production/*bom.csv
-            electrical/AngloRightKeyboard/production/positions.csv
+          path: electrical/${{ matrix.board }}/${{ matrix.board }}-pcb.zip
           if-no-files-found: error
-      - uses: actions/upload-artifact@v7
+          archive: false
+
+      - name: Rename Release Artifacts
+        if: github.ref_type == 'tag'
+        working-directory: electrical/${{ matrix.board }}
+        run: |
+          mv ${{ matrix.board }}-schematic.pdf ${{ matrix.board }}-schematic-${GITHUB_REF_NAME#electrical/v}.pdf
+          mv ${{ matrix.board }}-pcb.zip ${{ matrix.board }}-pcb-${GITHUB_REF_NAME#electrical/v}.zip
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
         with:
-          name: anglo-electrical_bellows-sensor-a
-          path: |
-            electrical/BellowsSensorA/production/*.zip
-            electrical/BellowsSensorA/production/*bom.csv
-            electrical/BellowsSensorA/production/positions.csv
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v7
-        with:
-          name: anglo-electrical_controller
-          path: |
-            electrical/Controller/production/*.zip
-            electrical/Controller/production/*bom.csv
-            electrical/Controller/production/positions.csv
-          if-no-files-found: error
+          working_directory: electrical/${{ matrix.board }}
+          files: |
+            ${{ matrix.board }}-schematic-*.pdf
+            ${{ matrix.board }}-pcb-*.zip
