@@ -2,11 +2,15 @@ name: Firmware
 
 on:
   push:
+    tags: [ "firmware/v[0-9]+.[0-9]+.[0-9]+" ]
     paths: [ "firmware/**", ".github/workflows/firmware.yml" ]
     branches: [ "main" ]
   pull_request:
     paths: [ "firmware/**", ".github/workflows/firmware.yml" ]
     branches: [ "main" ]
+
+permissions:
+  contents: write
 
 env:
   CARGO_TERM_COLOR: always
@@ -16,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./firmware
+        working-directory: firmware
 
     steps:
       - uses: extractions/setup-just@v4
@@ -33,11 +37,46 @@ jobs:
         run: just lint
       - uses: actions/upload-artifact@v7
         with:
-          name: anglo-firmware
-          path: |
-            firmware/anglo-controller-bootloader/target/thumbv6m-none-eabi/release/anglo-controller-bootloader
-            firmware/anglo-controller/target/thumbv6m-none-eabi/release/anglo-controller
-            firmware/anglo-keyboard-bootloader/target/thumbv6m-none-eabi/release/anglo-keyboard-bootloader
-            firmware/anglo-keyboard/target/thumbv6m-none-eabi/release/anglo-keyboard
-            firmware/build/anglo-firmware.bin.syx
+          path: firmware/anglo-controller-bootloader/target/thumbv6m-none-eabi/release/anglo-controller-bootloader
           if-no-files-found: error
+          archive: false
+      - uses: actions/upload-artifact@v7
+        with:
+          path: firmware/anglo-controller/target/thumbv6m-none-eabi/release/anglo-controller
+          if-no-files-found: error
+          archive: false
+      - uses: actions/upload-artifact@v7
+        with:
+          path: firmware/anglo-keyboard-bootloader/target/thumbv6m-none-eabi/release/anglo-keyboard-bootloader
+          if-no-files-found: error
+          archive: false
+      - uses: actions/upload-artifact@v7
+        with:
+          path: firmware/anglo-keyboard/target/thumbv6m-none-eabi/release/anglo-keyboard
+          if-no-files-found: error
+          archive: false
+      - uses: actions/upload-artifact@v7
+        with:
+          path: firmware/build/anglo-firmware.bin.syx
+          if-no-files-found: error
+          archive: false
+
+      - name: Rename Release Artifacts
+        if: github.ref_type == 'tag'
+        run: |
+          mv anglo-controller-bootloader/target/thumbv6m-none-eabi/release/anglo-controller-bootloader anglo-controller-bootloader-${GITHUB_REF_NAME#firmware/v}
+          mv anglo-controller/target/thumbv6m-none-eabi/release/anglo-controller anglo-controller-${GITHUB_REF_NAME#firmware/v}
+          mv anglo-keyboard-bootloader/target/thumbv6m-none-eabi/release/anglo-keyboard-bootloader anglo-keyboard-bootloader-${GITHUB_REF_NAME#firmware/v}
+          mv anglo-keyboard/target/thumbv6m-none-eabi/release/anglo-keyboard anglo-keyboard-${GITHUB_REF_NAME#firmware/v}
+          mv build/anglo-firmware.bin.syx anglo-firmware-${GITHUB_REF_NAME#firmware/v}.bin.syx
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
+        with:
+          working_directory: firmware
+          files: |
+            anglo-controller-bootloader-*
+            anglo-controller-*
+            anglo-keyboard-bootloader-*
+            anglo-keyboard-*
+            anglo-firmware-*.bin.syx
