@@ -17,12 +17,12 @@ pub async fn task(
 ) {
     let usb_driver = usb::Driver::new(r.usb, Irqs, r.dp, r.dm);
 
-    // TODO: Get IDs from https://pid.codes/howto/
-    const USB_VID: u16 = 0xCAFE; // Default VID in TinyUSB
-    const USB_PID: u16 = 0x4000 | (1 << 3); // PID for MIDI-only device in TinyUSB
+    // PID 1209:3F00 reserved with https://pid.codes/
+    const USB_VID: u16 = 0x1209;
+    const USB_PID: u16 = 0x3F00;
     let mut usb_config = embassy_usb::Config::new(USB_VID, USB_PID);
     usb_config.manufacturer = Some("Bushel Basket");
-    usb_config.product = Some("Anglo M");
+    usb_config.product = Some("MIDI Anglo");
     usb_config.serial_number = Some(embassy_stm32::uid::uid_hex());
 
     const MAX_MIDI_PACKET_SIZE: usize = 64;
