@@ -159,21 +159,20 @@ be placed in the `exports` subdirectory.
 
 #### Deviations
 
-The cable guide should be printed with TPU. I also recommend setting the top and
-bottom surface patterns to "Concentric".
-
-Bellows gaskets and button flanges should be printed with TPU.
+The button flanges, bellows gaskets, and cable guide should be printed with TPU.
+I also recommend setting the top and bottom surface patterns to "Concentric".
+Print these parts on a smooth plate.
 
 Button caps should be printed with the smallest layer height possible. 0.08 mm
 is good. This helps to reduce noise when pressing buttons and produces a
 smoother top. It is recommended to use an outer brim when printing this part.
 
-The magnet posts require a pause mid-print in order to insert the magnets.  They
-should also be printed with the same layer height as the button caps to ensure
-the wire press-fits the same way in both parts.
+The magnet posts should be printed with the same settings as the button caps to
+ensure the wire press-fits the same way in both parts. In addition, they require
+a pause mid-print in order to insert the magnets.
 
 Handrests have a curved top that benefits from a reduced layer height of 0.12 mm
-or less.
+or less. Set the top surface pattern to "Concentric".
 
 Faceplates and the controller panel should be printed with "Only one wall on
 first layer" enabled.
