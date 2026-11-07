@@ -199,6 +199,53 @@ Parts that incorporate threaded inserts should use 4 wall loops:
 
 Install heat set inserts in all parts that require them.
 
+#### Left Action Board
+Install 2 inserts in the left action board.
+
+The holes for the inserts go all the way through, so check that you are
+installing them from the side _without_ the spring pockets. While not strictly
+necessary, this helps prevent melted plastic from obstructing the threads.
+
+![Left Action Board](docs/images/heat-set-inserts-left-action-board.jpg)
+
+#### Right Action Board
+Install 2 inserts in the right action board.
+
+The holes for the inserts go all the way through, so check that you are
+installing them from the side _without_ the spring pockets. While not strictly
+necessary, this helps prevent melted plastic from obstructing the threads.
+
+![Right Action Board](docs/images/heat-set-inserts-right-action-board.jpg)
+
+#### Bellows Frames (2x)
+Install 6 inserts in each of the two bellows frames.
+
+![Bellows Frames](docs/images/heat-set-inserts-bellows-frames.jpg)
+
+#### Controller Panel
+Install 2 inserts in the controller panel.
+
+![Controller Panel](docs/images/heat-set-inserts-controller-panel.jpg)
+
+#### Handrests (2x)
+Install 1 insert in each of the two handrests.
+
+![Handrests](docs/images/heat-set-inserts-handrests.jpg)
+
+#### PCB Standoffs (2x)
+Install 1 insert in each of the two larger PCB standoffs.
+
+![PCB Standoffs](docs/images/heat-set-inserts-pcb-standoffs.jpg)
+
+#### Left Valve Block
+Install 4 inserts in the left valve block.
+
+![Left Valve Block](docs/images/heat-set-inserts-left-valve-block.jpg)
+
+#### Right Valve Block
+Install 4 inserts in the right valve block.
+
+![Right Valve Block](docs/images/heat-set-inserts-right-valve-block.jpg)
 
 ### Handrest Buckle
 
