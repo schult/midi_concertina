@@ -6,7 +6,7 @@
 | ----------: | :--- |
 |           | [PETG Filament](https://shop.polymaker.com/products/polymaker-petg?variant=45079221108793) |
 |           | [TPU Filament](https://shop.polymaker.com/products/polyflex-tpu95?variant=39574341681209) |
-|        30 | [Heat Set Insert M3 x 5.7](https://cnckitchenus.store/products/heat-set-insert-m3-x-5-7-100-pieces) |
+|        34 | [Heat Set Insert M3 x 5.7](https://cnckitchenus.store/products/heat-set-insert-m3-x-5-7-100-pieces) |
 |         3 | [M3 x 6mm Button Head Screw](https://boltdepot.com/Product-Details?product=7218) |
 |        10 | [M3 x 10mm Button Head Screw](https://boltdepot.com/Product-Details?product=7220) |
 |         1 | [M3 x 16mm Button Head Screw](https://boltdepot.com/Product-Details?product=7222) |
@@ -228,7 +228,7 @@ Install 2 inserts in the controller panel.
 ![Controller Panel](docs/images/heat-set-inserts-controller-panel.jpg)
 
 #### Handrests (2x)
-Install 1 insert in each of the two handrests.
+Install 3 inserts in each of the two handrests.
 
 ![Handrests](docs/images/heat-set-inserts-handrests.jpg)
 
