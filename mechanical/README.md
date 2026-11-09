@@ -247,7 +247,7 @@ Install 4 inserts in the right valve block.
 
 ![Right Valve Block](docs/images/heat-set-inserts-right-valve-block.jpg)
 
-### Handrest Buckle
+### Handrest Buckles (2x)
 
 Each handrest buckle is constructed from two lengths of straightened 12 gauge
 steel hanging wire.
@@ -255,15 +255,31 @@ steel hanging wire.
 
 #### Frame
 
-Make marks 12mm, 63mm, 80mm, 121mm, and 136mm from the end of the wire. At the
-first mark, hold the wire firmly with pliers on the side closest to the end, and
-make a 90-degree bend. Repeat this for each of the following three marks, making
-all bends in the same direction. Cut the wire at the final mark.
+Make marks 12mm, 63mm, 80mm, 121mm, and 136mm from the end of the wire.
+
+![Buckle Frame Measurements](docs/images/handrest-buckle-frame-measurements.jpg)
+
+At the first mark, hold the wire firmly with pliers on the side closest to the
+end, and make a 90-degree bend. Repeat this for each of the following three
+marks, making all bends in the same direction.
+
+![Buckle Frame Bend 1](docs/images/handrest-buckle-frame-1.jpg)
+![Buckle Frame Bend 2](docs/images/handrest-buckle-frame-2.jpg)
+![Buckle Frame Bend 3](docs/images/handrest-buckle-frame-3.jpg)
+![Buckle Frame Bend 4](docs/images/handrest-buckle-frame-4.jpg)
+
+ Cut the wire at the final mark.
+
+![Buckle Frame Cut](docs/images/handrest-buckle-frame-5.jpg)
+![Finished Buckle Frame](docs/images/handrest-buckle-frame-finished.jpg)
 
 
 #### Prong
 
 Round the end of the wire, then cut it to 16 mm long.
+
+![Buckle Prong Measurements](docs/images/handrest-buckle-prong-measurements.jpg)
+![Finished Buckle Prong](docs/images/handrest-buckle-prong-finished.jpg)
 
 
 #### Installation
@@ -271,9 +287,18 @@ Round the end of the wire, then cut it to 16 mm long.
 With the short leg of the frame below the handrest, fit the longer leg of the
 frame into the hole in the middle of the handrest. Pay attention to which side
 of the handrest the leg is on (you want the right and left hands to match).
+
+![Buckle Installation Step 1](docs/images/handrest-buckle-install-1.jpg)
+
 Rotate the frame until the short leg snaps into the notch in the bottom of the
-handrest. Hold the frame past the prong hole while pressing the unfinished end
-of the prong into the hole.
+handrest.
+
+![Buckle Installation Step 2](docs/images/handrest-buckle-install-2.jpg)
+
+Hold the frame past the prong hole while pressing the unfinished end of the
+prong into the hole.
+
+![Buckle Installation Step 3](docs/images/handrest-buckle-install-3.jpg)
 
 
 ### Faceplates
