@@ -303,11 +303,16 @@ prong into the hole.
 
 ### Faceplates
 
-Install button bushings in all of the faceplate sockets.
+Press button bushings into all of the faceplate sockets.
+
+![Faceplates Without Button Bushings](docs/images/faceplate-initial.jpg)
+![Faceplates With Button Bushings](docs/images/faceplate-button-bushings.jpg)
 
 Use two M3 x 10mm screws to bolt a handrest assembly to each faceplate. The
 buckle prong should face the closer edge of the faceplate.
 
+![Faceplate Handrest Screws](docs/images/faceplate-handrest-screws.jpg)
+![Faceplate Handrest Orientation](docs/images/faceplate-handrest-orientation.jpg)
 
 ### Buttons
 
