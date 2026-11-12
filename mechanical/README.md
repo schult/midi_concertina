@@ -314,23 +314,38 @@ buckle prong should face the closer edge of the faceplate.
 ![Faceplate Handrest Screws](docs/images/faceplate-handrest-screws.jpg)
 ![Faceplate Handrest Orientation](docs/images/faceplate-handrest-orientation.jpg)
 
-### Buttons
+### Buttons (31x)
 
-[tools/ButtonWireJig.FCStd](tools/ButtonWireJig.FCStd) is a tool to help with
-measuring the button wires and seating them in button caps.
+A tool to help measure the button wires and seat them in the button caps is
+provided at [tools/ButtonWireJig.FCStd](tools/ButtonWireJig.FCStd). Print it on
+its edge (so the hole in the long edge is facing up) with 0.2mm layer height, 4
+wall loops, and 5 bottom shell layers.
 
-Insert 16 gauge brass wire in the hole in the short edge of the jig until it
-stops. Place side cutters flush with the face of the jig and cut the wire. This
-should produce a ??mm (TODO) long section of wire. Repeat this for each button.
+![Button Jig Print Orientation](docs/images/button-jig-print-orientation.jpg)
 
-For each button, insert a wire section in the hole in the long side of the jig.
-Press a button cap onto the exposed end of the wire until it is fully seated. To
-check that the wire is fully seated, place the wire in the exposed slot in the
-jig, with the button cap flush against the side of the jig. The end of the wire
-should come to the edge of the jig.
+Insert a length of straightened 16 gauge brass wire into the hole in the short
+edge of the jig until it stops. Place side cutters flush against the jig and cut
+the wire. This should produce a 23mm long section of wire.
+
+![Button Wire Cut](docs/images/button-wire-cut.jpg)
+![Button Wire Length](docs/images/button-wire-length.jpg)
+
+Insert the wire section into the hole in the long side of the jig. Press a
+button cap onto the exposed end of the wire until it is fully seated (the button
+cap will _not_ be flush against the jig). To check that the wire is fully
+seated, place the wire in the exposed slot in the jig, with the button cap flush
+against the side of the jig. The end of the wire should come to the edge of the
+jig, protruding 18mm from the button cap.
+
+![Button Wire Press 1](docs/images/button-wire-press-1.jpg)
+![Button Wire Press 2](docs/images/button-wire-press-2.jpg)
+![Button Wire Protrusion Check](docs/images/button-wire-protrusion-check.jpg)
+![Button Wire Protrusion Length](docs/images/button-wire-protrusion-length.jpg)
 
 Push a button flange onto each of the wires, with the concave side facing
-the button cap. Press it flush with the button cap.
+the button cap. Press it flush against the button cap.
+
+![Button Wire Press 1](docs/images/button-flange-installed.jpg)
 
 
 ### Action Boards
