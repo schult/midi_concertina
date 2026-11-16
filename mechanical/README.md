@@ -354,8 +354,8 @@ For each button, place a spring on its wire. Insert the wire through the
 counterbored side of one of the holes in the action board. Press a magnet post
 onto the end of the wire protruding from the opposite side of the action board.
 
-Attach the action boards to their matching valve blocks with three M3 x ??mm
-(TODO) screws each.
+Attach the action boards to their matching valve blocks with three M3 x 16mm
+screws each.
 
 
 ### Controller Panel
@@ -366,9 +366,9 @@ TODO
 
 Cut a 516mm x 488mm piece of Tyvek. Also cut 42 25mm Tyvek squares.
 
-Mark the card locations on the back side of the Tyvek. Cards should be on a 84mm
-x 32mm grid. The first set of cards should hang about halfway off the edge of
-the Tyvek, so that when the Tyvek is glued into a tube, the seam falls in the
+Mark the card locations on the back side of the Tyvek. Cards should be on an
+84mm x 32mm grid. The first set of cards should hang about halfway off the edge
+of the Tyvek, so that when the Tyvek is glued into a tube, the seam falls in the
 middle of the cards instead of on the corners. A template to help quickly mark
 card locations is included as a layer in [BellowsCards.dxf](BellowsCards.dxf).
 
@@ -410,13 +410,13 @@ For all PCBAs, the side with components is the front, and the opposite side is
 the back. When viewing the back of a PCBA, its top and bottom edge can be found
 by orienting it so that its name and revision are right-side up.
 
-For each keyboard PCBA, insert two M3 x ??mm (TODO) screw through the holes in
-its back. Place the PCB standoffs on the screws. Standoff 1 is for the top
-corner and standoff 2 is for the bottom corner. Screw the PCBA to its matching
-action board, making sure the standoffs are oriented correctly.
+For each keyboard PCBA, insert two M3 x 20mm screws through the holes in its
+back. Place the PCB standoffs on the screws. Standoff 1 is for the top corner
+and standoff 2 is for the bottom corner. Screw the PCBA to its matching action
+board, making sure the standoffs are oriented correctly.
 
-Cut a ??mm (TODO) length of 2mm ID silicone tubing
-TODO: Bellows sensor
+Cut a 12mm length of 2mm ID silicone tubing
+TODO: Bellows sensor (M3 x 6mm screw)
 
 TODO: Flash controller
 TODO: Install Controller
