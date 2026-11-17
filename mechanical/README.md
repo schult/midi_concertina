@@ -385,7 +385,39 @@ board, making sure the standoffs are oriented correctly.
 
 ### Controller Panel
 
-TODO
+From the back side, press the light pipe into the center hole of the controller
+panel until it is flush with the front face.
+
+![Controller Panel Light Pipe](docs/images/controller-panel-light-pipe.jpg)
+![Controller Panel Light Pipe Location](docs/images/controller-panel-light-pipe-location.jpg)
+![Controller Panel Light Pipe Front](docs/images/controller-panel-light-pipe-front.jpg)
+
+Insert the controller panel button into its socket in the back of the controller
+panel.
+
+![Controller Panel Button](docs/images/controller-panel-button.jpg)
+![Controller Panel Button Location](docs/images/controller-panel-button-location.jpg)
+
+Use two M3 x 6mm screws to attach the controller PCBA to the back of the
+controller panel.
+
+![Controller Panel PCBA](docs/images/controller-panel-pcba.jpg)
+![Controller Panel Front](docs/images/controller-panel-front.jpg)
+
+If you have not yet flashed firmware to the controller PCBA, now is a good time
+to do so.
+
+![Controller Panel Flashing](docs/images/controller-panel-flash.jpg)
+
+Press the controller panel into its slot in the right valve block until it is
+fully seated.
+
+![Controller Panel Install](docs/images/controller-panel-install.jpg)
+
+Press the controller panel retainer into place and secure it with one M3 x 16mm
+screw.
+
+![Controller Panel Retainer](docs/images/controller-panel-retainer.jpg)
 
 ### Bellows
 
