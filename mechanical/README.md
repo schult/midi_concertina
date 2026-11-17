@@ -350,13 +350,38 @@ the button cap. Press it flush against the button cap.
 
 ### Action Boards
 
-For each button, place a spring on its wire. Insert the wire through the
-counterbored side of one of the holes in the action board. Press a magnet post
-onto the end of the wire protruding from the opposite side of the action board.
+Place a spring on the wire of a button assembly.
 
-Attach the action boards to their matching valve blocks with three M3 x 16mm
+![Action Board Spring](docs/images/action-board-spring.jpg)
+
+Insert the button wire through the counterbored side of one of the holes in the
+action board.
+
+![Action Board Insert Front](docs/images/action-board-insert-front.jpg)
+
+Press a magnet post onto the end of the wire protruding from the opposite side
+of the action board.
+
+![Action Board Insert Back](docs/images/action-board-insert-back.jpg)
+![Action Board Magnet Post](docs/images/action-board-magnet-post.jpg)
+
+Repeat for all buttons on both action boards. Note the extra large flange for
+the air button on the right hand action board.
+
+![Action Board All Buttons Front](docs/images/action-board-all-buttons-front.jpg)
+![Action Board All Buttons Back](docs/images/action-board-all-buttons-back.jpg)
+
+Attach the action boards to their matching valve blocks with three M3 x 10mm
 screws each.
 
+![Action Board Installed](docs/images/action-board-installed.jpg)
+
+For each keyboard PCBA, insert two M3 x 20mm screws through the holes in its
+back. Place the PCB standoffs on the screws. Standoff 1 is for the top corner
+and standoff 2 is for the bottom corner. Screw the PCBA to its matching action
+board, making sure the standoffs are oriented correctly.
+
+![Action Board PCB Installed](docs/images/action-board-pcb-installed.jpg)
 
 ### Controller Panel
 
@@ -409,11 +434,6 @@ TODO: Move these paragraphs to other sections?
 For all PCBAs, the side with components is the front, and the opposite side is
 the back. When viewing the back of a PCBA, its top and bottom edge can be found
 by orienting it so that its name and revision are right-side up.
-
-For each keyboard PCBA, insert two M3 x 20mm screws through the holes in its
-back. Place the PCB standoffs on the screws. Standoff 1 is for the top corner
-and standoff 2 is for the bottom corner. Screw the PCBA to its matching action
-board, making sure the standoffs are oriented correctly.
 
 Cut a 12mm length of 2mm ID silicone tubing
 TODO: Bellows sensor (M3 x 6mm screw)
