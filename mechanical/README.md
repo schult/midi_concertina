@@ -314,6 +314,7 @@ buckle prong should face the closer edge of the faceplate.
 ![Faceplate Handrest Screws](docs/images/faceplate-handrest-screws.jpg)
 ![Faceplate Handrest Orientation](docs/images/faceplate-handrest-orientation.jpg)
 
+
 ### Buttons (31x)
 
 A tool to help measure the button wires and seat them in the button caps is
@@ -383,6 +384,7 @@ board, making sure the standoffs are oriented correctly.
 
 ![Action Board PCB Installed](docs/images/action-board-pcb-installed.jpg)
 
+
 ### Controller Panel
 
 From the back side, press the light pipe into the center hole of the controller
@@ -418,6 +420,24 @@ Press the controller panel retainer into place and secure it with one M3 x 16mm
 screw.
 
 ![Controller Panel Retainer](docs/images/controller-panel-retainer.jpg)
+
+
+### Bellows Sensor
+
+Cut a 12mm length of 2mm ID silicone tubing.
+
+![Bellows Sensor Tubing Length](docs/images/bellows-sensor-tubing-length.jpg)
+
+Press one end of the tubing onto the port in the left valve block.
+
+![Bellows Sensor Tubing Location](docs/images/bellows-sensor-tubing-location.jpg)
+
+Line the bellows sensor PCBA up with its screw hole, orienting it so one of its
+ports lines up with the tubing. Press the aligned port into the tubing, and
+secure the PCBA with one M3 x 6mm screw.
+
+![Bellows Sensor Installed](docs/images/bellows-sensor-installed.jpg)
+
 
 ### Bellows
 
@@ -459,25 +479,20 @@ Tie seven loops of elastic cord about 270mm in circumference, and place one
 around each bellows valley. Align the knots with the seam in the Tyvek.
 
 
-### Electronics
+### Cable Guide
 
-TODO: Move these paragraphs to other sections?
-
-For all PCBAs, the side with components is the front, and the opposite side is
-the back. When viewing the back of a PCBA, its top and bottom edge can be found
-by orienting it so that its name and revision are right-side up.
-
-Cut a 12mm length of 2mm ID silicone tubing
-TODO: Bellows sensor (M3 x 6mm screw)
-
-TODO: Flash controller
-TODO: Install Controller
+TODO: Thread cable through guide
+TODO: Crimp connectors
+TODO: Trim cable
 TODO: Connect cable (through bellows!)
 TODO: Flash keyboards
+TODO: Screw cable guide to standoffs (one M3 x 6mm screw at each end)
+
 
 ### Close the Box
 
 TODO
+
 
 ### Hand Straps
 
